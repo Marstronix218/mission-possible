@@ -100,7 +100,7 @@ NASAの地球観測データを使ったブラウザゲームを提供します�
 | **Phase 1: Core Loop MVP** | 3都市（Los Angeles / Houston / Phoenix）で「選ぶ→設計→シミュレーション→評価→再挑戦」が通しで動く。匿名ログイン、試行の保存 | 1ミッションを最初から最後まで遊べる |
 | **Phase 2: 全ミッション展開** | 18都市・8カテゴリーのデータとシナリオ、グローバルランキング、前回との比較 | 18都市すべてでプレイ可能 |
 | **Phase 3: Classroom** | 教師ログイン、クラス作成、参加コード、ミッションの割り当て、条件設定、クラスランキング、教師ダッシュボード | 教師1人と生徒30人で授業を想定したテストが通る |
-| **Phase 4: Polish** | 日英i18n、アクセシビリティ、パフォーマンス改善、チュートリアル、デモ動画 | 審査用のデモが可能 |
+| **Phase 4: Polish** | English-only UI polish, accessibility, performance improvements, tutorial, demo video | 審査用のデモが可能 |
 
 **MVPの優先順位**: Phase 1 → Phase 3 → Phase 2 → Phase 4
 （理由: 審査では「教室で使える」点が差別化要素になるため、Classroomを全都市対応より優先します。）
@@ -363,7 +363,6 @@ Mission Score: 82/100
 | Map | MapLibre GL JS | 無料。ベクタータイルとGeoJSONレイヤーが使える |
 | Test | Vitest（sim中心）, Playwright（E2Eのスモークテスト） | simの決定論性をテストで保証する |
 | Lint/Format | ESLint + Prettier | Codexの出力を統一するため |
-| i18n | `next-intl`（ja / en） | Space Appsの審査は英語のため |
 
 ### 9.3 ディレクトリ構成
 ```
@@ -405,7 +404,6 @@ Mission Score: 82/100
 │   │   ├─ map/               # [Wako]
 │   │   └─ results/           # [Wako]
 │   └─ stores/                # [Sakura] Zustand
-└─ messages/{ja,en}.json      # i18n（各自が自分の画面のキーを追加）
 ```
 
 ### 9.4 共有の型（契約）— Phase 0で確定する
@@ -559,7 +557,7 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 | プライバシー | 生徒からメールや実名を集めない。ニックネームのみ。不適切な語はフィルタする。教師はクラスと生徒データを削除できる。利用規約とプライバシーポリシーのページを用意する（COPPAやFERPAを意識した設計） |
 | セキュリティ | RLSは全テーブルで有効にする。service role keyはサーバーのみで使い、`NEXT_PUBLIC_` を付けない。参加コードの総当たり対策としてレート制限をかける |
 | アクセシビリティ | WCAG 2.1 AAを目標にする。色だけで情報を伝えない（アイコンやパターンを併用する）。キーボードで操作できる |
-| i18n | 日本語と英語。デフォルトはブラウザの言語に合わせる |
+| App language | English only. Do not provide Japanese translations, a locale selector, or browser-language switching |
 | 決定論性 | `engineVersion` が同じなら、同じ入力から同じ出力を返す。エンジンを変更したらバージョンを上げ、ランキングを分ける |
 
 ---
@@ -596,7 +594,7 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 |---|---|---|
 | **Nori** | **Backend / Infra Lead**（Supabase・Vercelは1人で担当）＋ リポジトリ管理とマージの責任者 | `supabase/`, `src/app/api/`, `src/lib/supabase/`, `src/lib/api/`, `src/types/database.ts`, `.github/`, `middleware.ts`, Vercel設定 |
 | **Ryohei** | **Simulation & Data Lead** | `src/lib/sim/`, `data/`, `scripts/data/`, `src/types/game.ts`（管理者） |
-| **Sakura** | **Designer Experience Lead**（衛星設計画面とUI基盤） | `src/app/(game)/mission/[slug]/brief/`, `.../design/`, `src/components/designer/`, `src/components/ui/`, `src/stores/`, `messages/` の基盤 |
+| **Sakura** | **Designer Experience Lead**（衛星設計画面とUI基盤） | `src/app/(game)/mission/[slug]/brief/`, `.../design/`, `src/components/designer/`, `src/components/ui/`, `src/stores/` の基盤 |
 | **Wako** | **World & Results Lead**（地図、再生、結果、教室、ランキングの画面） | `src/app/(game)/map/`, `.../run/`, `.../result/`, `src/app/leaderboard/`, `src/app/classroom/`, `src/app/teacher/`, `src/components/map/`, `src/components/results/` |
 
 ### 15.2 詳細なタスク
@@ -619,13 +617,13 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 - [ ] **Phase 0**: `summarizeResources` を先に実装する（Sakuraの画面がすぐ使えるように）。`runSimulation` はモック値を返すスタブを先に出す
 - [ ] **Phase 1**: `data/parts.json`、`categories.json`、3都市分のミッションJSON
 - [ ] **Phase 1**: シミュレーションエンジン（グリッド、パス、観測判定、送信、信頼性）とスコア計算
-- [ ] **Phase 1**: フィードバックのルールエンジン（メッセージキーを返し、文言はi18nで管理する）
+- [ ] **Phase 1**: フィードバックのルールエンジン（英語のメッセージキーと文言を返す）
 - [ ] **Phase 1**: Vitestで決定論性、境界値、代表構成のスコアをテストする
 - [ ] **Phase 2**: NASAデータの事前処理スクリプト（FIRMS、GPM、ECOSTRESS など）と、18都市分のJSONの生成。出典も記録する
 - [ ] **Phase 2〜4**: ゲームバランスの調整と `engineVersion` の管理
 
 #### Sakura — Satellite Designer & UI Foundation
-- [ ] **Phase 0**: デザイントークン（色、タイポグラフィ）、shadcn/uiの導入、共通レイアウトとヘッダー、`next-intl` の基盤
+- [ ] **Phase 0**: デザイントークン（色、タイポグラフィ）、shadcn/uiの導入、共通レイアウトとヘッダー、英語UIテキストの基盤
 - [ ] **Phase 1**: Mission Briefing画面
 - [ ] **Phase 1**: Satellite Designer（5スロット、パーツカード、複数センサーの搭載）
 - [ ] **Phase 1**: Resource Dashboard（ゲージ、違反の表示、Launchの無効化）。`summarizeResources` を使う
@@ -849,7 +847,7 @@ Run lint, typecheck and test before finishing a task.
 ## Conventions
 - Server Components by default; add "use client" only when needed.
 - Validate all API input/output with Zod schemas in src/lib/api/schemas.ts.
-- UI text must use next-intl keys (messages/ja.json, messages/en.json). No hardcoded strings.
+- All user-facing UI text must be English. Do not add Japanese translations, locale switching, or browser-language detection.
 - Tailwind + shadcn/ui components from src/components/ui.
 - Do not convey information with color alone (accessibility).
 - Clearly label NASA observed data vs simulated data in any visualization.
