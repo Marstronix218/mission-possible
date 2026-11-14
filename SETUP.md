@@ -58,7 +58,7 @@ Local branch: `feat/wako/world-results`. Integration base: `develop` at `617701e
 
 The simulation dependency is Ryohei's branch commit `00efd67345a036735664136ebc01d8eda90c8ffb`. Its source is copied unchanged, and its origin is recorded here. The dependency is already present in the current integration base. Sakura’s shared designer, stores, UI primitives, and tokens are preserved; the mock briefing/designer entrypoints select Wako’s local demo only when mock mode is active.
 
-GitHub read access is connected, but writes to Marstronix218/mission-possible currently fail with HTTP 403 “Resource not accessible by integration.” The repository owner must authorize the GitHub app for this repository. The feature branch is prepared for a draft PR; it has not been pushed and protected branches have not been changed.
+The feature branch is pushed. [Draft PR #5](https://github.com/Marstronix218/mission-possible/pull/5) targets `develop`; review remains pending. Protected branches have not been changed.
 
 Nori’s foundation migration `20261114000000_profiles_and_attempts.sql` is preserved unchanged from the current main branch. The classroom migration extends that schema rather than creating a competing attempts table. The repository main branch gained this foundation while implementation was in progress; the delivery branch has now been reconciled with the updated `develop` foundation.
 
@@ -76,7 +76,7 @@ The classroom API now follows the upstream authorization rule: only a non-anonym
 
 ## Verified backend status and database access
 
-The configured public and secret API keys have been verified without logging their values. The database REST and Auth settings endpoints return 200. The application tables are not yet present. Email sign-in is enabled; anonymous sign-in is currently disabled. Enable anonymous sign-ins before student/solo cloud testing.
+Earlier checks verified the configured public and secret API keys without logging their values; database REST and Auth settings endpoints returned 200, but application tables were not yet present. The user subsequently reported enabling anonymous sign-ins. Hosted backend state has not been rechecked during the requested mock-data continuation.
 
 The three API variables do not grant arbitrary SQL execution. To let the migration runner create the schema, set `SUPABASE_DB_URL` in `.env.local` to a PostgreSQL connection string from the Supabase Connect dialog (session-pooler or direct connection). Credentials stay in the local file. Run:
 
