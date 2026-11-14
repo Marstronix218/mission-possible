@@ -5,12 +5,13 @@
 
 | 項目 | 内容 |
 |---|---|
-| ドキュメント | Product Requirements Document (PRD) v1.0 |
+| ドキュメント | Product Requirements Document (PRD) v1.2 |
 | オーナー | Nori |
 | チーム | Nori / Ryohei / Sakura / Wako |
 | 技術スタック | Next.js (App Router, TypeScript) / Supabase / Vercel |
 | 開発手法 | 4人がそれぞれ Codex を使って並行開発 |
-| ステータス | Draft |
+| ステータス | Delivery plan — phase gates require verification |
+| 更新日 | 2026-11-14 |
 
 ---
 
@@ -97,13 +98,112 @@ NASAの地球観測データを使ったブラウザゲームを提供します�
 | フェーズ | 内容 | 完了条件 |
 |---|---|---|
 | **Phase 0: Setup** | リポジトリ、Next.js雛形、Supabaseプロジェクト、Vercel連携、CI、型定義（契約）の確定 | `develop` がVercel Previewにデプロイされ、CIが通る |
-| **Phase 1: Core Loop MVP** | 3都市（Los Angeles / Houston / Phoenix）で「選ぶ→設計→シミュレーション→評価→再挑戦」が通しで動く。匿名ログイン、試行の保存 | 1ミッションを最初から最後まで遊べる |
+| **Phase 1: Core Loop MVP** | 3都市（Los Angeles / Houston / Phoenix）で「選ぶ→設計→シミュレーション→評価→再挑戦」が通しで動く。匿名ログイン、試行の保存 | 3都市すべてで保存・結果・再挑戦まで遊べる（§4.3） |
 | **Phase 2: 全ミッション展開** | 18都市・8カテゴリーのデータとシナリオ、グローバルランキング、前回との比較 | 18都市すべてでプレイ可能 |
 | **Phase 3: Classroom** | 教師ログイン、クラス作成、参加コード、ミッションの割り当て、条件設定、クラスランキング、教師ダッシュボード | 教師1人と生徒30人で授業を想定したテストが通る |
 | **Phase 4: Polish** | English-only UI polish, accessibility, performance improvements, tutorial, demo video | 審査用のデモが可能 |
 
 **MVPの優先順位**: Phase 1 → Phase 3 → Phase 2 → Phase 4
 （理由: 審査では「教室で使える」点が差別化要素になるため、Classroomを全都市対応より優先します。）
+
+### 4.1 Execution order and how to start
+
+**Delivery order: Phase 0 → Phase 1 → Phase 3 → Phase 2 → Phase 4 → Release.** Phase numbers retain their original scope; Classroom intentionally ships before the 18-city expansion. Phase 2 data preparation may run in parallel after Phase 1 contracts stabilize, but must not delay Classroom integration.
+
+Each contributor reads the root `AGENTS.md`, this section, their ownership in §15, and `docs/setup.md`. Pick one unchecked task in the current phase, create a scoped branch, implement within your ownership, verify, commit, **push your own branch**, and open a PR using §16.9. Do this for every completed task; do not wait until the end of a phase to share work. Nori owns integration and records the phase gate evidence in the tracking issue. A pushed task is ready for review; a phase is complete only after its required PRs are merged and its integration checks pass.
+
+These checklists describe required work, not proof that it is already finished. Existing code, remote provisioning, branch rules, deployments, and test results must be verified before checking a box. The Phase 0 foundation may already contain some Phase 1 auth/storage work; reuse it after review instead of recreating it.
+
+### 4.2 Phase 0 — Foundation and contracts
+
+**Entry:** Repository access for all four teammates. Nori coordinates the initial foundation while `develop` does not exist. Bootstrap PRs target `main` only during this initial setup; after the reviewed foundation is merged, Nori establishes `develop` from that reviewed commit. All subsequent feature PRs target `develop`.
+
+| Owner | Required deliverables | Handoff / evidence |
+|---|---|---|
+| Nori | Next.js/strict TypeScript foundation; Node 22 and pinned pnpm; lint/typecheck/test/build CI; Supabase local migrations and RLS tests; separate hosted dev/prod configuration; auth helpers and API schemas/client; Vercel Preview; verified teammate access, CODEOWNERS and branch protection | Push foundation PR; publish setup instructions and Preview URL; record actual CI check name and auth/session smoke results. Never publish secrets |
+| Ryohei | Reviewed `src/types/game.ts`; complete part and mission schemas; pure `summarizeResources`; engine entry-point contract and test fixtures | Publish contract PR for all four reviewers, fixture inputs and expected resource summaries; enumerate any engine work still blocked |
+| Sakura | Design tokens, English text conventions, shared UI primitives, layout/header and design store interface | Push UI-foundation PR; give Wako component exports, navigation/store interfaces and keyboard interaction examples |
+| Wako | Route/navigation skeleton for map, run, result, leaderboard, classroom and teacher screens; loading/empty/error states; fixture-based playback/result prototype | Push route-shell PR; confirm navigation and data requirements with Sakura, Ryohei and Nori |
+
+**Contract checklist — Ryohei owns game contracts; Nori owns API/DB contracts; all four review the shared game interface:**
+
+- [ ] Define mission slug/IDs, English objective text, bounding-box order, cell coordinates, timeline time units, fixed seed, source metadata and missing-data behavior.
+- [ ] Complete every part's cost, mass, power, storage/downlink units, instrument capacity and compatibility rules. The abbreviated tables in §7.2 are starting values, not a complete catalog.
+- [ ] Specify validation violations vs warnings, power/battery behavior, timestep/revisit/cloud/latency rules, category weights summing to 100, scoring formulas, zero-denominator behavior, rounding and success thresholds. Publish representative fixtures so UI and server use the same rules.
+- [ ] Freeze `summarizeResources` / `runSimulation` signatures and exports, feedback keys and English rendering, score scale, timeline/cell payload, engine version and data/catalog version strategy. Version changed simulation inputs so old scores are not silently compared against new rules.
+- [ ] Freeze attempt response with persisted attempt ID and `SimResult`, history pagination, error codes, duplicate-submit behavior, and how design/classroom context passes from brief → designer → run → result → retry. Nori documents final Zod schemas in `src/lib/api/`; consumers use those contracts.
+- [ ] Agree on shared files before parallel work: Sakura owns `src/app/layout.tsx`, global styles, shared navigation and stores; Wako coordinates route changes through those interfaces. Nori owns package/config/lockfile changes; request required dependencies before importing them. Planned libraries in §9 are not evidence they are installed.
+
+**Exit gate:** Required foundation/contracts/UI-shell PRs are merged; clean-clone install and all four application checks pass; local DB reset/RLS tests pass; `develop` Preview and auth callback/session refresh are verified. Missing hosted access or contracts remain named blockers, not checked boxes. UI work may continue against explicit fixtures while waiting.
+
+### 4.3 Phase 1 — Three-city core loop
+
+**Entry:** Phase 0 gate and reviewed shared interfaces. Only Los Angeles, Houston and Phoenix are playable in this phase.
+
+| Owner | Required deliverables | Handoff / evidence |
+|---|---|---|
+| Ryohei | Three sourced NASA mission snapshots, complete parts/category catalogs, deterministic engine, resource validation, scoring and English feedback (F-SIM, F-EVL) | Push engine/data PRs first; determinism, boundary and representative-design tests; source metadata; measured engine runtime |
+| Nori | Anonymous sessions, profiles/attempts migrations and RLS; validated attempt submission/history API; server-owned mission constraints and score recomputation | Integrate the reviewed real engine before enabling submission; DB tests for denied client writes, cross-user access and malformed requests; auth + save/history smoke evidence |
+| Sakura | Briefing, five-slot designer, resource dashboard, invalid-launch explanation, draft persistence and retry restoration (F-BRF, F-DSN, F-RES, F-ITR-01) | Push designer PRs; test valid/invalid designs, reload restoration and keyboard use; share launch payload/store handoff with Wako |
+| Wako | Map with three playable cities, playback ≤30 seconds with skip, results/feedback and retry; connect persisted attempts and history | Push map/playback/results PRs; show sourced observations separately from simulation and handle pending/failed saves without losing the design |
+
+**Integration order:** Ryohei's real engine/catalog → Nori's authoritative submission/history → Sakura's launch handoff → Wako's saved result/retry flow. UI lanes can proceed in parallel using development fixtures, then replace those fixtures before the gate.
+
+**Exit gate:** On Preview, a new anonymous player can select each of the three cities, read the brief, design, launch, save a server-scored attempt, view/skip playback, inspect results, retry with the prior design, and reload their history. Invalid designs fail on both client and server; repeated identical inputs reproduce the result. No fixture score or invented NASA observation appears in the playable path.
+
+### 4.4 Phase 3 — Classroom first
+
+**Entry:** Phase 1 end-to-end gate. Classroom initially uses the same three verified missions; the remaining 15 cities are not a prerequisite.
+
+| Owner | Required deliverables | Handoff / evidence |
+|---|---|---|
+| Nori | Trusted teacher-role provisioning plus Magic Link; classroom/member migrations and RLS; create/update/join/student-history APIs; code rotation/invalidation; member removal/archive/deletion; ranking and authorized Realtime; join rate limits; server deadline, constraints and attempt-limit enforcement | Push backend PRs before UI integration; document teacher enrollment and API schemas; test unauthorized roles, cross-class access, expired/invalid codes and concurrent submissions at the attempt limit |
+| Ryohei | Custom-constraint validation and deterministic scoring using server-selected class settings | Push engine/fixture updates; prove classroom constraints cannot be bypassed and custom results remain separate from standard global results |
+| Sakura | Shared join/settings form controls, validation messages, classroom-aware designer constraints and attempt/deadline states | Push scoped UI/store PRs; hand Wako shared controls and class-context interface; keep route pages under Wako's ownership |
+| Wako | Teacher login/create/settings/dashboard; student code/nickname join; assigned mission navigation; class leaderboard, history, removal/archive controls and permission/error states | Push classroom/teacher PRs; exercise teacher and student journeys with real APIs and reconnect behavior |
+
+**Rules fixed before implementation:** Store deadlines in UTC and show the timezone with displayed deadlines. The server clock decides expiry; reject launches at or after the deadline. Class improvement means best score minus first completed score; ties use the earliest time the best score was achieved. Rankings partition by mission, engine/data rules and class assignment settings. Once a class has attempts, mission/scoring settings are locked; a different assignment requires a new class. Code rotation, deadline, archive and membership changes must be enforced server-side. Nickname uniqueness/filtering and trusted teacher provisioning must be specified by Nori before enabling classroom access. Public nicknames require explicit player choice; do not expose email, real names, internal user IDs or private designs through rankings.
+
+**Exit gate:** One teacher and 30 distinct student sessions complete a lesson rehearsal; additionally test the §12 target of 40 concurrent launches. Confirm limits under concurrency, teacher isolation, student privacy, nickname conflicts, code rotation, removal/archive behavior, ranking ties/improvement and Realtime authorization. Custom classroom results never enter the global leaderboard. Record actual results and unresolved failures.
+
+### 4.5 Phase 2 — All missions and global competition
+
+**Entry:** Phase 1 interfaces are stable; Classroom gate takes delivery priority. Final acceptance follows Phase 3.
+
+| Owner | Required deliverables | Handoff / evidence |
+|---|---|---|
+| Ryohei | All 18 cities / 8 categories, reproducible preprocessing scripts, NASA source/coverage dates and licenses, validated snapshots and category-specific regression cases | Push data in reviewable batches; include generation commands and provenance; version balance/data changes and agree ranking partitions with Nori |
+| Nori | Mission/version-scoped global leaderboard, best-attempt/tie rules, bounded queries/cache, nickname API and authorized draft persistence API/storage (F-DSN-05); history extensions | Push API/DB PRs; prove custom classroom scores are excluded and private records cannot be read through ranking queries |
+| Sakura | Load past designs, resource warnings, API-backed draft saving (F-DSN-05) and design comparison support; optional satellite illustration only after required scope | Push designer/store PRs; test switching missions, invalid/obsolete part IDs and restored designs against current constraints |
+| Wako | Enable all verified city markers; global leaderboard; attempt history, previous-attempt score/part comparison and NASA-observed vs simulated comparison | Push screen PRs; verify every city reaches a sourced result and ranking reads the server's authoritative score/version |
+
+**Exit gate:** All 18 cities and 8 categories pass the full core loop with source credits, correct category behavior and no placeholder observations. Global rankings are per mission and scoring version, select each player's best eligible result, use earliest-best tie ordering, and exclude custom classes. Previous-attempt comparison, design loading and observation comparison work with persisted data.
+
+### 4.6 Phase 4 — Polish and release readiness
+
+**Entry:** Phase 1, Phase 3 and Phase 2 gates pass. P0/P1 requirements are required for release; P2 work is optional and any deferral is recorded by requirement ID.
+
+| Owner | Required deliverables | Handoff / evidence |
+|---|---|---|
+| Sakura | Tutorial, consistent English copy, focus/keyboard support, readable validation and non-color cues; shared responsive polish | Push polish PRs; keyboard walkthrough and accessibility findings/fixes at the supported 768px minimum width |
+| Wako | Map/playback/results/classroom responsive and error-state QA; demo scenario, recording and browser smoke checks | Push UI fixes and demo instructions; Chrome/Edge/Safari plus Chromebook/iPad evidence; reduced-motion/skip and reconnect coverage |
+| Ryohei | Final engine/data audit, balance regression results, source credits and reproducible demo designs | Push final simulation/data fixes; fixed-input reproducibility, distinct trade-offs and measured server-runtime evidence |
+| Nori | Production configuration/secret/RLS review; privacy/terms routes and content coordinated with Sakura; monitoring/backups, release checklist and rollback procedure | Push infrastructure/API fixes; record environment verification, backup/recovery readiness and Preview performance results |
+
+**Exit gate:** Lint, typecheck, tests and build pass on the release commit; relevant DB tests pass; core/classroom regression journeys pass; §12 targets have measured evidence (including LCP ≤2.5s under the stated 4G profile and server simulation ≤500ms). Link results, browser/device coverage, outstanding risks and explicitly deferred P2 IDs in the release PR. Do not claim a target is met from a local build alone.
+
+### 4.7 Release and handoff — Nori integrates, everyone pushes
+
+- [ ] Every owner completes §16.9 for their final scoped task and supplies branch, pushed commit, PR, checks and remaining blockers. Local-only work is unfinished.
+- [ ] Nori confirms all required PRs are merged into `develop`, all phase gates have evidence, and all four owners have reviewed their release area.
+- [ ] Nori prepares a reviewed `develop` → `main` release PR; verify target Supabase project, migration order, generated types, environment variables and backup/rollback steps before applying production changes.
+- [ ] After release authorization, Nori merges the release PR and verifies the deployed commit, production auth, solo save/retry, classroom permissions and leaderboard isolation. Record Production URL and monitoring results.
+- [ ] If production smoke checks fail, stop rollout and use the documented recovery plan; database rollback must preserve stored attempts. File follow-up issues with owner and requirement ID.
+- [ ] Handoff includes setup/deployment instructions, data regeneration commands, teacher provisioning instructions, known limitations and demo video. No credentials belong in the handoff.
+
+### 4.8 Task tracking and blockers
+
+Create one tracking issue per phase and one scoped issue/PR per deliverable. Each task records **phase, owner, requirement IDs, allowed paths, prerequisite PRs, acceptance checks, branch and PR links**. Use `Not started → In progress → Pushed / PR open → Reviewed → Merged / verified`; use `Blocked` with the missing dependency, responsible owner and recovery step. Only mark a phase complete after its exit gate. Nori records integration evidence; each contributor is responsible for pushing and reporting their own work.
 
 ---
 
@@ -138,7 +238,7 @@ NASAの地球観測データを使ったブラウザゲームを提供します�
 ### 6.1 Interactive USA Mission Map（F-MAP）
 | ID | 要件 | 優先度 |
 |---|---|---|
-| F-MAP-01 | 米国全土の地図に18都市をマーカー表示する | P0 |
+| F-MAP-01 | 米国全土の地図に18都市をマーカー表示する（Phase 1では3都市のみプレイ可能。残りはPhase 2で有効化する） | P0 |
 | F-MAP-02 | マーカーの色やアイコンを災害カテゴリー（8種）ごとに変える | P0 |
 | F-MAP-03 | ホバーまたはタップで都市名、災害、ミッション目標をプレビュー表示する | P0 |
 | F-MAP-04 | 自分の最高スコアとクリア状況を地図上に表示する | P1 |
@@ -264,7 +364,7 @@ NASAの地球観測データを使ったブラウザゲームを提供します�
 **ミッションの標準制約（デフォルト値）**: Budget $250M、Mass 500 kg。Classroomでは教師が変更できます。
 
 ### 7.3 シミュレーションの簡略モデル
-1. **観測グリッド**: 対象地域を約20×20のセルに分割します。各セルにNASA由来の「真値」（例: 火災の有無、浸水の有無、地表面温度）を割り当てます（`data/missions/<city>.json`）。
+1. **観測グリッド**: 対象地域を約20×20のセルに分割します。各セルにNASA由来の参照観測値（例: 火災検出、水域分類、地表面温度）と有効・欠測マスクを割り当てます。完全な真値とは扱わず、観測から導出した値とモデル値を区別します（§8）（`data/missions/<city>.json`）。
 2. **パス生成**: 軌道の係数から、ミッション期間中の観測機会（タイムステップ）を決定論的に生成します。
 3. **観測判定**: 各パスで観測幅に入ったセルについて、次の条件をすべて満たせば「観測成功」とします。
    - 電力: 発電量とバッテリーで機器の消費電力をまかなえる
@@ -302,27 +402,72 @@ Mission Score: 82/100
 
 ## 8. NASAデータ統合
 
-### 8.1 方針
-- **ビルド時に事前処理（静的JSON）** する方式にします。ゲーム実行中はNASA APIを呼びません。
-  - 理由: レート制限、APIキーの管理、レイテンシ、審査中の安定性。
-- 事前処理スクリプトは `scripts/data/` に置き、生成物は `data/missions/*.json` にコミットします。
-- 出典（データセット名、取得日、URL、ライセンス）を各JSONの `sources` に記録し、ゲーム内のクレジットに表示します。
+### 8.1 Data selection and responsibility
 
-### 8.2 カテゴリーとデータソースの対応
-| Category | NASA Data / Mission | ゲーム内での用途 |
+**Official-source research reviewed: 2026-11-14.** The products below are recommended inputs, not downloaded or QA-approved mission snapshots. Product pages establish suitability; they do not prove a usable scene exists for a particular city/date. Ryohei owns acquisition, preprocessing and `data/` PRs; Nori reviews access/secrets and API contracts; Sakura and Wako implement the source credits and observation/model labels.
+
+Acquire historical science files during a separate preprocessing step, then commit compact, versioned mission JSON under `data/missions/`. Normal builds consume these snapshots; builds and gameplay must not require NASA network access or credentials. Keep scripts under `scripts/data/`. Do not add a data-processing dependency until its owner has approved it.
+
+### 8.2 Recommended products for all eight categories
+
+Spatial resolutions below describe source products, not the game's cell size. Product versions are explicit reproducibility choices and must be rechecked when acquiring data; do not silently switch to a newer collection.
+
+| Category / mission cities | Recommended product and official source | Native support / sampling | Game use and interpretation limits |
+|---|---|---|---|
+| **Wildfire — Los Angeles** | NASA FIRMS **VIIRS 375 m active-fire archive**, select and record satellite and standard-processing release; [archive information](https://firms.modaps.eosdis.nasa.gov/content/active_fire/), [archive download](https://firms.modaps.eosdis.nasa.gov/download/) | Hotspot detections at satellite overpass times; CSV archive is a practical first input | Aggregate confidence-filtered hotspot detections into cells/time bins. An active-fire detection is not a burned-area polygon. Retain observation gaps; absence of a hotspot alone does not establish an observed fire-free cell |
+| **Heat — San Francisco, Phoenix, Chicago** | **ECOSTRESS `ECO_L2T_LSTE`, V002**, [NASA product metadata and QA notices](https://data.nasa.gov/dataset/ecostress-tiled-land-surface-temperature-and-emissivity-instantaneous-l2-global-70-m-v002-09540) | 70 m tiled land-surface temperature/emissivity, COG; ISS scene times, not a guaranteed daily sequence | Use `LST`, uncertainty/QA and the separate `cloud_mask`; V002 QC bits alone do not identify clouds. Decode documented scale/units before conversion. Land-surface temperature is not air temperature or a direct health-risk measurement. Review obstruction/geolocation notices for chosen scenes |
+| **Flood — Seattle, Houston, St. Louis, Atlanta, New York City** | **OPERA `OPERA_L3_DSWX-HLS_V1`**, [PO.DAAC product](https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-HLS_V1); optional **`OPERA_L3_DSWX-S1_V1`**, [radar product](https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-S1_V1) | 30 m water classifications, COG; HLS sampling depends on acquisitions/clouds; S1 description specifies 6–12-day revisit | Compare quality-masked water extent against an observed pre-event baseline. Surface water includes permanent water; it is not automatically flooding. S1 provides cloud-independent radar context but does not resolve all urban/vegetated inundation. Check actual historical granules and current reprocessing notices |
+| **Snow — Denver, Minneapolis, Boston** | **MODIS Terra `MOD10A1`, Collection 6.1 (`061`)**, [NASA NSIDC DAAC product](https://nsidc.org/data/mod10a1/versions/61) | Daily 500 m snow-cover/NDSI and QA, HDF-EOS2 | Preserve cloud/missing/polar-night flags and apply QA. Snow extent is not snow depth or snowfall amount. IMERG below may provide precipitation context, separately labeled |
+| **Drought — Salt Lake City region** | **SMAP `SPL3SMP_E`, V006**, [NASA NSIDC DAAC product](https://nsidc.org/data/spl3smp_e/versions/6); optional [JPL GRACE/GRACE-FO CRI mascons RL06.3 V04](https://podaac.jpl.nasa.gov/dataset/TELLUS_GRAC-GRFO_MASCON_CRI_GRID_RL06.3_V4) | SMAP daily files posted on a 9 km grid (posting is not independent footprint resolution); GRACE monthly anomalies on a 0.5° output grid, with independent mass estimates on much coarser ~3° mascons | Use QA-filtered regional soil-moisture trends; daily files do not guarantee valid daily coverage everywhere. GRACE is basin-scale water-storage context, not city/neighborhood detail. State anomaly baseline and distinguish soil moisture from total water storage; neither alone is an official drought classification |
+| **Storm — Oklahoma City, Miami, New Orleans** | **GPM IMERG Final `GPM_3IMERGHH`, V07**, [NASA GES DISC catalog](https://disc.gsfc.nasa.gov/datasets?keywords=GPM_3IMERGHH_07&page=1), [V07 technical documentation](https://gpm.nasa.gov/resources/documents/imerg-v07-technical-documentation) | 0.1° × 0.1°, half-hourly precipitation estimates | Use archived Final data for reproducibility; integrate rates over elapsed hours for accumulation. Supports storm precipitation and Flood/Snow context, not tornado paths, hurricane winds or flood extent. The catalog reviewed lists coverage through 2025-09-30: verify availability before choosing newer events |
+| **Glacier — Anchorage region** | **ICESat-2 `ATL06`, V007**, [NASA NSIDC DAAC product](https://nsidc.org/data/atl06/versions/7); optical context may use [NASA/USGS Landsat 8–9 Collection 2 Level-2](https://www.usgs.gov/centers/eros/science/usgs-eros-archive-landsat-archives-landsat-8-9-olitirs-collection-2-level-2) | ATL06 overlapping 40 m along-track height segments, 20 m spacing; nominal 91-day repeat; HDF5 | Choose a named nearby glacier and verify intersecting tracks. Filter height QA and retain vertical datum. Tracks are sparse, not a wall-to-wall elevation grid; compare compatible seasonal/longer observations. Optical boundary extraction is a derived analysis, not an ATL06 measurement |
+| **Volcano — Hilo / Hawaiʻi Island** | **MODIS Terra `MOD14A1`, Collection 6.1**, [NASA LAADS product](https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD14A1); optional [Landsat Collection 2 surface-temperature context](https://www.usgs.gov/landsat-missions/landsat-collection-2-surface-temperature) | MOD14A1: 1 km daily thermal-anomaly/fire masks, eight daily layers packaged per file | Use an actual volcanic AOI such as Kīlauea, not Hilo city center. Verify anomaly attribution and cloud/confidence flags; anomalies alone do not establish an eruption or lava perimeter. The eight layers are daily observations, not an eight-day composite. Landsat context is not guaranteed molten-lava temperature retrieval |
+
+**Archive choice:** For fixed historical missions, prefer the provider's standard/final science product rather than a changing near-real-time feed. FIRMS distinguishes standard processing from NRT and documents archive replacement of NRT records in its [active-fire data guidance](https://firms.modaps.eosdis.nasa.gov/content/active_fire/). Record the actual source file checksum so later upstream reprocessing cannot silently change an accepted mission.
+
+### 8.3 MVP acquisition targets — Los Angeles, Houston, Phoenix
+
+These windows and AOIs are **proposed search targets**, not verified granule selections. Bounding boxes use WGS84 `[west, south, east, north]`. Ryohei must inspect coverage, then record the final AOI, dates and exact files in the data PR before enabling the mission.
+
+| Mission | Proposed AOI / historical search window (UTC) | First acquisition and acceptance evidence |
 |---|---|---|
-| Wildfire | FIRMS（MODIS / VIIRS アクティブファイア） | 火災セルの真値、時系列での拡大 |
-| Urban / Extreme Heat | ECOSTRESS, Landsat（地表面温度） | 温度グリッドの真値 |
-| Flood | GPM（IMERG降水）, OPERA DSWx（地表水） | 降水量、浸水セルの真値 |
-| Snow / Winter Storm | MODIS（積雪被覆）, GPM | 積雪セル、降水量 |
-| Drought | SMAP（土壌水分）, GRACE-FO（陸域貯水量） | 長期の変化トレンド |
-| Severe Storm / Hurricane | GPM | 降水強度 |
-| Glacier Change | Landsat, ICESat-2 | 氷河の端の位置、標高の変化 |
-| Volcano | Landsat, MODIS（熱異常） | 熱異常セル |
+| Los Angeles / Wildfire | `[-118.9, 33.9, -117.6, 34.5]`; 2025-01-07 through 2025-01-14 (exclusive end) | FIRMS archived NOAA-20 VIIRS detections; pin the archive release. NASA documents the January 2025 Palisades/Eaton event in its [fire-spread visualization](https://svs.gsfc.nasa.gov/5558). Show valid detections and timestamps in the intended area; retain confidence and satellite fields. Do not extract scores or synthetic fire growth from the visualization |
+| Houston / Flood | `[-95.9, 29.3, -94.7, 30.5]`; search May 2024 and a pre-event baseline | Start with DSWx-HLS water/QA layers and IMERG Final V07 precipitation. Choose actual before/after water acquisitions after examining coverage; do not assume S1 historical coverage exists just because a later radar collection is available. Confirm observed new-water differences with missing/cloud areas excluded; rainfall alone cannot satisfy flood-extent acceptance |
+| Phoenix / Heat | `[-112.5, 33.1, -111.6, 33.9]`; search July 2023 | Find a usable ECOSTRESS V002 scene, with QA/cloud mask, acquisition time and valid-pixel counts. [NASA's July 2023 Phoenix heat account](https://www.nasa.gov/centers-and-facilities/jpl/nasa-data-shows-fierce-surface-temperatures-during-phoenix-heat-wave/) establishes useful scenario context, but its maps use VIIRS and do not verify ECOSTRESS coverage. Publish an actual ECOSTRESS granule selection or report the gap |
 
-### 8.3 実測値とシミュレーション値の区別（必須）
-- UI上で **「NASA Observed」**（実データ）と **「Simulated by your satellite」**（仮想の観測結果）を、色と凡例で必ず分けて表示します。
-- 実データから直接測れない値（例: 雲量の時系列）は、簡略モデルで推定したものであることを明記します。
+A mission may use a static observed reference while the student's satellite observes it over simulated time. If source scenes are sparse, do not imply that a seven-day animation is a measured daily sequence. Drought and glacier scenarios require longer historical source intervals; label those intervals independently from the simulated mission duration.
+
+### 8.4 Access and preprocessing handoff
+
+1. **Find actual files:** Use [NASA Earthdata Search](https://search.earthdata.nasa.gov/) with product short name/version, AOI and UTC date bounds. Record collection/granule identifiers, acquisition times and download links before processing. A dataset-level coverage range is not proof of a clear local observation.
+2. **Authenticate locally:** Register for [Earthdata Login](https://urs.earthdata.nasa.gov/documentation/for_users/welcome) for protected science-file downloads. FIRMS [Area API](https://firms.modaps.eosdis.nasa.gov/api/area) uses a separate free `MAP_KEY`; its documented requests use a bounding box and 1–5-day range, with a data-availability endpoint. Prefer the archive for these historical scenarios. Keys, login tokens and credential-bearing URLs remain local and uncommitted; no student account is required.
+3. **Decode and mask:** Follow the selected product's guide for projection, variables, scale/offset, fill values, units and QA. Preserve cloud/no-data as unknown rather than zero, dry land or a failed student detection. Keep pre-event and event imagery on compatible grids and retain source time differences.
+4. **Aggregate honestly:** Build the ~20×20 educational grid with documented rules: area-weighted valid-pixel means/fractions for continuous/area fields, categorical rules for masks and time bins for hotspots. Preserve valid-data fraction per cell. Do not create finer independent information by upsampling coarse IMERG/SMAP data or interpolating ATL06 tracks. Declare any interpolation as modeled.
+5. **Separate observations from mechanics:** Observed/derived reference layers feed the deterministic game. Student sensor capability, cloud sequences not directly observed, revisit paths, transmission and scores remain educational models. Unknown reference cells are excluded from observation-based scoring denominators; Ryohei documents thresholds and insufficient-data behavior in the reviewed game contract.
+6. **Publish compact reproducible outputs:** Keep large raw rasters outside the repository; commit the processing script/config, source manifest and compact mission snapshot. Include a reproducible command, input/output hashes, source-grid support, QA exclusions and valid-cell/time coverage report in each data PR. Nori verifies that normal CI/builds remain independent of Earthdata credentials. Each contributor commits and pushes their scoped branch under §16.9.
+
+### 8.5 Provenance and data acceptance gate
+
+Extend the reviewed `sources` metadata contract before adding generated snapshots. These are required metadata fields, not an instruction to bypass Ryohei's ownership of `src/types/game.ts`:
+
+- Product short name, version/release, provider, instrument/satellite, official landing page, DOI where supplied, provider's required citation/acknowledgment and terms/license link. Preserve NASA/NOAA/USGS/Copernicus partner credit where applicable; do not assume every hosted asset has identical rights.
+- Granule/file identifiers, stable download references with credentials removed, acquisition interval, access date and SHA-256 checksum of input files.
+- AOI/bbox, source CRS and spatial support, variables/units, scale conversion, QA rules, valid/missing mask semantics, aggregation method, anomaly/baseline dates and any derived or modeled fields.
+- Processing command/config and code revision, output checksum, dataset/catalog version and compatible engine version. Source/balance changes that affect scores require an explicit version/ranking decision.
+
+**Ryohei's acceptance checklist, for every enabled city:**
+
+- [ ] The committed manifest identifies downloaded, inspectable files that intersect the intended AOI/time; coverage and valid-pixel thresholds are defined and pass.
+- [ ] Representative known-valid, invalid and missing values survive decoding/aggregation correctly; units, UTC timing and coordinate order are tested.
+- [ ] Reprocessing fixed inputs/config reproduces the snapshot; all-missing coverage fails clearly instead of producing a plausible score.
+- [ ] The data PR includes a reference preview and coverage report, source credits and source/model limitations; Wako/Sakura verify the matching UI labels.
+- [ ] Compact snapshots and scripts are pushed to Ryohei's feature branch and reviewed before Nori enables server scoring. Unsupported cities remain unavailable until this gate passes.
+
+### 8.6 Observed, derived and simulated labels (required)
+
+Use **“NASA Observed”** for the sourced observation layer and **“Simulated by your satellite”** for game output, with text/icons as well as color. Show source date, product/version, resolution/support and missing-data legend. Label processed differences/aggregates **“Derived from NASA observations”** and modeled/interpolated fields **“Modeled”**; observations themselves have uncertainty and are reference evidence, not perfect ground truth.
+
+For visual reference, [NASA GIBS](https://nasa-gibs.github.io/gibs-api-docs/available-visualizations/) serves visualized science layers. Treat browse imagery as display material: do not recover quantitative truth values from image colors. Keep numeric science files as the scoring reference, and preserve each layer's attribution if a browse image is used.
 
 ---
 
@@ -417,7 +562,7 @@ export interface Mission {
   slug: string;              // 'los-angeles'
   city: string;
   category: Category;
-  objective: { ja: string; en: string };
+  objective: string;        // English only
   bbox: [number, number, number, number];
   defaultConstraints: Constraints;
   durationDays: number;
@@ -513,13 +658,13 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 -- ランキング用のview（または関数）
 -- global_leaderboard: classroom_id is null, user×missionごとの最高スコア
 -- classroom_leaderboard: classroom_idごと。最高スコア、挑戦回数、改善度
---   （改善度 = 最高スコア − 初回スコア。または最新 − 1つ前。仕様はPhase 3で確定する）
+--   （改善度 = 最高スコア − 初回の完了済みスコア。§4.4参照）
 ```
 
 ### RLSの方針
 | テーブル | SELECT | INSERT/UPDATE |
 |---|---|---|
-| profiles | 本人のみ（nicknameはランキングのview経由で公開） | 本人のみ |
+| profiles | 本人のみ（nicknameはランキングのview経由で公開） | 本人のみ（roleの自己変更は禁止） |
 | classrooms | 担任の教師。またはメンバー（コードでの参加はRPC経由） | 教師のみ |
 | classroom_members | 同じクラスのメンバーと担任 | RPC `join_classroom(code, nickname)` のみ |
 | attempts | 本人と、そのクラスの担任 | **service roleのみ**（Route Handlerがサーバーでスコアを再計算して挿入する） |
@@ -544,6 +689,7 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 
 - 入出力はすべてZodで検証します。スキーマは `src/lib/api/schemas.ts` に置き、フロントと共有します。
 - エラーは `{ error: { code, message } }` の形式で統一します。
+- This table is a contract outline, not proof of implemented endpoints. Nori must publish reviewed schemas for attempt IDs/results, history pagination, draft persistence, teacher provisioning, member removal and classroom deletion before their consumer tasks begin. The initial solo submission schema may omit `classroomId`; add it only with Phase 3 authorization and server-side class settings. See §4.2–4.5.
 
 ---
 
@@ -578,7 +724,7 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 
 | リスク | 影響 | 対策 |
 |---|---|---|
-| NASAデータの前処理に時間がかかる | 高 | まずPhase 1の3都市に絞る。残りは同じ形式の簡易データで仮置きし、あとで差し替える |
+| NASAデータの前処理に時間がかかる | 高 | まずPhase 1の3都市に絞る。未取得の都市は未公開にする。開発専用fixtureは明記し、NASA実測値や本番スコアとして扱わない |
 | ゲームバランスが壊れる（最強の構成が1つに決まる） | 高 | 「全部最高級」では予算オーバーになるよう価格を設定する。カテゴリーごとにセンサーの適合度に差をつける。Vitestで「代表的な5構成のスコア分布」を回帰テストする |
 | 4人が並行して開発し、Codexの変更が衝突する | 高 | ディレクトリの担当を決める（CODEOWNERS）。共有の型はPhase 0で確定し、変更はPRで合意を取る。PRは小さくする |
 | スコアの改ざん | 中 | サーバーでsimを再計算し、attemptsにはservice roleだけが書き込む |
@@ -592,12 +738,14 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 ### 15.1 全体像
 | メンバー | 役割 | 担当領域（ディレクトリ） |
 |---|---|---|
-| **Nori** | **Backend / Infra Lead**（Supabase・Vercelは1人で担当）＋ リポジトリ管理とマージの責任者 | `supabase/`, `src/app/api/`, `src/lib/supabase/`, `src/lib/api/`, `src/types/database.ts`, `.github/`, `middleware.ts`, Vercel設定 |
+| **Nori** | **Backend / Infra Lead**（Supabase・Vercelは1人で担当）＋ リポジトリ管理とマージの責任者 | `supabase/`, `src/app/api/`, `src/lib/supabase/`, `src/lib/api/`, `src/types/database.ts`, `.github/`, `src/proxy.ts`（認証・セッション更新）, Vercel設定 |
 | **Ryohei** | **Simulation & Data Lead** | `src/lib/sim/`, `data/`, `scripts/data/`, `src/types/game.ts`（管理者） |
 | **Sakura** | **Designer Experience Lead**（衛星設計画面とUI基盤） | `src/app/(game)/mission/[slug]/brief/`, `.../design/`, `src/components/designer/`, `src/components/ui/`, `src/stores/` の基盤 |
 | **Wako** | **World & Results Lead**（地図、再生、結果、教室、ランキングの画面） | `src/app/(game)/map/`, `.../run/`, `.../result/`, `src/app/leaderboard/`, `src/app/classroom/`, `src/app/teacher/`, `src/components/map/`, `src/components/results/` |
 
 ### 15.2 詳細なタスク
+
+Phase-by-phase handoffs and exit gates in §4 apply in addition to this owner summary. Execute in order 0 → 1 → 3 → 2 → 4; push each completed task under §16.9.
 
 #### Nori — Supabase / Vercel / Backend
 - [ ] **Phase 0**: GitHubリポジトリを作り、ブランチ保護、CODEOWNERS、PRテンプレート、CI（lint / typecheck / test / build）を設定する
@@ -614,7 +762,7 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 
 #### Ryohei — Simulation Engine & NASA Data
 - [ ] **Phase 0**: `src/types/game.ts` の契約を作り、全員のレビューを経て確定する
-- [ ] **Phase 0**: `summarizeResources` を先に実装する（Sakuraの画面がすぐ使えるように）。`runSimulation` はモック値を返すスタブを先に出す
+- [ ] **Phase 0**: `summarizeResources` を先に実装する（Sakuraの画面がすぐ使えるように）。`runSimulation` の開発専用fixtureを先に出す。本番のAPIや採点経路では使わない
 - [ ] **Phase 1**: `data/parts.json`、`categories.json`、3都市分のミッションJSON
 - [ ] **Phase 1**: シミュレーションエンジン（グリッド、パス、観測判定、送信、信頼性）とスコア計算
 - [ ] **Phase 1**: フィードバックのルールエンジン（英語のメッセージキーと文言を返す）
@@ -632,7 +780,7 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 - [ ] **Phase 4**: チュートリアル（初回のガイドツアー）とアクセシビリティの確認
 
 #### Wako — Map, Simulation Playback, Results, Classroom UI
-- [ ] **Phase 1**: USA Mission Map（MapLibre、18マーカー、プレビュー、ブリーフへの遷移）
+- [ ] **Phase 1**: USA Mission Map（MapLibre、3都市をプレイ可能にする。残りのマーカーは未公開または選択不可。プレビュー、ブリーフへの遷移）
 - [ ] **Phase 1**: シミュレーションの再生画面（地上軌跡、観測セルのアニメーション、スキップ）。`SimResult` を使う
 - [ ] **Phase 1**: 結果画面（スコア、レーダーチャート、フィードバック、再設計ボタン）
 - [ ] **Phase 2**: 前回比較、挑戦履歴、NASA実データとの並列表示、グローバルランキングの画面
@@ -640,14 +788,17 @@ create index on attempts (mission_slug, classroom_id, score_total desc);
 - [ ] **Phase 4**: デモ用のシナリオと動画の撮影補助
 
 ### 15.3 依存関係と並行開発のコツ
+```text
+Phase 0: reviewed game/API contracts + explicit development fixtures
+  ├─ Sakura: Designer and shared controls
+  ├─ Wako: playback/results and route shells
+  └─ Nori: request validation, auth and API plumbing (submission remains disabled)
+Phase 1: real catalog/engine → authoritative attempts API → integrated launch/results
+Then: Phase 3 Classroom → Phase 2 all-city rollout → Phase 4 → release
 ```
-Phase 0: types/game.ts の確定（Ryohei主導・全員レビュー）
-           ├─▶ Sakura: summarizeResources のスタブでDesignerを作り始める
-           ├─▶ Wako:   runSimulation のモック SimResult で再生画面と結果画面を作り始める
-           └─▶ Nori:   attempts API は runSimulation のスタブで先に通す
-```
-- **モックを先に作る**: Ryoheiは最初の1日目に、契約どおりの値を返すスタブを `develop` にマージします。他の3人はそれを使って先に進められます。
-- **API待ちを避ける**: Nori は `src/lib/api/` にfetchラッパーを先に作ります。Wako は MSW（Mock Service Worker）またはモック関数で画面を作り、あとで差し替えます。
+- Development fixtures belong in tests or explicit development-only adapters; do not merge a fake-scoring engine into the playable path or save fixture scores as real attempts.
+- Nori publishes typed API clients/schemas before screen integration. Wako uses existing test tooling or scoped fixture functions while APIs are pending; new dependencies require the agreed owner review.
+- All lanes follow the phase checklists in §4 and push each completed task using §16.9. A dependency is available for integration after its reviewed PR is merged, not merely because it exists locally.
 
 ### 15.4 RACI（主要な意思決定）
 | 決定事項 | R（実行） | A（承認） | C（相談） | I（共有） |
@@ -675,10 +826,12 @@ main        ← 本番（Vercel Production）。直接pushは禁止。developか
 
 **ルール**
 1. **必ず自分のブランチで作業します。** `main` と `develop` への直接pushはGitHubのブランチ保護で禁止します。
-2. ブランチは **常に最新の `develop` から** 作成します。
+2. ブランチは **最新の `origin/develop` から** 作成します。Phase 0でまだ存在しない場合だけ、`origin/main` を使います。既存の作業ツリーに他の作業がある場合は、先に別worktreeを使い、変更を破棄しません。
    ```bash
-   git switch develop && git pull
-   git switch -c feat/<your-name>/<topic>
+   git fetch origin
+   git switch -c feat/<your-name>/<topic> origin/develop
+   # Phase 0 only, if origin/develop does not exist:
+   # git switch -c chore/<your-name>/<topic> origin/main
    ```
 3. **1ブランチ = 1テーマ = 1PR** にします。目安は差分400行以内です（JSONデータとロックファイルは除く）。
 4. 作業中は1日1回以上、`develop` を取り込みます（rebase推奨）。
@@ -699,10 +852,10 @@ db(attempts): add RLS policy for teacher read
 スコープには担当領域（`map`, `designer`, `sim`, `api`, `db`, `classroom`, `ui`, `data`, `ci`）を使います。
 
 ### 16.3 Pull Request のルール
-- PRの宛先は **`develop`** にします（リリースPRだけは `main`）。
+- PRの宛先は **`develop`** にします（リリースPRは `main`、初回foundationの例外は§4.2）。
 - **CIがすべて成功** していること（`lint`, `typecheck`, `test`, `build`）。
 - **1人以上の承認が必要** です。CODEOWNERSで担当者が自動的にレビュアーに入ります。
-  - `src/types/` を変更するPRは **全員の承認** が必要です。
+  - `src/types/game.ts` の共有契約を変更するPRは **全員のレビューと合意** が必要です。`src/types/database.ts` の再生成はNoriがDB変更と一緒にレビューします。CODEOWNERSだけでは全員の承認を必須化できないため、PR上で合意を記録します。
   - `supabase/` を変更するPRはNoriの承認が必要です。
 - VercelのPreview URLで動作を確認し、PRにスクリーンショットかGIFを貼ります（UIの変更の場合）。
 - マージ方法は **Squash and merge** にして、履歴を1PR1コミットに保ちます。
@@ -755,7 +908,7 @@ db(attempts): add RLS policy for teacher read
 3. **担当ディレクトリを明示** してプロンプトを書きます。下のテンプレートを使ってください。
 4. Codexは `AGENTS.md`（17章）を読んで動きます。リポジトリ共通のルールは `AGENTS.md` に書きます。個人のプロンプトに毎回書く必要はありません。
 5. **共有の型、DBスキーマ、`package.json` の依存関係** をCodexが変更しようとしたら、いったん止めて担当者に相談します。
-6. Codexの生成物は **必ず自分で読んでからPRを出します。** `pnpm lint && pnpm typecheck && pnpm test` をローカルで通してください。
+6. Codexの生成物は **必ず自分で読んでからPRを出します。** `pnpm lint` / `pnpm typecheck` / `pnpm test` / `pnpm build` をローカルで通してください。完了時は必ず§16.9に従って自分のブランチにcommit・pushし、PRを作成します。
 7. 新しいパッケージを追加するときは、PRの説明に理由を書きます。ロックファイルの衝突は `develop` を取り込んでから `pnpm install` で再生成します。
 8. 秘密情報（Supabaseのservice role key など）をプロンプトやコードに貼りません。`.env.local` は `.gitignore` に入れておき、値はNoriが共有します（Vercelから `vercel env pull` で取得）。
 
@@ -778,6 +931,12 @@ feat/sakura/designer-slots（このブランチ上で作業すること）
 ## Inputs / Contracts
 - 型: src/types/game.ts の SatelliteDesign, ResourceSummary
 - 関数: src/lib/sim の summarizeResources()
+
+## Delivery
+- Read §4 phase gate and §16.9. Implement only this scoped task.
+- Run required checks, commit only task files, push this branch, and open a PR.
+- Return branch, pushed SHA, PR URL, check results and blockers. Do not stop at local edits.
+- Do not push main/develop, merge, or deploy as part of this task.
 
 ## Acceptance Criteria
 - 各スロットでパーツを選択でき、選択するとResourceSummaryが即座に更新される
@@ -810,6 +969,46 @@ feat/sakura/designer-slots（このブランチ上で作業すること）
 
 ---
 
+### 16.9 Required completion: commit, push your branch, open a PR
+
+**Applies to every contributor and every scoped task, from Phase 0 through the final fixes. Work is not delivered while it exists only on your computer. Each contributor must push their completed work to their own remote feature branch before reporting completion.** This requirement also belongs in every Codex task prompt (§16.5).
+
+1. Confirm the branch and scope with `git status --short --branch`. Never commit or push another contributor's unrelated changes. Never work directly on or push `main` / `develop`.
+2. Use Node.js 22 and the pnpm version in `package.json`. Run `pnpm install --frozen-lockfile`, then `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` for implementation changes. Include targeted behavior tests. For schema changes, also run `supabase start`, `supabase db reset`, `supabase test db`, and regenerate `src/types/database.ts`. Documentation-only tasks require diff/content/link checks; record why runtime checks are not applicable.
+3. Review `git diff`, stage only the task's named files, inspect the staged diff, and create a Conventional Commit. Do not use blanket staging in a shared or dirty worktree. Do not commit `.env` files, credentials, build output or generated local state.
+4. Push to your own branch and verify the remote SHA. Replace the example owner/topic and paths below with your task's actual values:
+
+   ```bash
+   git branch --show-current
+   git diff --check
+   git add -- path/to/owned-file path/to/another-owned-file
+   git diff --cached
+   git commit -m "feat(designer): add instrument selection"
+   git push -u origin feat/sakura/designer-slots
+   git rev-parse HEAD
+   git ls-remote origin refs/heads/feat/sakura/designer-slots
+   ```
+
+   The local and remote SHAs must match. Use your actual current feature branch; do not copy Sakura's example for another owner's work. If push is rejected, fetch and inspect the divergence; incorporate changes without discarding others' work. Do not force-push shared branches. Report authentication/network failures with the exact blocked step; a failed push is not completion.
+5. Open a PR targeting `develop` (bootstrap exception: §4.2), link the phase/task issue and requirement IDs, request the designated reviewers, and include check results plus UI screenshots/Preview URL where relevant. Wait for CI results; fix failures within scope. A blocked check must be reported explicitly, with its reason and recovery owner; do not claim that it passed.
+6. Report the handoff below. Nori reviews and integrates; contributors do not merge protected branches or deploy production simply because their scoped task is done.
+
+```text
+Phase / task / requirement IDs:
+Owner:
+Branch:
+Pushed commit SHA:
+PR URL / target branch:
+Changed files and behavior:
+Validation commands and results (including skipped checks and concrete reasons):
+Preview / screenshots / integration evidence:
+Dependencies, remaining blockers and next owner:
+```
+
+A task may be reported as **Pushed / PR open** once its work is remotely available; **Merged / verified** requires review, merge and the relevant integration evidence. A phase cannot pass with missing required checks. If GitHub access prevents creating a PR after a successful push, provide the pushed branch/SHA and comparison link and mark PR creation blocked.
+
+---
+
 ## 17. 付録：AGENTS.md テンプレート
 
 リポジトリのルートに置きます。Codexはこのファイルを読んで作業します。
@@ -819,7 +1018,7 @@ feat/sakura/designer-slots（このブランチ上で作業すること）
 
 ## Project
 Next.js (App Router, TypeScript strict) + Supabase + Vercel.
-Educational satellite mission design game. See docs/PRD.md for requirements.
+Educational satellite mission design game. See PRD_Mission_Possible_Code_Blue.md for requirements and phase delivery gates.
 
 ## Golden rules
 1. Never work on `main` or `develop`. Work only on the current feature branch.
@@ -829,7 +1028,7 @@ Educational satellite mission design game. See docs/PRD.md for requirements.
    - src/types/** (shared contracts)
    - supabase/** (DB migrations — owner: Nori)
    - package.json / pnpm-lock.yaml (dependencies)
-   - .github/**, middleware.ts
+   - .github/**, src/proxy.ts
 4. Never hardcode secrets. Never use SUPABASE_SERVICE_ROLE_KEY in client code
    or in any file under src/components or a "use client" module.
 5. src/lib/sim must stay pure: no React, no Next.js, no Supabase, no Date.now(), no Math.random().
@@ -842,7 +1041,9 @@ Educational satellite mission design game. See docs/PRD.md for requirements.
 - Typecheck: pnpm typecheck
 - Test: pnpm test
 - Build: pnpm build
-Run lint, typecheck and test before finishing a task.
+Run lint, typecheck, test and build before finishing a task.
+Commit scoped files, push your own feature branch, and open a PR as required by PRD §16.9.
+Report the pushed SHA, PR link, check results and blockers; local edits alone are unfinished.
 
 ## Conventions
 - Server Components by default; add "use client" only when needed.
@@ -854,7 +1055,7 @@ Run lint, typecheck and test before finishing a task.
 - Commit messages: Conventional Commits, e.g. feat(designer): ...
 
 ## Ownership
-- Nori: supabase/, src/app/api/, src/lib/supabase/, src/lib/api/, .github/
+- Nori: supabase/, src/app/api/, src/lib/supabase/, src/lib/api/, .github/, src/proxy.ts
 - Ryohei: src/lib/sim/, data/, scripts/data/, src/types/game.ts
 - Sakura: designer, brief, src/components/ui/, src/stores/
 - Wako: map, run, result, leaderboard, classroom, teacher pages
