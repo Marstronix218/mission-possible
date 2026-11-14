@@ -1,0 +1,7 @@
+.next
+node_modules
+.omx
+.omc
+pnpm-lock.yaml
+PRD_Mission_Possible_Code_Blue.md
+src/types/database.ts
