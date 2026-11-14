@@ -1,8 +1,9 @@
+import { isMockMode } from "@/lib/data-mode";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabaseConfig, hasSupabaseConfig } from "@/lib/supabase/env";
 export async function proxy(request: NextRequest) {
-  if (!hasSupabaseConfig()) return NextResponse.next({ request });
+  if (isMockMode || !hasSupabaseConfig()) return NextResponse.next({ request });
   let response = NextResponse.next({ request });
   const { url, key } = getSupabaseConfig();
   const client = createServerClient(url, key, {

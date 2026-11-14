@@ -1,24 +1,20 @@
-# Local project metadata
+# Local metadata and credentials
 .omc/
-
-# Operating system files
+.omx/
 .DS_Store
 Thumbs.db
-
-# Editor settings
 .vscode/
 .idea/
-
-# Dependencies and build outputs
-node_modules/
-.next/
-out/
-coverage/
-*.tsbuildinfo
-
-# Credentials and local tooling
 .env*
 !.env.example
 .vercel/
 supabase/.temp/
 supabase/.branches/
+# Dependencies and generated output
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+public/maps/maplibre-worker.mjs
+supabase/setup.sql

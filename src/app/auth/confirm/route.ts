@@ -1,42 +1,13 @@
-import { NextResponse, type NextRequest } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { hasSupabaseConfig } from "@/lib/supabase/env";
-import { safeRedirectPath } from "@/lib/api/redirect";
-export async function GET(request: NextRequest) {
-  if (!hasSupabaseConfig())
-    return NextResponse.json(
-      {
-        error: {
-          code: "NOT_CONFIGURED",
-          message: "Authentication is not configured.",
-        },
-      },
-      { status: 503, headers: { "Cache-Control": "private, no-store" } },
-    );
-  const token_hash = request.nextUrl.searchParams.get("token_hash");
-  const type = request.nextUrl.searchParams.get("type");
-  if (token_hash && type === "email") {
-    const client = await createClient();
-    const { error } = await client.auth.verifyOtp({
-      token_hash,
-      type: "email",
-    });
-    if (!error)
-      return NextResponse.redirect(
-        new URL(
-          safeRedirectPath(request.nextUrl.searchParams.get("next")),
-          request.url,
-        ),
-        { headers: { "Cache-Control": "private, no-store" } },
-      );
-  }
-  return NextResponse.json(
-    {
-      error: {
-        code: "INVALID_AUTH_LINK",
-        message: "This sign-in link is invalid or expired.",
-      },
-    },
-    { status: 400, headers: { "Cache-Control": "private, no-store" } },
-  );
+import {isMockMode} from "@/lib/data-mode";
+import {createServerClient} from '@supabase/ssr';
+import {cookies} from 'next/headers';
+import {NextResponse} from 'next/server';
+export async function GET(request:Request){
+ if(isMockMode)return NextResponse.redirect(new URL("/teacher",request.url));
+ const url=new URL(request.url);const token_hash=url.searchParams.get('token_hash');
+ if(token_hash&&url.searchParams.get('type')==='email'&&process.env.NEXT_PUBLIC_SUPABASE_URL&&process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY){
+ const store=await cookies();const sb=createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL,process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,{cookies:{getAll:()=>store.getAll(),setAll:values=>{for(const {name,value,options} of values)store.set(name,value,options)}}});
+ const {error}=await sb.auth.verifyOtp({token_hash,type:'email'});if(!error)return NextResponse.redirect(new URL('/teacher',url));
+ }
+ return NextResponse.redirect(new URL('/teacher?authError=expired',url));
 }

@@ -2,39 +2,56 @@
   "name": "mission-possible",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@10.28.2",
-  "engines": {
-    "node": ">=22.0.0"
-  },
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
     "test": "vitest run",
+    "prebuild": "node scripts/prepare-map.mjs",
+    "predev": "node scripts/prepare-map.mjs",
+    "test:engine": "vitest run",
+    "db:check": "node --env-file=.env.local scripts/migrate.mjs",
+    "db:migrate": "node --env-file=.env.local scripts/migrate.mjs --apply",
+    "db:bundle": "node scripts/prepare-database-bundle.mjs",
+    "pretest": "node scripts/prepare-database-bundle.mjs",
     "format:check": "prettier --check .",
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@supabase/ssr": "0.12.7",
-    "@supabase/supabase-js": "2.119.0",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.119.0",
+    "maplibre-gl": "6.18.0",
     "next": "16.4.6",
     "react": "19.3.1",
     "react-dom": "19.3.1",
-    "server-only": "^0.0.1",
-    "zod": "^4.3.6"
+    "zod": "^4.6.7",
+    "@radix-ui/react-slot": "^1.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.0",
+    "zustand": "^5.0.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.1.18",
-    "@types/node": "^22.19.0",
-    "@types/react": "^19.2.0",
-    "@types/react-dom": "^19.2.0",
-    "eslint": "^9.39.0",
+    "@electric-sql/pglite": "^0.5.16",
+    "@types/node": "26.6.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
     "eslint-config-next": "16.4.6",
-    "prettier": "^3.7.4",
-    "tailwindcss": "^4.1.18",
-    "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
-  }
+    "pg": "^8.23.1",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "vitest": "^5.1.0",
+    "tailwindcss": "^4.1.0",
+    "@tailwindcss/postcss": "^4.1.0",
+    "postcss": "^8.5.0",
+    "prettier": "^3.7.4"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "packageManager": "pnpm@10.28.2"
 }
