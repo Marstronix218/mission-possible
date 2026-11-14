@@ -51,3 +51,9 @@ export type Ranking = {
   improvement: number;
   achieved: string;
 };
+
+export type ClassroomProgress = {
+  attemptsUsed: number;
+  canSubmit: boolean;
+  isTeacher: boolean;
+};

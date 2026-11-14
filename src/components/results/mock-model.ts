@@ -201,6 +201,20 @@ export function performDemoAction(
     return c;
   }
   if (action === "classroom") return member(input.id);
+  if (action === "classroomStatus") {
+    const c = member(input.id);
+    const isMember = state.members.some(
+      (m) => m.classroom_id === c.id && m.user_id === ctx.userId,
+    );
+    return {
+      attemptsUsed: state.attempts.filter(
+        (a) => a.classroom_id === c.id && a.user_id === ctx.userId,
+      ).length,
+      canSubmit: isMember,
+      isTeacher: c.teacher_id === ctx.userId,
+    };
+  }
+
   if (action === "students") {
     teacher(input.id);
     return {

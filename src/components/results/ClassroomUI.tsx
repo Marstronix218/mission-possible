@@ -7,9 +7,11 @@ import {
   newDemoStudent,
   demoUpdateEvent,
 } from "./mock-storage";
-import type { Classroom, Ranking } from "./contracts";
+import type { Classroom, Ranking, ClassroomProgress } from "./contracts";
 import { playableMissions } from "./missions";
 import type { SatelliteDesign, SimResult } from "@/types/game";
+import { classroomBlocker, attemptsRemaining } from "./classroom-policy";
+import { loadClassroomState } from "./classroom-state";
 type CloudAttempt = {
   id: string;
   user_id: string;
@@ -186,14 +188,16 @@ export function ClassDashboard({ id }: { id: string }) {
   const [error, setError] = useState("");
   const [live, setLive] = useState(false);
   const [now, setNow] = useState(0);
+  const [progress, setProgress] = useState<ClassroomProgress | null>(null);
   const refresh = useCallback(async () => {
     try {
-      const classroom = await api<Classroom>("classroom", { id });
+      const { classroom, progress } = await loadClassroomState(id);
       const ranking = await api<Ranking[]>("ranking", {
         missionSlug: classroom.mission_slug,
         classroomId: id,
       });
       setC(classroom);
+      setProgress(progress);
       setNow(Date.now());
       setRows(ranking);
       setError("");
@@ -212,8 +216,10 @@ export function ClassDashboard({ id }: { id: string }) {
       Promise.resolve().then(tick);
       window.addEventListener(demoUpdateEvent, tick);
       window.addEventListener("storage", tick);
+      const timer = setInterval(() => setNow(Date.now()), 1000);
       return () => {
         active = false;
+        clearInterval(timer);
         window.removeEventListener(demoUpdateEvent, tick);
         window.removeEventListener("storage", tick);
       };
@@ -248,6 +254,9 @@ export function ClassDashboard({ id }: { id: string }) {
       if (channel) void cloud().removeChannel(channel);
     };
   }, [id, refresh]);
+  const blocker = c
+    ? classroomBlocker(c, progress?.attemptsUsed ?? 0, now)
+    : null;
   return (
     <main>
       <div className="eyebrow">CLASSROOM MISSION</div>
@@ -268,7 +277,8 @@ export function ClassDashboard({ id }: { id: string }) {
                 </h2>
                 <p>
                   Budget ${c.budget_m}M · Mass {c.mass_kg} kg ·{" "}
-                  {c.max_attempts ?? "Unlimited"} attempts
+                  {c.max_attempts ?? "Unlimited"}{" "}
+                  {c.max_attempts === 1 ? "attempt" : "attempts"}
                 </p>
                 <p>
                   {c.deadline
@@ -278,8 +288,14 @@ export function ClassDashboard({ id }: { id: string }) {
                       })
                     : "No deadline"}
                 </p>
-                {c.is_active &&
-                (!c.deadline || Date.parse(c.deadline) > now) ? (
+                {progress && !progress.isTeacher && (
+                  <p>
+                    Your attempts: {progress.attemptsUsed} ·{" "}
+                    {attemptsRemaining(c, progress.attemptsUsed) ?? "Unlimited"}{" "}
+                    remaining
+                  </p>
+                )}
+                {!blocker && progress?.canSubmit ? (
                   <Link
                     className="primary"
                     href={
@@ -289,7 +305,10 @@ export function ClassDashboard({ id }: { id: string }) {
                     Start class mission ↗
                   </Link>
                 ) : (
-                  <p>This classroom is closed.</p>
+                  <p role="status">
+                    {blocker ??
+                      "Teacher preview: join as a demo student to play the assigned mission."}
+                  </p>
                 )}
               </section>
               <section className="panel history">
@@ -397,6 +416,7 @@ export function GlobalRanking({
           <label className="field">
             Mission
             <select
+              disabled={!!classroomId}
               value={slug}
               onChange={(e) => {
                 setSlug(e.target.value);

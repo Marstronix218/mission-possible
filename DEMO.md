@@ -25,3 +25,13 @@ NASA image files remain archived observations for geographic context. Hazard gri
 ## Verified browser journey
 
 A demo student joined ORBIT1, completed the Los Angeles class mission, scored 61.2, and appeared in the classroom ranking. The demo teacher saw the student’s saved design/history and created another class with a generated code. Local HTTP checks confirmed that the live API is disabled and auth callbacks redirect locally in mock mode. No Supabase provisioning was performed.
+
+## Wako playback and classroom polish
+
+- During playback, choose **Reduce motion** to hold the animation still, or use the system reduced-motion preference. **Play animation** opts into motion; **Skip to results** works from the still view.
+- Classroom brief/design/playback screens show attempts used and remaining. Once exhausted, the designer explains the limit and disables launch while preserving the satellite design.
+- Deadline status updates as time passes, without requiring a class mutation or reload.
+- Result comparisons use older attempts with matching mission, class, engine version, and constraints. Historical scores remain stored snapshots.
+- The map shows only the active demo actor's own solo best scores. Class scores remain in their class ranking.
+
+See `WAKO_STATUS.md` for validation evidence and the remaining integration boundaries.

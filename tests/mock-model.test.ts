@@ -194,4 +194,65 @@ describe("browser-local mock classroom behavior", () => {
       performDemoAction(state, "ranking", { missionSlug: "phoenix" }, ctx()),
     ).toEqual([]);
   });
+  it("reports the active viewer’s own allowance and separates teacher preview", () => {
+    performDemoAction(
+      state,
+      "joinClass",
+      { code: "ORBIT1", nickname: "Demo Viewer" },
+      ctx(),
+    );
+    expect(
+      performDemoAction(state, "classroomStatus", { id: demoClassId }, ctx()),
+    ).toEqual({ attemptsUsed: 0, canSubmit: true, isTeacher: false });
+    performDemoAction(
+      state,
+      "attempt",
+      {
+        missionSlug: "los-angeles",
+        classroomId: demoClassId,
+        design: defaultDesign,
+        requestId: "viewer-attempt",
+      },
+      ctx(),
+    );
+    expect(
+      performDemoAction(state, "classroomStatus", { id: demoClassId }, ctx()),
+    ).toMatchObject({ attemptsUsed: 1 });
+    expect(
+      performDemoAction(
+        state,
+        "classroomStatus",
+        { id: demoClassId },
+        ctx("teacher"),
+      ),
+    ).toEqual({ attemptsUsed: 0, canSubmit: false, isTeacher: true });
+  });
+  it("returns only the active demo student’s personal history", () => {
+    performDemoAction(
+      state,
+      "attempt",
+      {
+        missionSlug: "phoenix",
+        design: defaultDesign,
+        requestId: "personal-attempt",
+      },
+      ctx(),
+    );
+    expect(
+      performDemoAction(
+        state,
+        "history",
+        { missionSlug: "phoenix" },
+        ctx(),
+      ) as unknown[],
+    ).toHaveLength(1);
+    expect(
+      performDemoAction(
+        state,
+        "history",
+        { missionSlug: "phoenix" },
+        ctx("student", "another-student"),
+      ),
+    ).toEqual([]);
+  });
 });

@@ -2,6 +2,11 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { loadAttempts } from "../results/session";
+import { api, backendAvailable } from "../results/cloud";
+import { playableMissions } from "../results/missions";
+import { ENGINE_VERSION } from "@/lib/sim";
+import type { SimResult } from "@/types/game";
+import { useReducedMotion } from "../results/use-reduced-motion";
 import * as maplibregl from "maplibre-gl";
 import {
   missions,
@@ -13,21 +18,65 @@ export default function MissionMap() {
   const [best, setBest] = useState<
     Record<string, { score: number; success: boolean }>
   >({});
+  const [progressError, setProgressError] = useState("");
+  const reducedMotion = useReducedMotion();
   useEffect(() => {
     let active = true;
-    Promise.resolve().then(() => {
-      const scores: Record<string, { score: number; success: boolean }> = {};
-      for (const a of loadAttempts().filter((a) => !a.classroomId)) {
-        if (!scores[a.slug] || a.result.score.total > scores[a.slug].score)
-          scores[a.slug] = {
-            score: a.result.score.total,
-            success: a.result.success,
-          };
+    async function refresh() {
+      try {
+        const rows = backendAvailable
+          ? (
+              await Promise.all(
+                playableMissions.map(async (mission) =>
+                  (
+                    await api<
+                      {
+                        mission_slug: string;
+                        result: SimResult;
+                        classroom_id: string | null;
+                      }[]
+                    >("history", { missionSlug: mission.slug })
+                  ).map((a) => ({
+                    slug: a.mission_slug,
+                    result: a.result,
+                    classroomId: a.classroom_id ?? undefined,
+                  })),
+                ),
+              )
+            ).flat()
+          : loadAttempts();
+        const scores: Record<string, { score: number; success: boolean }> = {};
+        for (const a of rows.filter(
+          (a) => !a.classroomId && a.result.engineVersion === ENGINE_VERSION,
+        ))
+          if (!scores[a.slug] || a.result.score.total > scores[a.slug].score)
+            scores[a.slug] = {
+              score: a.result.score.total,
+              success: a.result.success,
+            };
+        if (active) {
+          setBest(scores);
+          setProgressError("");
+        }
+      } catch {
+        if (active) {
+          setBest({});
+          setProgressError(
+            "Your progress could not be loaded. Mission selection is still available.",
+          );
+        }
       }
-      if (active) setBest(scores);
-    });
+    }
+    void refresh();
+    const changed = () => {
+      void refresh();
+    };
+    window.addEventListener("storage", changed);
+    window.addEventListener("mission-possible:mock-updated", changed);
     return () => {
       active = false;
+      window.removeEventListener("storage", changed);
+      window.removeEventListener("mission-possible:mock-updated", changed);
     };
   }, []);
   const host = useRef<HTMLDivElement>(null);
@@ -142,7 +191,11 @@ export default function MissionMap() {
           <button
             key={c}
             aria-pressed={filter === c}
-            onClick={() => setFilter(c)}
+            onClick={() => {
+              setFilter(c);
+              if (selected.category !== c)
+                setSelected(missions.find((m) => m.category === c)!);
+            }}
           >
             <i style={{ background: categoryColors[c] }} />
             {c}
@@ -209,6 +262,11 @@ export default function MissionMap() {
           </small>
         </aside>
       </div>
+      {progressError && (
+        <p role="status" className="notice">
+          {progressError}
+        </p>
+      )}
       <section className="cities">
         <div className="section-heading">
           <h2>Choose your next challenge</h2>
@@ -221,7 +279,11 @@ export default function MissionMap() {
               aria-pressed={selected.slug === m.slug}
               onClick={() => {
                 setSelected(m);
-                map.current?.flyTo({ center: m.coordinates, zoom: 4 });
+                map.current?.flyTo({
+                  center: m.coordinates,
+                  zoom: 4,
+                  duration: reducedMotion ? 0 : 900,
+                });
               }}
             >
               <span

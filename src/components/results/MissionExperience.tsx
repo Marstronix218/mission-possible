@@ -12,7 +12,11 @@ import type {
 import { runSimulation, summarizeResources, partsCatalog } from "@/lib/sim";
 import { defaultDesign } from "./missions";
 import { api, backendAvailable, isMockMode } from "./cloud";
-import { designSchema, type Classroom } from "./contracts";
+import {
+  designSchema,
+  type Classroom,
+  type ClassroomProgress,
+} from "./contracts";
 import {
   loadAttempts,
   saveAttempt,
@@ -20,6 +24,10 @@ import {
   designerDraftKey,
   type SavedAttempt,
 } from "./session";
+import { classroomBlocker, attemptsRemaining } from "./classroom-policy";
+import { loadClassroomState } from "./classroom-state";
+import { useReducedMotion } from "./use-reduced-motion";
+import { comparableAttempts, previousComparableAttempt } from "./history-model";
 const metrics = [
   "Observation accuracy",
   "Response time",
@@ -45,6 +53,15 @@ export default function MissionExperience({
   );
   const [progress, setProgress] = useState(0);
   const [paused, setPaused] = useState(false);
+  const reducedMotion = useReducedMotion();
+  const [manualPlayback, setManualPlayback] = useState(false);
+  const [stillPlayback, setStillPlayback] = useState(false);
+  const motionReduced = reducedMotion || stillPlayback;
+  const elapsedPlayback = useRef(0);
+  const [clock, setClock] = useState(0);
+  const [classProgress, setClassProgress] = useState<ClassroomProgress | null>(
+    null,
+  );
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -72,7 +89,7 @@ export default function MissionExperience({
           const parsed = designSchema.safeParse(JSON.parse(draft));
           if (parsed.success && active) setDesign(parsed.data);
         }
-        const rows = loadAttempts()
+        const rows = (backendAvailable ? [] : loadAttempts())
           .filter(
             (a) => a.slug === mission.slug && a.classroomId === classroomId,
           )
@@ -85,9 +102,12 @@ export default function MissionExperience({
           );
         }
         if (classroomId) {
-          const c = await api<Classroom>("classroom", { id: classroomId });
+          const { classroom: c, progress } =
+            await loadClassroomState(classroomId);
           if (active) {
             setClassroom(c);
+            setClassProgress(progress);
+            setClock(Date.now());
             setConstraints({
               budgetM: Number(c.budget_m),
               massKg: Number(c.mass_kg),
@@ -137,17 +157,88 @@ export default function MissionExperience({
     };
   }, [mission.slug, mission.defaultConstraints, classroomId, attemptId, stage]);
   useEffect(() => {
-    if (stage !== "run" || paused || progress >= 1 || !loaded || error) return;
-    const timer = setInterval(
-      () => setProgress((p) => Math.min(1, p + 0.01)),
-      180,
-    );
-    return () => clearInterval(timer);
-  }, [stage, paused, progress, loaded, error]);
+    if (!classroomId) return;
+    let active = true;
+    const refresh = async () => {
+      try {
+        const { classroom: c, progress } =
+          await loadClassroomState(classroomId);
+        if (active) {
+          setClassroom(c);
+          setClassProgress(progress);
+          setConstraints({
+            budgetM: Number(c.budget_m),
+            massKg: Number(c.mass_kg),
+          });
+          setClock(Date.now());
+        }
+      } catch (e) {
+        if (active)
+          setError(
+            e instanceof Error ? e.message : "Could not refresh classroom.",
+          );
+      }
+    };
+    const tick = setInterval(() => setClock(Date.now()), 1000);
+    const changed = () => {
+      void refresh();
+    };
+    window.addEventListener("storage", changed);
+    window.addEventListener("mission-possible:mock-updated", changed);
+    return () => {
+      active = false;
+      clearInterval(tick);
+      window.removeEventListener("storage", changed);
+      window.removeEventListener("mission-possible:mock-updated", changed);
+    };
+  }, [classroomId]);
+  useEffect(() => {
+    if (
+      stage !== "run" ||
+      paused ||
+      !loaded ||
+      error ||
+      (motionReduced && !manualPlayback)
+    )
+      return;
+    const before = elapsedPlayback.current;
+    if (before >= 18000) return;
+    const start = performance.now();
+    const timer = setInterval(() => {
+      const elapsed = Math.min(18000, before + performance.now() - start);
+      setProgress(elapsed / 18000);
+      if (elapsed === 18000) clearInterval(timer);
+    }, 100);
+    return () => {
+      elapsedPlayback.current = Math.min(
+        18000,
+        before + performance.now() - start,
+      );
+      clearInterval(timer);
+    };
+  }, [stage, paused, loaded, error, motionReduced, manualPlayback]);
   const resources = summarizeResources(design, constraints);
   const result = attempt?.result;
-  const previous = history[history.findIndex((a) => a.id === attempt?.id) + 1];
-  const comparison = history.find((a) => a.id === compare) ?? previous;
+  const previous = attempt
+    ? previousComparableAttempt(history, attempt)
+    : undefined;
+  const comparison = attempt
+    ? (history.find(
+        (a) => a.id === compare && comparableAttempts(attempt, a),
+      ) ?? previous)
+    : undefined;
+  const classBlocker = classroomId
+    ? (classroomBlocker(classroom, classProgress?.attemptsUsed ?? 0, clock) ??
+      (!classProgress
+        ? "Loading classroom participation…"
+        : !classProgress.canSubmit
+          ? "Join this classroom as a demo student before launching."
+          : null))
+    : null;
+  const remaining = classroom
+    ? attemptsRemaining(classroom, classProgress?.attemptsUsed ?? 0)
+    : null;
+  const playbackPaused = paused || (motionReduced && !manualPlayback);
   function update(next: SatelliteDesign) {
     setDesign(next);
     try {
@@ -167,7 +258,7 @@ export default function MissionExperience({
   }
   async function launch() {
     setError("");
-    if (resources.violations.length) return;
+    if (resources.violations.length || classBlocker) return;
     try {
       localStorage.setItem(
         draftKey(mission.slug, classroomId),
@@ -185,6 +276,7 @@ export default function MissionExperience({
     setBusy(true);
     setError("");
     try {
+      if (classBlocker) throw new Error(classBlocker);
       if (resources.violations.length)
         throw new Error(resources.violations.join(" "));
       let outcome: SimResult;
@@ -214,7 +306,13 @@ export default function MissionExperience({
         classroomId,
         verified,
       };
-      saveAttempt(row);
+      if (backendAvailable) {
+        try {
+          saveAttempt(row);
+        } catch {
+          /* The primary attempt store succeeded; history can reload its result. */
+        }
+      } else saveAttempt(row);
       router.push(
         base +
           "/result?attempt=" +
@@ -326,6 +424,20 @@ export default function MissionExperience({
         <p className="error" role="alert">
           {error}
         </p>
+      )}
+      {classroomId && loaded && stage !== "result" && (
+        <section className="notice" aria-label="Classroom attempt status">
+          <p>
+            {classProgress?.isTeacher
+              ? "Teacher preview"
+              : `Your attempts: ${classProgress?.attemptsUsed ?? 0}${classroom?.max_attempts !== null && classroom?.max_attempts !== undefined ? " / " + classroom.max_attempts : ""}`}
+            {remaining !== null ? ` · ${remaining} remaining` : ""}
+          </p>
+          {classBlocker && <p role="status">{classBlocker}</p>}
+          <Link href={"/classroom/" + classroomId}>
+            Return to classroom ranking ↗
+          </Link>
+        </section>
       )}
       {stage === "brief" && (
         <div className="two-column">
@@ -496,9 +608,7 @@ export default function MissionExperience({
             <button
               className="primary"
               disabled={
-                !loaded ||
-                resources.violations.length > 0 ||
-                (!!classroomId && (!classroom || !classroom.is_active))
+                !loaded || resources.violations.length > 0 || !!classBlocker
               }
               onClick={launch}
             >
@@ -509,7 +619,30 @@ export default function MissionExperience({
         </div>
       )}
       {stage === "run" && (
-        <section className="panel">
+        <section className="panel" aria-busy={busy}>
+          <label className="choice">
+            <input
+              type="checkbox"
+              checked={motionReduced}
+              disabled={reducedMotion}
+              onChange={(e) => {
+                setStillPlayback(e.target.checked);
+                setManualPlayback(false);
+              }}
+            />
+            <span>
+              Reduce motion{reducedMotion ? " (system preference)" : ""}
+            </span>
+          </label>
+          {motionReduced && !manualPlayback && (
+            <p role="status" className="notice">
+              Reduced motion is on. Choose Play animation to start, or skip
+              directly to your results.
+            </p>
+          )}
+          {busy && (
+            <p role="status">Saving your attempt. Your design is preserved.</p>
+          )}
           <div className="section-heading">
             <h2>Observation playback</h2>
             <span>
@@ -535,14 +668,28 @@ export default function MissionExperience({
           </p>
           <div className="actions">
             <button
-              onClick={() => setPaused((p) => !p)}
+              onClick={() => {
+                if (motionReduced && !manualPlayback) {
+                  setManualPlayback(true);
+                  setPaused(false);
+                } else setPaused((p) => !p);
+              }}
               disabled={progress >= 1 || busy}
             >
-              {paused ? "Resume" : "Pause"}
+              {motionReduced && !manualPlayback
+                ? "Play animation"
+                : playbackPaused
+                  ? "Resume"
+                  : "Pause"}
             </button>
             <button
               className="primary"
-              disabled={!loaded || busy || resources.violations.length > 0}
+              disabled={
+                !loaded ||
+                busy ||
+                resources.violations.length > 0 ||
+                !!classBlocker
+              }
               onClick={finish}
             >
               {busy
@@ -663,9 +810,9 @@ export default function MissionExperience({
                   value={compare}
                   onChange={(e) => setCompare(e.target.value)}
                 >
-                  <option value="">Previous attempt</option>
+                  <option value="">Previous comparable attempt</option>
                   {history
-                    .filter((a) => a.id !== attempt.id)
+                    .filter((a) => comparableAttempts(attempt, a))
                     .map((a) => (
                       <option key={a.id} value={a.id}>
                         {new Date(a.at).toLocaleString("en-US")} ·{" "}
@@ -699,7 +846,10 @@ export default function MissionExperience({
                   </ul>
                 </>
               ) : (
-                <p>Complete another attempt to compare designs and scores.</p>
+                <p>
+                  Complete another attempt with the same mission, engine
+                  version, and constraints to compare designs and scores.
+                </p>
               )}
               <ol>
                 {history.map((a) => (
