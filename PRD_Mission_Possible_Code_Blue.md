@@ -5,7 +5,7 @@
 
 | 項目 | 内容 |
 |---|---|
-| ドキュメント | Product Requirements Document (PRD) v1.1 |
+| ドキュメント | Product Requirements Document (PRD) v1.2 |
 | オーナー | Nori |
 | チーム | Nori / Ryohei / Sakura / Wako |
 | 技術スタック | Next.js (App Router, TypeScript) / Supabase / Vercel |
@@ -364,7 +364,7 @@ Create one tracking issue per phase and one scoped issue/PR per deliverable. Eac
 **ミッションの標準制約（デフォルト値）**: Budget $250M、Mass 500 kg。Classroomでは教師が変更できます。
 
 ### 7.3 シミュレーションの簡略モデル
-1. **観測グリッド**: 対象地域を約20×20のセルに分割します。各セルにNASA由来の「真値」（例: 火災の有無、浸水の有無、地表面温度）を割り当てます（`data/missions/<city>.json`）。
+1. **観測グリッド**: 対象地域を約20×20のセルに分割します。各セルにNASA由来の参照観測値（例: 火災検出、水域分類、地表面温度）と有効・欠測マスクを割り当てます。完全な真値とは扱わず、観測から導出した値とモデル値を区別します（§8）（`data/missions/<city>.json`）。
 2. **パス生成**: 軌道の係数から、ミッション期間中の観測機会（タイムステップ）を決定論的に生成します。
 3. **観測判定**: 各パスで観測幅に入ったセルについて、次の条件をすべて満たせば「観測成功」とします。
    - 電力: 発電量とバッテリーで機器の消費電力をまかなえる
@@ -402,27 +402,72 @@ Mission Score: 82/100
 
 ## 8. NASAデータ統合
 
-### 8.1 方針
-- **ビルド時に事前処理（静的JSON）** する方式にします。ゲーム実行中はNASA APIを呼びません。
-  - 理由: レート制限、APIキーの管理、レイテンシ、審査中の安定性。
-- 事前処理スクリプトは `scripts/data/` に置き、生成物は `data/missions/*.json` にコミットします。
-- 出典（データセット名、取得日、URL、ライセンス）を各JSONの `sources` に記録し、ゲーム内のクレジットに表示します。
+### 8.1 Data selection and responsibility
 
-### 8.2 カテゴリーとデータソースの対応
-| Category | NASA Data / Mission | ゲーム内での用途 |
+**Official-source research reviewed: 2026-11-14.** The products below are recommended inputs, not downloaded or QA-approved mission snapshots. Product pages establish suitability; they do not prove a usable scene exists for a particular city/date. Ryohei owns acquisition, preprocessing and `data/` PRs; Nori reviews access/secrets and API contracts; Sakura and Wako implement the source credits and observation/model labels.
+
+Acquire historical science files during a separate preprocessing step, then commit compact, versioned mission JSON under `data/missions/`. Normal builds consume these snapshots; builds and gameplay must not require NASA network access or credentials. Keep scripts under `scripts/data/`. Do not add a data-processing dependency until its owner has approved it.
+
+### 8.2 Recommended products for all eight categories
+
+Spatial resolutions below describe source products, not the game's cell size. Product versions are explicit reproducibility choices and must be rechecked when acquiring data; do not silently switch to a newer collection.
+
+| Category / mission cities | Recommended product and official source | Native support / sampling | Game use and interpretation limits |
+|---|---|---|---|
+| **Wildfire — Los Angeles** | NASA FIRMS **VIIRS 375 m active-fire archive**, select and record satellite and standard-processing release; [archive information](https://firms.modaps.eosdis.nasa.gov/content/active_fire/), [archive download](https://firms.modaps.eosdis.nasa.gov/download/) | Hotspot detections at satellite overpass times; CSV archive is a practical first input | Aggregate confidence-filtered hotspot detections into cells/time bins. An active-fire detection is not a burned-area polygon. Retain observation gaps; absence of a hotspot alone does not establish an observed fire-free cell |
+| **Heat — San Francisco, Phoenix, Chicago** | **ECOSTRESS `ECO_L2T_LSTE`, V002**, [NASA product metadata and QA notices](https://data.nasa.gov/dataset/ecostress-tiled-land-surface-temperature-and-emissivity-instantaneous-l2-global-70-m-v002-09540) | 70 m tiled land-surface temperature/emissivity, COG; ISS scene times, not a guaranteed daily sequence | Use `LST`, uncertainty/QA and the separate `cloud_mask`; V002 QC bits alone do not identify clouds. Decode documented scale/units before conversion. Land-surface temperature is not air temperature or a direct health-risk measurement. Review obstruction/geolocation notices for chosen scenes |
+| **Flood — Seattle, Houston, St. Louis, Atlanta, New York City** | **OPERA `OPERA_L3_DSWX-HLS_V1`**, [PO.DAAC product](https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-HLS_V1); optional **`OPERA_L3_DSWX-S1_V1`**, [radar product](https://podaac.jpl.nasa.gov/dataset/OPERA_L3_DSWX-S1_V1) | 30 m water classifications, COG; HLS sampling depends on acquisitions/clouds; S1 description specifies 6–12-day revisit | Compare quality-masked water extent against an observed pre-event baseline. Surface water includes permanent water; it is not automatically flooding. S1 provides cloud-independent radar context but does not resolve all urban/vegetated inundation. Check actual historical granules and current reprocessing notices |
+| **Snow — Denver, Minneapolis, Boston** | **MODIS Terra `MOD10A1`, Collection 6.1 (`061`)**, [NASA NSIDC DAAC product](https://nsidc.org/data/mod10a1/versions/61) | Daily 500 m snow-cover/NDSI and QA, HDF-EOS2 | Preserve cloud/missing/polar-night flags and apply QA. Snow extent is not snow depth or snowfall amount. IMERG below may provide precipitation context, separately labeled |
+| **Drought — Salt Lake City region** | **SMAP `SPL3SMP_E`, V006**, [NASA NSIDC DAAC product](https://nsidc.org/data/spl3smp_e/versions/6); optional [JPL GRACE/GRACE-FO CRI mascons RL06.3 V04](https://podaac.jpl.nasa.gov/dataset/TELLUS_GRAC-GRFO_MASCON_CRI_GRID_RL06.3_V4) | SMAP daily files posted on a 9 km grid (posting is not independent footprint resolution); GRACE monthly anomalies on a 0.5° output grid, with independent mass estimates on much coarser ~3° mascons | Use QA-filtered regional soil-moisture trends; daily files do not guarantee valid daily coverage everywhere. GRACE is basin-scale water-storage context, not city/neighborhood detail. State anomaly baseline and distinguish soil moisture from total water storage; neither alone is an official drought classification |
+| **Storm — Oklahoma City, Miami, New Orleans** | **GPM IMERG Final `GPM_3IMERGHH`, V07**, [NASA GES DISC catalog](https://disc.gsfc.nasa.gov/datasets?keywords=GPM_3IMERGHH_07&page=1), [V07 technical documentation](https://gpm.nasa.gov/resources/documents/imerg-v07-technical-documentation) | 0.1° × 0.1°, half-hourly precipitation estimates | Use archived Final data for reproducibility; integrate rates over elapsed hours for accumulation. Supports storm precipitation and Flood/Snow context, not tornado paths, hurricane winds or flood extent. The catalog reviewed lists coverage through 2025-09-30: verify availability before choosing newer events |
+| **Glacier — Anchorage region** | **ICESat-2 `ATL06`, V007**, [NASA NSIDC DAAC product](https://nsidc.org/data/atl06/versions/7); optical context may use [NASA/USGS Landsat 8–9 Collection 2 Level-2](https://www.usgs.gov/centers/eros/science/usgs-eros-archive-landsat-archives-landsat-8-9-olitirs-collection-2-level-2) | ATL06 overlapping 40 m along-track height segments, 20 m spacing; nominal 91-day repeat; HDF5 | Choose a named nearby glacier and verify intersecting tracks. Filter height QA and retain vertical datum. Tracks are sparse, not a wall-to-wall elevation grid; compare compatible seasonal/longer observations. Optical boundary extraction is a derived analysis, not an ATL06 measurement |
+| **Volcano — Hilo / Hawaiʻi Island** | **MODIS Terra `MOD14A1`, Collection 6.1**, [NASA LAADS product](https://ladsweb.modaps.eosdis.nasa.gov/missions-and-measurements/products/MOD14A1); optional [Landsat Collection 2 surface-temperature context](https://www.usgs.gov/landsat-missions/landsat-collection-2-surface-temperature) | MOD14A1: 1 km daily thermal-anomaly/fire masks, eight daily layers packaged per file | Use an actual volcanic AOI such as Kīlauea, not Hilo city center. Verify anomaly attribution and cloud/confidence flags; anomalies alone do not establish an eruption or lava perimeter. The eight layers are daily observations, not an eight-day composite. Landsat context is not guaranteed molten-lava temperature retrieval |
+
+**Archive choice:** For fixed historical missions, prefer the provider's standard/final science product rather than a changing near-real-time feed. FIRMS distinguishes standard processing from NRT and documents archive replacement of NRT records in its [active-fire data guidance](https://firms.modaps.eosdis.nasa.gov/content/active_fire/). Record the actual source file checksum so later upstream reprocessing cannot silently change an accepted mission.
+
+### 8.3 MVP acquisition targets — Los Angeles, Houston, Phoenix
+
+These windows and AOIs are **proposed search targets**, not verified granule selections. Bounding boxes use WGS84 `[west, south, east, north]`. Ryohei must inspect coverage, then record the final AOI, dates and exact files in the data PR before enabling the mission.
+
+| Mission | Proposed AOI / historical search window (UTC) | First acquisition and acceptance evidence |
 |---|---|---|
-| Wildfire | FIRMS（MODIS / VIIRS アクティブファイア） | 火災セルの真値、時系列での拡大 |
-| Urban / Extreme Heat | ECOSTRESS, Landsat（地表面温度） | 温度グリッドの真値 |
-| Flood | GPM（IMERG降水）, OPERA DSWx（地表水） | 降水量、浸水セルの真値 |
-| Snow / Winter Storm | MODIS（積雪被覆）, GPM | 積雪セル、降水量 |
-| Drought | SMAP（土壌水分）, GRACE-FO（陸域貯水量） | 長期の変化トレンド |
-| Severe Storm / Hurricane | GPM | 降水強度 |
-| Glacier Change | Landsat, ICESat-2 | 氷河の端の位置、標高の変化 |
-| Volcano | Landsat, MODIS（熱異常） | 熱異常セル |
+| Los Angeles / Wildfire | `[-118.9, 33.9, -117.6, 34.5]`; 2025-01-07 through 2025-01-14 (exclusive end) | FIRMS archived NOAA-20 VIIRS detections; pin the archive release. NASA documents the January 2025 Palisades/Eaton event in its [fire-spread visualization](https://svs.gsfc.nasa.gov/5558). Show valid detections and timestamps in the intended area; retain confidence and satellite fields. Do not extract scores or synthetic fire growth from the visualization |
+| Houston / Flood | `[-95.9, 29.3, -94.7, 30.5]`; search May 2024 and a pre-event baseline | Start with DSWx-HLS water/QA layers and IMERG Final V07 precipitation. Choose actual before/after water acquisitions after examining coverage; do not assume S1 historical coverage exists just because a later radar collection is available. Confirm observed new-water differences with missing/cloud areas excluded; rainfall alone cannot satisfy flood-extent acceptance |
+| Phoenix / Heat | `[-112.5, 33.1, -111.6, 33.9]`; search July 2023 | Find a usable ECOSTRESS V002 scene, with QA/cloud mask, acquisition time and valid-pixel counts. [NASA's July 2023 Phoenix heat account](https://www.nasa.gov/centers-and-facilities/jpl/nasa-data-shows-fierce-surface-temperatures-during-phoenix-heat-wave/) establishes useful scenario context, but its maps use VIIRS and do not verify ECOSTRESS coverage. Publish an actual ECOSTRESS granule selection or report the gap |
 
-### 8.3 実測値とシミュレーション値の区別（必須）
-- UI上で **「NASA Observed」**（実データ）と **「Simulated by your satellite」**（仮想の観測結果）を、色と凡例で必ず分けて表示します。
-- 実データから直接測れない値（例: 雲量の時系列）は、簡略モデルで推定したものであることを明記します。
+A mission may use a static observed reference while the student's satellite observes it over simulated time. If source scenes are sparse, do not imply that a seven-day animation is a measured daily sequence. Drought and glacier scenarios require longer historical source intervals; label those intervals independently from the simulated mission duration.
+
+### 8.4 Access and preprocessing handoff
+
+1. **Find actual files:** Use [NASA Earthdata Search](https://search.earthdata.nasa.gov/) with product short name/version, AOI and UTC date bounds. Record collection/granule identifiers, acquisition times and download links before processing. A dataset-level coverage range is not proof of a clear local observation.
+2. **Authenticate locally:** Register for [Earthdata Login](https://urs.earthdata.nasa.gov/documentation/for_users/welcome) for protected science-file downloads. FIRMS [Area API](https://firms.modaps.eosdis.nasa.gov/api/area) uses a separate free `MAP_KEY`; its documented requests use a bounding box and 1–5-day range, with a data-availability endpoint. Prefer the archive for these historical scenarios. Keys, login tokens and credential-bearing URLs remain local and uncommitted; no student account is required.
+3. **Decode and mask:** Follow the selected product's guide for projection, variables, scale/offset, fill values, units and QA. Preserve cloud/no-data as unknown rather than zero, dry land or a failed student detection. Keep pre-event and event imagery on compatible grids and retain source time differences.
+4. **Aggregate honestly:** Build the ~20×20 educational grid with documented rules: area-weighted valid-pixel means/fractions for continuous/area fields, categorical rules for masks and time bins for hotspots. Preserve valid-data fraction per cell. Do not create finer independent information by upsampling coarse IMERG/SMAP data or interpolating ATL06 tracks. Declare any interpolation as modeled.
+5. **Separate observations from mechanics:** Observed/derived reference layers feed the deterministic game. Student sensor capability, cloud sequences not directly observed, revisit paths, transmission and scores remain educational models. Unknown reference cells are excluded from observation-based scoring denominators; Ryohei documents thresholds and insufficient-data behavior in the reviewed game contract.
+6. **Publish compact reproducible outputs:** Keep large raw rasters outside the repository; commit the processing script/config, source manifest and compact mission snapshot. Include a reproducible command, input/output hashes, source-grid support, QA exclusions and valid-cell/time coverage report in each data PR. Nori verifies that normal CI/builds remain independent of Earthdata credentials. Each contributor commits and pushes their scoped branch under §16.9.
+
+### 8.5 Provenance and data acceptance gate
+
+Extend the reviewed `sources` metadata contract before adding generated snapshots. These are required metadata fields, not an instruction to bypass Ryohei's ownership of `src/types/game.ts`:
+
+- Product short name, version/release, provider, instrument/satellite, official landing page, DOI where supplied, provider's required citation/acknowledgment and terms/license link. Preserve NASA/NOAA/USGS/Copernicus partner credit where applicable; do not assume every hosted asset has identical rights.
+- Granule/file identifiers, stable download references with credentials removed, acquisition interval, access date and SHA-256 checksum of input files.
+- AOI/bbox, source CRS and spatial support, variables/units, scale conversion, QA rules, valid/missing mask semantics, aggregation method, anomaly/baseline dates and any derived or modeled fields.
+- Processing command/config and code revision, output checksum, dataset/catalog version and compatible engine version. Source/balance changes that affect scores require an explicit version/ranking decision.
+
+**Ryohei's acceptance checklist, for every enabled city:**
+
+- [ ] The committed manifest identifies downloaded, inspectable files that intersect the intended AOI/time; coverage and valid-pixel thresholds are defined and pass.
+- [ ] Representative known-valid, invalid and missing values survive decoding/aggregation correctly; units, UTC timing and coordinate order are tested.
+- [ ] Reprocessing fixed inputs/config reproduces the snapshot; all-missing coverage fails clearly instead of producing a plausible score.
+- [ ] The data PR includes a reference preview and coverage report, source credits and source/model limitations; Wako/Sakura verify the matching UI labels.
+- [ ] Compact snapshots and scripts are pushed to Ryohei's feature branch and reviewed before Nori enables server scoring. Unsupported cities remain unavailable until this gate passes.
+
+### 8.6 Observed, derived and simulated labels (required)
+
+Use **“NASA Observed”** for the sourced observation layer and **“Simulated by your satellite”** for game output, with text/icons as well as color. Show source date, product/version, resolution/support and missing-data legend. Label processed differences/aggregates **“Derived from NASA observations”** and modeled/interpolated fields **“Modeled”**; observations themselves have uncertainty and are reference evidence, not perfect ground truth.
+
+For visual reference, [NASA GIBS](https://nasa-gibs.github.io/gibs-api-docs/available-visualizations/) serves visualized science layers. Treat browse imagery as display material: do not recover quantitative truth values from image colors. Keep numeric science files as the scoring reference, and preserve each layer's attribution if a browse image is used.
 
 ---
 
