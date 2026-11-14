@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import DemoBanner from "@/components/results/DemoBanner";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
 export const metadata: Metadata = {
@@ -22,6 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Link href="/leaderboard">Rankings</Link>
           </nav>
         </header>
+        <DemoBanner />
         {children}
         <footer>
           MISSION: POSSIBLE / CODE BLUE{" "}

@@ -1,5 +1,7 @@
 # Run and connect the application
 
+**Current mode: mock data.** Supabase work is paused at the user’s request. Use `DEMO.md` for the working local classroom flow; the live setup below is optional reference only. Existing keys are preserved and no live backend requests are made.
+
 ## Local solo play
 
 Use Node.js 22.13+:

@@ -11,7 +11,7 @@ import type {
 } from "@/types/game";
 import { runSimulation, summarizeResources, partsCatalog } from "@/lib/sim";
 import { defaultDesign } from "./missions";
-import { api, cloudConfigured } from "./cloud";
+import { api, backendAvailable, isMockMode } from "./cloud";
 import { designSchema, type Classroom } from "./contracts";
 import {
   loadAttempts,
@@ -60,9 +60,14 @@ export default function MissionExperience({
     async function load() {
       await Promise.resolve();
       try {
-        const store=classroomId?null:localStorage.getItem(designerDraftKey(mission.slug));
-        const shared=store?JSON.parse(store)?.state?.design:null;
-        const draft=shared&&designSchema.safeParse(shared).success?JSON.stringify(shared):localStorage.getItem(draftKey(mission.slug,classroomId));
+        const store = classroomId
+          ? null
+          : localStorage.getItem(designerDraftKey(mission.slug));
+        const shared = store ? JSON.parse(store)?.state?.design : null;
+        const draft =
+          shared && designSchema.safeParse(shared).success
+            ? JSON.stringify(shared)
+            : localStorage.getItem(draftKey(mission.slug, classroomId));
         if (draft) {
           const parsed = designSchema.safeParse(JSON.parse(draft));
           if (parsed.success && active) setDesign(parsed.data);
@@ -89,10 +94,35 @@ export default function MissionExperience({
             });
           }
         }
-        if(cloudConfigured&&stage==='result'){
-          const remote=await api<{id:string;mission_slug:string;design:SatelliteDesign;constraints:Constraints|null;result:SimResult;created_at:string;classroom_id:string|null}[]>('history',{missionSlug:mission.slug,classroomId});
-          const rows:SavedAttempt[]=remote.map(a=>({id:a.id,slug:a.mission_slug,design:a.design,constraints:a.constraints??mission.defaultConstraints,result:a.result,at:a.created_at,classroomId:a.classroom_id??undefined,verified:true}));
-          if(active){setHistory(rows);setAttempt(rows.find(a=>a.id===attemptId)??(attemptId?null:rows[0]??null));}
+        if (backendAvailable && stage === "result") {
+          const remote = await api<
+            {
+              id: string;
+              mission_slug: string;
+              design: SatelliteDesign;
+              constraints: Constraints | null;
+              result: SimResult;
+              created_at: string;
+              classroom_id: string | null;
+            }[]
+          >("history", { missionSlug: mission.slug, classroomId });
+          const rows: SavedAttempt[] = remote.map((a) => ({
+            id: a.id,
+            slug: a.mission_slug,
+            design: a.design,
+            constraints: a.constraints ?? mission.defaultConstraints,
+            result: a.result,
+            at: a.created_at,
+            classroomId: a.classroom_id ?? undefined,
+            verified: !isMockMode,
+          }));
+          if (active) {
+            setHistory(rows);
+            setAttempt(
+              rows.find((a) => a.id === attemptId) ??
+                (attemptId ? null : (rows[0] ?? null)),
+            );
+          }
         }
       } catch (e) {
         if (active)
@@ -105,7 +135,7 @@ export default function MissionExperience({
     return () => {
       active = false;
     };
-  }, [mission.slug, mission.defaultConstraints, classroomId, attemptId,stage]);
+  }, [mission.slug, mission.defaultConstraints, classroomId, attemptId, stage]);
   useEffect(() => {
     if (stage !== "run" || paused || progress >= 1 || !loaded || error) return;
     const timer = setInterval(
@@ -125,7 +155,11 @@ export default function MissionExperience({
         draftKey(mission.slug, classroomId),
         JSON.stringify(next),
       );
-      if(!classroomId)localStorage.setItem(designerDraftKey(mission.slug),JSON.stringify({state:{design:next},version:0}));
+      if (!classroomId)
+        localStorage.setItem(
+          designerDraftKey(mission.slug),
+          JSON.stringify({ state: { design: next }, version: 0 }),
+        );
       setError("");
     } catch {
       setError("Your browser could not save this draft.");
@@ -156,7 +190,7 @@ export default function MissionExperience({
       let outcome: SimResult;
       const id = (requestId.current ??= crypto.randomUUID());
       let verified = false;
-      if (cloudConfigured) {
+      if (backendAvailable) {
         const saved = await api<{ result: SimResult }>("attempt", {
           missionSlug: mission.slug,
           design,
@@ -164,7 +198,7 @@ export default function MissionExperience({
           requestId: id,
         });
         outcome = saved.result;
-        verified = true;
+        verified = !isMockMode;
       } else {
         if (classroomId)
           throw new Error("Live classrooms require the backend connection.");
@@ -281,9 +315,11 @@ export default function MissionExperience({
       <p className="notice">
         Educational simulation · Hazard grids are modeled, not NASA
         observations.{" "}
-        {cloudConfigured
-          ? "Cloud submissions are recalculated on the server."
-          : "Solo attempts are saved in this browser. Live classrooms and rankings require cloud configuration."}
+        {isMockMode
+          ? "Mock classroom data stays in this browser. Scores are computed by the real simulation engine."
+          : backendAvailable
+            ? "Cloud submissions are recalculated on the server."
+            : "Solo attempts are saved in this browser. Live classrooms and rankings require cloud configuration."}
       </p>
       {!loaded && <p role="status">Loading mission…</p>}
       {error && (
@@ -539,7 +575,11 @@ export default function MissionExperience({
                 </span>
                 <p>
                   Coverage {result.score.coverage.toFixed(1)}% ·{" "}
-                  {attempt.verified ? "Submitted to cloud" : "Local attempt"}
+                  {isMockMode
+                    ? "Local demo attempt"
+                    : attempt.verified
+                      ? "Submitted to cloud"
+                      : "Local attempt"}
                 </p>
                 <Radar values={values} />
                 <dl>

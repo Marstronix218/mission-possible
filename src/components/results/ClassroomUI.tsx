@@ -1,7 +1,12 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { api, cloud, cloudConfigured, token } from "./cloud";
+import { api, cloud, backendAvailable, isMockMode, token } from "./cloud";
+import {
+  selectDemoActor,
+  newDemoStudent,
+  demoUpdateEvent,
+} from "./mock-storage";
 import type { Classroom, Ranking } from "./contracts";
 import { playableMissions } from "./missions";
 import type { SatelliteDesign, SimResult } from "@/types/game";
@@ -88,6 +93,7 @@ export function JoinClass() {
     setError("");
     const data = new FormData(e.currentTarget);
     try {
+      if (isMockMode) selectDemoActor("student");
       setJoined(
         await api<Classroom>("joinClass", {
           code: String(data.get("code")).trim().toUpperCase(),
@@ -112,7 +118,20 @@ export function JoinClass() {
         Join with a class code and a nickname. No student email or real name is
         needed.
       </p>
-      {!cloudConfigured ? (
+      {isMockMode && (
+        <div className="actions">
+          <button
+            onClick={() => {
+              newDemoStudent();
+              setJoined(null);
+              setError("");
+            }}
+          >
+            Use another demo student
+          </button>
+        </div>
+      )}
+      {!backendAvailable ? (
         <Setup />
       ) : joined ? (
         <section className="panel">
@@ -123,6 +142,12 @@ export function JoinClass() {
         </section>
       ) : (
         <form className="panel form-panel" onSubmit={join}>
+          {isMockMode && (
+            <p className="notice">
+              Use code <strong>ORBIT1</strong> to join the sample classroom. All
+              sample players are fictional.
+            </p>
+          )}
           <label className="field">
             Class code
             <input
@@ -132,7 +157,7 @@ export function JoinClass() {
               maxLength={6}
               autoComplete="off"
               pattern="[A-Za-z0-9]{6}"
-              placeholder="A1B2C3"
+              placeholder={isMockMode ? "ORBIT1" : "A1B2C3"}
             />
           </label>
           <label className="field">
@@ -177,12 +202,22 @@ export function ClassDashboard({ id }: { id: string }) {
     }
   }, [id]);
   useEffect(() => {
-    if (!cloudConfigured) return;
+    if (!backendAvailable) return;
     let active = true;
     let channel: ReturnType<ReturnType<typeof cloud>["channel"]> | undefined;
     const tick = () => {
       if (active) void refresh();
     };
+    if (isMockMode) {
+      Promise.resolve().then(tick);
+      window.addEventListener(demoUpdateEvent, tick);
+      window.addEventListener("storage", tick);
+      return () => {
+        active = false;
+        window.removeEventListener(demoUpdateEvent, tick);
+        window.removeEventListener("storage", tick);
+      };
+    }
     void token()
       .then(() => {
         if (!active) return;
@@ -217,7 +252,7 @@ export function ClassDashboard({ id }: { id: string }) {
     <main>
       <div className="eyebrow">CLASSROOM MISSION</div>
       <h1>{c?.name ?? "Your classroom"}</h1>
-      {!cloudConfigured ? (
+      {!backendAvailable ? (
         <Setup />
       ) : (
         <>
@@ -261,9 +296,11 @@ export function ClassDashboard({ id }: { id: string }) {
                 <div className="section-heading">
                   <h2>Class ranking</h2>
                   <span>
-                    {live
-                      ? "Live updates connected"
-                      : "Refreshing every 10 seconds"}
+                    {isMockMode
+                      ? "Browser-local demo updates"
+                      : live
+                        ? "Live updates connected"
+                        : "Refreshing every 10 seconds"}
                   </span>
                 </div>
                 <RankingTable rows={rows} />
@@ -306,6 +343,26 @@ export function GlobalRanking({
   const [rows, setRows] = useState<Ranking[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    if (!isMockMode) return;
+    let active = true;
+    api<Ranking[]>("ranking", { missionSlug: slug, classroomId })
+      .then((data) => {
+        if (active) {
+          setRows(data);
+          setError("");
+        }
+      })
+      .catch((e) => {
+        if (active)
+          setError(
+            e instanceof Error ? e.message : "Could not load demo ranking.",
+          );
+      });
+    return () => {
+      active = false;
+    };
+  }, [slug, classroomId]);
   async function load(next = slug) {
     setLoading(true);
     setError("");
@@ -333,7 +390,7 @@ export function GlobalRanking({
         Compare the same mission and engine version only. Custom class
         conditions stay in their class ranking.
       </p>
-      {!cloudConfigured ? (
+      {!backendAvailable ? (
         <Setup />
       ) : (
         <section className="panel">
@@ -403,9 +460,29 @@ export function TeacherDashboard({ authError }: { authError?: string }) {
   const [students, setStudents] = useState<StudentData | null>(null);
   const [busy, setBusy] = useState(false);
   const scoringLocked = Boolean(selected && students?.attempts.length);
+  useEffect(() => {
+    if (!isMockMode) return;
+    let active = true;
+    Promise.resolve()
+      .then(async () => {
+        selectDemoActor("teacher");
+        const data = await api<Classroom[]>("listClasses");
+        if (active) setClasses(data);
+      })
+      .catch((e) => {
+        if (active)
+          setError(
+            e instanceof Error ? e.message : "Could not load demo classrooms.",
+          );
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
   async function list() {
     setError("");
     try {
+      if (isMockMode) selectDemoActor("teacher");
       setClasses(await api<Classroom[]>("listClasses"));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not load classes.");
@@ -516,7 +593,7 @@ export function TeacherDashboard({ authError }: { authError?: string }) {
         <br />
         <em>into understanding.</em>
       </h1>
-      {!cloudConfigured ? (
+      {!backendAvailable ? (
         <Setup />
       ) : (
         <>
@@ -526,24 +603,38 @@ export function TeacherDashboard({ authError }: { authError?: string }) {
               {message}
             </p>
           )}
-          <section className="panel">
-            <h2>Teacher sign-in</h2>
-            <form onSubmit={login} className="inline-form">
-              <label className="field">
-                Teacher email
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </label>
-              <button disabled={busy}>Send magic link</button>
-              <button type="button" onClick={list}>
-                Load my classes
-              </button>
-            </form>
-          </section>
+          {isMockMode ? (
+            <section className="panel">
+              <h2>Demo teacher dashboard</h2>
+              <p>
+                You are roleplaying the sample teacher. There is no real
+                account, email sign-in, or authentication in this mode.
+              </p>
+              <button onClick={list}>Reload demo classes</button>
+            </section>
+          ) : (
+            <>
+              {" "}
+              <section className="panel">
+                <h2>Teacher sign-in</h2>
+                <form onSubmit={login} className="inline-form">
+                  <label className="field">
+                    Teacher email
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </label>
+                  <button disabled={busy}>Send magic link</button>
+                  <button type="button" onClick={list}>
+                    Load my classes
+                  </button>
+                </form>
+              </section>
+            </>
+          )}
           <div className="two-column">
             <form
               key={selected?.id ?? "new"}

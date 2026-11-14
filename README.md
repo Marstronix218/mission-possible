@@ -1,11 +1,13 @@
 # Mission: Possible — Code Blue
 
-An educational satellite-design game using Next.js App Router, TypeScript, MapLibre, Ryohei's deterministic simulation engine, and a Supabase classroom backend.
+An educational satellite-design game using Next.js App Router, TypeScript, MapLibre, and Ryohei's deterministic simulation engine. Browser-local mock classroom data is enabled by default; Supabase is optional and inactive.
+
+Start with [DEMO.md](DEMO.md). Join the sample classroom with **ORBIT1**, or open Teacher to try the complete roleplay flow without email or database setup.
 
 - **Map:** 18 selectable city previews, category filters, local best scores and completion status, bundled Natural Earth country outlines, keyboard-accessible markers and city list.
 - **MVP game:** Los Angeles, Houston, Phoenix. Briefing → configurable satellite → resource validation → simulation playback → real computed score, feedback, redesign, saved history, comparisons.
 - **NASA comparison:** archived Terra MODIS true-color observations beside modeled observation cells, with dates and exact source metadata. The observed imagery does not supply scoring hazard labels.
-- **Classrooms:** email magic-link teacher sign-in, anonymous student joining, custom constraints, deadlines and attempt limits, ranking updates, student design/history inspection, CSV export, member removal, code rotation, and archiving. Requires configured Supabase.
+- **Classrooms:** email magic-link teacher sign-in, anonymous student joining, custom constraints, deadlines and attempt limits, ranking updates, student design/history inspection, CSV export, member removal, code rotation, and archiving. Works with clearly labeled mock data by default. Live mode requires configured Supabase.
 - **Rankings:** server-recalculated submissions, separated by mission/engine version and classroom vs standard solo conditions.
 
 Run `npm ci` and `npm run dev`, then visit http://localhost:3000/map. See [SETUP.md](SETUP.md) for cloud setup, sources, verification limits, and GitHub delivery status.

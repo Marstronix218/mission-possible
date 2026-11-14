@@ -1,3 +1,4 @@
+import { isMockMode } from "@/lib/data-mode";
 import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
@@ -52,6 +53,17 @@ const inputSchema = z.discriminatedUnion("action", [
   }),
 ]);
 export async function POST(request: Request) {
+  if (isMockMode)
+    return NextResponse.json(
+      {
+        error: {
+          code: "MOCK_MODE",
+          message:
+            "Live backend requests are disabled. Demo actions run locally in the browser.",
+        },
+      },
+      { status: 503 },
+    );
   try {
     if (Number(request.headers.get("content-length") ?? 0) > 20000)
       throw new HttpError(413, "Request too large.");

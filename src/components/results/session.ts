@@ -55,4 +55,5 @@ export function saveAttempt(a: SavedAttempt) {
 }
 
 // Compatibility bridge for Sakura's persisted Zustand design store.
-export const designerDraftKey=(slug:string)=>`mission-possible:design:${slug}`;
+export const designerDraftKey = (slug: string) =>
+  `mission-possible:design:${slug}`;
