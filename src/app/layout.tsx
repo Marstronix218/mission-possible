@@ -1,30 +1,37 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { ReactNode } from "react";
+import DemoBanner from "@/components/results/DemoBanner";
+import "maplibre-gl/dist/maplibre-gl.css";
 import "./globals.css";
-
 export const metadata: Metadata = {
   title: "Mission: Possible — Code Blue",
-  description: "Design an Earth observation satellite and explore its trade-offs.",
+  description: "Design a satellite. Protect your community.",
 };
-
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <a className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-10 focus:bg-card focus:p-3" href="#main-content">
+        <a className="skip-link" href="#main-content">
           Skip to content
         </a>
-        <header className="border-b border-border">
-          <div className="mx-auto flex min-h-16 max-w-6xl items-center px-5 sm:px-8">
-            <Link className="font-semibold tracking-tight" href="/">
-              Mission: Possible <span className="ml-2 text-primary">Code Blue</span>
-            </Link>
-          </div>
+        <header className="site-header">
+          <Link className="brand" href="/map">
+            <span className="brand-icon">✳</span> MISSION: POSSIBLE{" "}
+            <small>CODE BLUE</small>
+          </Link>
+          <nav aria-label="Main">
+            <Link href="/map">Mission map</Link>
+            <Link href="/classroom">Join class</Link>
+            <Link href="/teacher">Teacher</Link>
+            <Link href="/leaderboard">Rankings</Link>
+          </nav>
         </header>
-        <main id="main-content" tabIndex={-1} className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-20">
-          {children}
-        </main>
+        <DemoBanner />
+        {children}
+        <footer>
+          MISSION: POSSIBLE / CODE BLUE{" "}
+          <span>Learn through exploration. Build for your community.</span>
+        </footer>
       </body>
     </html>
   );

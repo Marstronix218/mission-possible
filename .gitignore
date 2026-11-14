@@ -8,8 +8,19 @@ Thumbs.db
 # Editor settings
 .vscode/
 .idea/
+
 node_modules/
 .next/
-next-env.d.ts
-.env*
 *.tsbuildinfo
+
+public/maps/maplibre-worker.mjs
+
+.env*
+!.env.example
+
+# Generated SQL Editor bundle
+supabase/setup.sql
+
+# Additional upstream exclusions
+next-env.d.ts
+!.env.example
