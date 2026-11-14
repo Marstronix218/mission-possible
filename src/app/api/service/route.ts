@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { identity, HttpError, check } from "@/lib/backend";
-import {canManageClassrooms} from "@/lib/authorization";
+import { canManageClassrooms } from "@/lib/authorization";
 import {
   classSchema,
   designSchema,
@@ -13,6 +13,10 @@ import { runSimulation, summarizeResources, ENGINE_VERSION } from "@/lib/sim";
 export const runtime = "nodejs";
 const uuid = z.string().uuid();
 const inputSchema = z.discriminatedUnion("action", [
+  z.object({
+    action: z.literal("setNickname"),
+    nickname: nicknameSchema.nullable(),
+  }),
   z.object({ action: z.literal("createClass"), settings: classSchema }),
   z.object({ action: z.literal("listClasses") }),
   z.object({
@@ -56,8 +60,16 @@ export async function POST(request: Request) {
     const input = inputSchema.parse(JSON.parse(raw));
     const { db, user } = await identity(request);
     const teacher = async () => {
-      const {data,error}=await db.from('profiles').select('role').eq('id',user.id).maybeSingle();
-      if(error||!canManageClassrooms(user,data?.role))throw new HttpError(403,'Sign in with your teacher email and ask the project administrator to approve your teacher role.');
+      const { data, error } = await db
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error || !canManageClassrooms(user, data?.role))
+        throw new HttpError(
+          403,
+          "Sign in with your teacher email and ask the project administrator to approve your teacher role.",
+        );
     };
     const owned = async (id: string) => {
       await teacher();
@@ -89,6 +101,16 @@ export async function POST(request: Request) {
       }
       return c;
     };
+    if (input.action === "setNickname") {
+      const { data, error } = await db
+        .from("profiles")
+        .update({ nickname: input.nickname })
+        .eq("id", user.id)
+        .select("nickname")
+        .single();
+      check(error);
+      return NextResponse.json(data);
+    }
     if (input.action === "createClass") {
       await teacher();
       const { data, error } = await db
@@ -238,7 +260,27 @@ export async function POST(request: Request) {
         p_engine: ENGINE_VERSION,
       });
       check(error);
-      return NextResponse.json(data);
+      return NextResponse.json(
+        (data ?? []).map(
+          (
+            row: {
+              nickname: string;
+              score: number;
+              attempts: number;
+              improvement: number;
+              achieved: string;
+            },
+            i: number,
+          ) => ({
+            entry_id: i + 1,
+            nickname: row.nickname,
+            score: row.score,
+            attempts: row.attempts,
+            improvement: row.improvement,
+            achieved: row.achieved,
+          }),
+        ),
+      );
     }
 
     throw new HttpError(400, "Unknown action.");

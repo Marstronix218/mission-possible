@@ -62,7 +62,7 @@ export function RankingTable({ rows }: { rows: Ranking[] }) {
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={r.user_id}>
+            <tr key={r.entry_id}>
               <td>{i + 1}</td>
               <th scope="row">{r.nickname}</th>
               <td>{Number(r.score).toFixed(1)}</td>
@@ -238,7 +238,9 @@ export function ClassDashboard({ id }: { id: string }) {
                 <p>
                   {c.deadline
                     ? "Deadline: " +
-                      new Date(c.deadline).toLocaleString("en-US")
+                      new Date(c.deadline).toLocaleString("en-US", {
+                        timeZoneName: "short",
+                      })
                     : "No deadline"}
                 </p>
                 {c.is_active &&
@@ -285,6 +287,22 @@ export function GlobalRanking({
       ? initialMission
       : "los-angeles",
   );
+  const [publicNickname, setPublicNickname] = useState("");
+  const [notice, setNotice] = useState("");
+  async function publishNickname(nickname: string | null) {
+    setError("");
+    try {
+      await api("setNickname", { nickname });
+      setNotice(
+        nickname
+          ? "Your standard-condition scores are public under this nickname."
+          : "Your scores are hidden from the global ranking.",
+      );
+      await load();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not update nickname.");
+    }
+  }
   const [rows, setRows] = useState<Ranking[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -339,20 +357,52 @@ export function GlobalRanking({
             {loading ? "Loading…" : "Load ranking"}
           </button>
           <ErrorMessage message={error} />
+          {!classroomId && (
+            <section>
+              <h2>Choose whether to appear publicly</h2>
+              <p>
+                Publishing a nickname makes your standard-condition solo scores
+                visible. Use a nickname, not your real name or email.
+              </p>
+              <label className="field">
+                Public nickname
+                <input
+                  value={publicNickname}
+                  onChange={(e) => setPublicNickname(e.target.value)}
+                  minLength={2}
+                  maxLength={24}
+                />
+              </label>
+              <div className="actions">
+                <button onClick={() => publishNickname(publicNickname)}>
+                  Publish my nickname & scores
+                </button>
+                <button onClick={() => publishNickname(null)}>
+                  Hide my global scores
+                </button>
+              </div>
+              {notice && <p role="status">{notice}</p>}
+            </section>
+          )}
           <RankingTable rows={rows} />
         </section>
       )}
     </main>
   );
 }
-export function TeacherDashboard({authError}:{authError?:string}) {
+export function TeacherDashboard({ authError }: { authError?: string }) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState(authError?"The sign-in link is invalid or expired. Request a new magic link.":"");
+  const [error, setError] = useState(
+    authError
+      ? "The sign-in link is invalid or expired. Request a new magic link."
+      : "",
+  );
   const [classes, setClasses] = useState<Classroom[]>([]);
   const [selected, setSelected] = useState<Classroom | null>(null);
   const [students, setStudents] = useState<StudentData | null>(null);
   const [busy, setBusy] = useState(false);
+  const scoringLocked = Boolean(selected && students?.attempts.length);
   async function list() {
     setError("");
     try {
@@ -388,7 +438,9 @@ export function TeacherDashboard({authError}:{authError?:string}) {
     try {
       const settings = {
         name: String(f.get("name")),
-        mission_slug: String(f.get("mission")),
+        mission_slug: scoringLocked
+          ? selected!.mission_slug
+          : String(f.get("mission")),
         budget_m: Number(f.get("budget")),
         mass_kg: Number(f.get("mass")),
         max_attempts: f.get("attempts") ? Number(f.get("attempts")) : null,
@@ -419,6 +471,7 @@ export function TeacherDashboard({authError}:{authError?:string}) {
   }
   async function inspect(c: Classroom) {
     setSelected(c);
+    setStudents(null);
     setError("");
     try {
       setStudents(await api<StudentData>("students", { id: c.id }));
@@ -500,6 +553,12 @@ export function TeacherDashboard({authError}:{authError?:string}) {
               <h2>
                 {selected ? "Edit " + selected.name : "Create a classroom"}
               </h2>
+              {scoringLocked && (
+                <p className="notice">
+                  Mission, budget, and mass are locked after the first attempt.
+                  Create a new class for a different assignment.
+                </p>
+              )}
               <label className="field">
                 Class name
                 <input
@@ -513,6 +572,7 @@ export function TeacherDashboard({authError}:{authError?:string}) {
                 Mission
                 <select
                   name="mission"
+                  disabled={scoringLocked}
                   defaultValue={selected?.mission_slug ?? "los-angeles"}
                 >
                   {playableMissions.map((m) => (
@@ -526,6 +586,7 @@ export function TeacherDashboard({authError}:{authError?:string}) {
                 Budget ($M)
                 <input
                   name="budget"
+                  readOnly={scoringLocked}
                   type="number"
                   required
                   min={80}
@@ -537,6 +598,7 @@ export function TeacherDashboard({authError}:{authError?:string}) {
                 Mass (kg)
                 <input
                   name="mass"
+                  readOnly={scoringLocked}
                   type="number"
                   required
                   min={150}
@@ -657,7 +719,9 @@ export function TeacherDashboard({authError}:{authError?:string}) {
                       .map((a) => (
                         <li key={a.id}>
                           {Number(a.score_total).toFixed(1)}/100 ·{" "}
-                          {new Date(a.created_at).toLocaleString("en-US")}
+                          {new Date(a.created_at).toLocaleString("en-US", {
+                            timeZoneName: "short",
+                          })}
                           <details>
                             <summary>View satellite design</summary>
                             <pre>{JSON.stringify(a.design, null, 2)}</pre>

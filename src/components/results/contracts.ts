@@ -44,7 +44,7 @@ export type Classroom = {
   teacher_id: string;
 };
 export type Ranking = {
-  user_id: string;
+  entry_id: number;
   nickname: string;
   score: number;
   attempts: number;

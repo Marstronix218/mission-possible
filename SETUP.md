@@ -71,3 +71,18 @@ Fetched all remote branches on 2026-11-14. `origin/develop` remains `a9b980a3afd
 The latest upstream PRD is now included. `docs/upstream-setup.md` preserves Nori’s foundation setup guide; use this SETUP.md for the current standalone branch’s local commands. Other upstream implementation branches have been fetched for integration, not force-merged over local work.
 
 The classroom API now follows the upstream authorization rule: only a non-anonymous, email-confirmed user with a server-read `profiles.role = teacher` can manage classes. Clients cannot grant that role themselves.
+
+## Verified backend status and database access
+
+The configured public and secret API keys have been verified without logging their values. The database REST and Auth settings endpoints return 200. The application tables are not yet present. Email sign-in is enabled; anonymous sign-in is currently disabled. Enable anonymous sign-ins before student/solo cloud testing.
+
+The three API variables do not grant arbitrary SQL execution. To let the migration runner create the schema, set `SUPABASE_DB_URL` in `.env.local` to a PostgreSQL connection string from the Supabase Connect dialog (session-pooler or direct connection). Credentials stay in the local file. Run:
+
+```sh
+npm run db:check
+npm run db:migrate
+```
+
+The runner checks that a hosted connection matches the configured Supabase project, enforces certificate verification, uses a transaction/advisory lock, and records applied migration versions/checksums. It never logs a connection string. Alternatively, use the separately supplied `database-setup.sql` in the project SQL Editor for this empty project. No hosted migration has been claimed or applied without SQL/admin access.
+
+The third migration locks scoring settings once a class has attempts, backfills pre-existing Auth users as students, and requires explicit public-nickname choice before solo scores appear globally. API ranking responses omit internal user IDs. Class deadlines display the local timezone; database time remains authoritative.

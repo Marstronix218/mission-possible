@@ -17,3 +17,6 @@ public/maps/maplibre-worker.mjs
 
 .env*
 !.env.example
+
+# Generated SQL Editor bundle
+supabase/setup.sql
