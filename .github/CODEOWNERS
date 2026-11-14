@@ -1,0 +1,14 @@
+# Verified repository owner. Replace/add teammates only after confirming their
+# GitHub handles and repository access; PRD display names are not account names.
+* @Marstronix218
+
+# Nori: backend, infrastructure, and shared-contract integration.
+/supabase/ @Marstronix218
+/src/app/api/ @Marstronix218
+/src/lib/supabase/ @Marstronix218
+/src/lib/api/ @Marstronix218
+/src/types/ @Marstronix218
+/.github/ @Marstronix218
+/src/proxy.ts @Marstronix218
+/middleware.ts @Marstronix218
+/vercel.json @Marstronix218
