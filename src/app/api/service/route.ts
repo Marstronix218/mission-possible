@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { identity, HttpError, check } from "@/lib/backend";
+import {canManageClassrooms} from "@/lib/authorization";
 import {
   classSchema,
   designSchema,
@@ -54,15 +55,12 @@ export async function POST(request: Request) {
     if (raw.length > 20000) throw new HttpError(413, "Request too large.");
     const input = inputSchema.parse(JSON.parse(raw));
     const { db, user } = await identity(request);
-    const teacher = () => {
-      if (user.is_anonymous || !user.email_confirmed_at)
-        throw new HttpError(
-          403,
-          "Teachers must sign in using their email magic link.",
-        );
+    const teacher = async () => {
+      const {data,error}=await db.from('profiles').select('role').eq('id',user.id).maybeSingle();
+      if(error||!canManageClassrooms(user,data?.role))throw new HttpError(403,'Sign in with your teacher email and ask the project administrator to approve your teacher role.');
     };
     const owned = async (id: string) => {
-      teacher();
+      await teacher();
       const { data, error } = await db
         .from("classrooms")
         .select("*")
@@ -92,7 +90,7 @@ export async function POST(request: Request) {
       return c;
     };
     if (input.action === "createClass") {
-      teacher();
+      await teacher();
       const { data, error } = await db
         .from("classrooms")
         .insert({
@@ -106,7 +104,7 @@ export async function POST(request: Request) {
       return NextResponse.json(data);
     }
     if (input.action === "listClasses") {
-      teacher();
+      await teacher();
       const { data, error } = await db
         .from("classrooms")
         .select("*")

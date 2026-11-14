@@ -17,7 +17,7 @@ Open http://localhost:3000/map. The three MVP missions run the actual determinis
 2. Apply both SQL files in `supabase/migrations/` in filename order with Supabase migrations or its SQL editor. This migration includes RLS, service-only mutation functions, transactional submission limits, and a Realtime timestamp table.
 3. In Authentication, enable Anonymous Sign-Ins and email Magic Links. Set the site URL and allow `/teacher` and `/auth/confirm` as a redirect URL for both localhost and the intended deployment. Configure email delivery for the intended class size. Supabase's default email delivery limits are suitable only for testing.
 4. Copy `.env.example` to `.env.local`, then set the project URL, anonymous public key, and service-role key. The service-role key is server-only: never add a `NEXT_PUBLIC_` prefix or commit it.
-5. Restart/build the app. The browser obtains an anonymous session for students and solo players. Teachers request a magic link, sign in, then click **Load my classes**.
+5. Restart/build the app. The browser obtains an anonymous session for students and solo players. Teachers request a magic link and sign in. A project administrator must then approve their `profiles.role` as `teacher` using trusted Supabase administration; a verified email alone does not grant this role. Then click **Load my classes**.
 6. Create a classroom, share its six-character code, and join as a student in a separate browser profile. Student sign-in requires no email.
 7. Submit two designs, confirm the class ranking updates, inspect history as the teacher, and check that a second unrelated account cannot read the class. These live Auth/email/Realtime checks require the real project and have not been executed in this environment.
 
@@ -63,3 +63,11 @@ Nori’s foundation migration `20261114000000_profiles_and_attempts.sql` is pres
 The browser uses `@supabase/ssr` cookie-backed sessions for compatibility with Nori’s auth foundation. `/auth/confirm` supports the foundation’s `token_hash` email template and verifies the OTP before redirecting to the teacher dashboard.
 
 Final browser checks: a valid thermal/sun-synchronous design scored 61.2; switching its orbit to Low LEO scored 33.5. The comparison showed −27.7 points and the orbit change. Removing all instruments disabled launch. NASA imagery and redesign/history rendered successfully.
+
+## Latest upstream information
+
+Fetched all remote branches on 2026-11-14. `origin/develop` remains `a9b980a3afddb7671a7286369bfc60134e94c17e`. `origin/main` is `2be9a014d834866c222daecdd8bc1437a2c7d94e`. Ryohei’s latest branch is `c91776ede3b5e596b93551706780d69a42914fb3`; all simulation, game-type, and mission-data files already match that branch.
+
+The latest upstream PRD is now included. `docs/upstream-setup.md` preserves Nori’s foundation setup guide; use this SETUP.md for the current standalone branch’s local commands. Other upstream implementation branches have been fetched for integration, not force-merged over local work.
+
+The classroom API now follows the upstream authorization rule: only a non-anonymous, email-confirmed user with a server-read `profiles.role = teacher` can manage classes. Clients cannot grant that role themselves.
