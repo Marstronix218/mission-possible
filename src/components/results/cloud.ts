@@ -1,5 +1,6 @@
 "use client";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import type {SupabaseClient} from "@supabase/supabase-js";
+import {createBrowserClient} from "@supabase/ssr";
 let client: SupabaseClient | undefined;
 export const cloudConfigured = !!(
   process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -10,7 +11,7 @@ export function cloud() {
     throw new Error(
       "Live classrooms require Supabase configuration. See SETUP.md.",
     );
-  return (client ??= createClient(
+  return (client ??= createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   ));

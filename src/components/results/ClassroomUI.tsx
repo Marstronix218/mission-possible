@@ -345,10 +345,10 @@ export function GlobalRanking({
     </main>
   );
 }
-export function TeacherDashboard() {
+export function TeacherDashboard({authError}:{authError?:string}) {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(authError?"The sign-in link is invalid or expired. Request a new magic link.":"");
   const [classes, setClasses] = useState<Classroom[]>([]);
   const [selected, setSelected] = useState<Classroom | null>(null);
   const [students, setStudents] = useState<StudentData | null>(null);

@@ -15,7 +15,7 @@ Open http://localhost:3000/map. The three MVP missions run the actual determinis
 
 1. Create a development Supabase project (or use the team's existing project).
 2. Apply both SQL files in `supabase/migrations/` in filename order with Supabase migrations or its SQL editor. This migration includes RLS, service-only mutation functions, transactional submission limits, and a Realtime timestamp table.
-3. In Authentication, enable Anonymous Sign-Ins and email Magic Links. Set the site URL and allow `/teacher` as a redirect URL for both localhost and the intended deployment. Configure email delivery for the intended class size. Supabase's default email delivery limits are suitable only for testing.
+3. In Authentication, enable Anonymous Sign-Ins and email Magic Links. Set the site URL and allow `/teacher` and `/auth/confirm` as a redirect URL for both localhost and the intended deployment. Configure email delivery for the intended class size. Supabase's default email delivery limits are suitable only for testing.
 4. Copy `.env.example` to `.env.local`, then set the project URL, anonymous public key, and service-role key. The service-role key is server-only: never add a `NEXT_PUBLIC_` prefix or commit it.
 5. Restart/build the app. The browser obtains an anonymous session for students and solo players. Teachers request a magic link, sign in, then click **Load my classes**.
 6. Create a classroom, share its six-character code, and join as a student in a separate browser profile. Student sign-in requires no email.
@@ -59,3 +59,7 @@ The simulation dependency is Ryohei's branch commit `00efd67345a036735664136ebc0
 This environment currently has no working authenticated GitHub write connection. The installed connector reports an unavailable tool, and no GitHub CLI/token is configured. The local source and ZIP are complete delivery artifacts, but they are not a remote push or pull request. Do not merge directly into `main` or `develop`.
 
 Nori’s foundation migration `20261114000000_profiles_and_attempts.sql` is preserved unchanged from the current main branch. The classroom migration extends that schema rather than creating a competing attempts table. The repository main branch gained this foundation while implementation was in progress; `develop` is still at the original PRD commit.
+
+The browser uses `@supabase/ssr` cookie-backed sessions for compatibility with Nori’s auth foundation. `/auth/confirm` supports the foundation’s `token_hash` email template and verifies the OTP before redirecting to the teacher dashboard.
+
+Final browser checks: a valid thermal/sun-synchronous design scored 61.2; switching its orbit to Low LEO scored 33.5. The comparison showed −27.7 points and the orbit change. Removing all instruments disabled launch. NASA imagery and redesign/history rendered successfully.
