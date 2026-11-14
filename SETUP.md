@@ -54,13 +54,13 @@ The local dev/build commands use Webpack because this host's Turbopack file watc
 
 ## GitHub delivery
 
-Local branch: `feat/wako/world-results`. Integration base: `develop`, currently at the original PRD commit.
+Local branch: `feat/wako/world-results`. Integration base: `develop` at `617701ef05be9c0644b902cbe691cf22f37fad3d`.
 
-The simulation dependency is Ryohei's branch commit `00efd67345a036735664136ebc01d8eda90c8ffb`. Its source is copied unchanged, and its origin is recorded here. Coordinate the simulation branch merge before merging this application branch. This work also bootstraps Next.js and adds a temporary designer/backend because no other implementation exists on `develop` yet.
+The simulation dependency is Ryohei's branch commit `00efd67345a036735664136ebc01d8eda90c8ffb`. Its source is copied unchanged, and its origin is recorded here. The dependency is already present in the current integration base. Sakura’s shared designer, stores, UI primitives, and tokens are preserved; the mock briefing/designer entrypoints select Wako’s local demo only when mock mode is active.
 
-This environment currently has no working authenticated GitHub write connection. The installed connector reports an unavailable tool, and no GitHub CLI/token is configured. The local source and ZIP are complete delivery artifacts, but they are not a remote push or pull request. Do not merge directly into `main` or `develop`.
+GitHub is connected for feature-branch delivery. This work is submitted as a draft integration PR; it does not change protected branches or claim production readiness.
 
-Nori’s foundation migration `20261114000000_profiles_and_attempts.sql` is preserved unchanged from the current main branch. The classroom migration extends that schema rather than creating a competing attempts table. The repository main branch gained this foundation while implementation was in progress; `develop` is still at the original PRD commit.
+Nori’s foundation migration `20261114000000_profiles_and_attempts.sql` is preserved unchanged from the current main branch. The classroom migration extends that schema rather than creating a competing attempts table. The repository main branch gained this foundation while implementation was in progress; the delivery branch has now been reconciled with the updated `develop` foundation.
 
 The browser uses `@supabase/ssr` cookie-backed sessions for compatibility with Nori’s auth foundation. `/auth/confirm` supports the foundation’s `token_hash` email template and verifies the OTP before redirecting to the teacher dashboard.
 
@@ -68,7 +68,7 @@ Final browser checks: a valid thermal/sun-synchronous design scored 61.2; switch
 
 ## Latest upstream information
 
-Fetched all remote branches on 2026-11-14. `origin/develop` remains `a9b980a3afddb7671a7286369bfc60134e94c17e`. `origin/main` is `2be9a014d834866c222daecdd8bc1437a2c7d94e`. Ryohei’s latest branch is `c91776ede3b5e596b93551706780d69a42914fb3`; all simulation, game-type, and mission-data files already match that branch.
+Fetched all remote branches on 2026-11-14. `origin/develop` is now `617701ef05be9c0644b902cbe691cf22f37fad3d` and its shared components have been reconciled into this feature branch. `origin/main` is `2be9a014d834866c222daecdd8bc1437a2c7d94e`. Ryohei’s latest branch is `c91776ede3b5e596b93551706780d69a42914fb3`; all simulation, game-type, and mission-data files already match that branch.
 
 The latest upstream PRD is now included. `docs/upstream-setup.md` preserves Nori’s foundation setup guide; use this SETUP.md for the current standalone branch’s local commands. Other upstream implementation branches have been fetched for integration, not force-merged over local work.
 

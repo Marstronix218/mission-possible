@@ -11,7 +11,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <header>
+        <a className="skip-link" href="#main-content">
+          Skip to content
+        </a>
+        <header className="site-header">
           <Link className="brand" href="/map">
             <span className="brand-icon">✳</span> MISSION: POSSIBLE{" "}
             <small>CODE BLUE</small>

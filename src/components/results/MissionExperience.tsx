@@ -392,7 +392,7 @@ export default function MissionExperience({
     </div>
   );
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <Link className="back" href="/map">
         ← All missions
       </Link>

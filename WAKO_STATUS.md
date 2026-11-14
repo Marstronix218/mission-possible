@@ -25,4 +25,10 @@ Only Los Angeles, Houston, and Phoenix have playable mission data. The other 15 
 
 The mock classroom is browser-local roleplay, not multi-device authentication or an authoritative shared service. Live backend and deployment checks remain outside the requested mock-data continuation. The live adapter will need the agreed authoritative classroom/status/history contracts before production acceptance.
 
-Changes are committed on the local `feat/wako/world-results` branch. GitHub's write connection still reports an unavailable tool; no remote push or PR is claimed.
+Delivery branch: `feat/wako/world-results`. GitHub access is connected; this snapshot is being published for draft integration review. The upstream shared designer and UI components are preserved, with Wako’s mock screens selected only in mock mode.
+
+## Upstream reconciliation before publication
+
+The updated develop foundation is preserved, including Sakura’s original designer, design store, UI primitives, and styling tokens. The shared briefing/designer pages use the upstream implementation in live mode and the local Wako flow in explicit mock mode. Dependencies are merged with the upstream npm package/lockfile and previously floating versions are pinned to the versions already tested. A skip-to-content link is restored.
+
+After reconciliation, all 35 tests and the production build pass. ESLint passes with one pre-existing warning in the unchanged upstream designer about internal window.location navigation. The combined teacher dashboard renders without console errors.

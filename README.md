@@ -22,4 +22,4 @@ No Supabase project credentials, live classroom accounts, or hosting configurati
 
 `npm audit` currently reports eight moderate findings in the development-only ESLint dependency chain. No forced incompatible dependency downgrade was applied.
 
-Nori’s foundation migration `20261114000000_profiles_and_attempts.sql` is preserved unchanged from the current main branch. The classroom migration extends that schema rather than creating a competing attempts table. The repository main branch gained this foundation while implementation was in progress; `develop` is still at the original PRD commit.
+Nori’s foundation migration `20261114000000_profiles_and_attempts.sql` is preserved unchanged from the current main branch. The classroom migration extends that schema rather than creating a competing attempts table. The repository main branch gained this foundation while implementation was in progress; the delivery branch has now been reconciled with the updated `develop` foundation.

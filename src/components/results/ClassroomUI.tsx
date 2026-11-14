@@ -109,7 +109,7 @@ export function JoinClass() {
     }
   }
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <div className="eyebrow">CLASSROOM / STUDENT</div>
       <h1>
         One challenge.
@@ -258,7 +258,7 @@ export function ClassDashboard({ id }: { id: string }) {
     ? classroomBlocker(c, progress?.attemptsUsed ?? 0, now)
     : null;
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <div className="eyebrow">CLASSROOM MISSION</div>
       <h1>{c?.name ?? "Your classroom"}</h1>
       {!backendAvailable ? (
@@ -396,7 +396,7 @@ export function GlobalRanking({
     }
   }
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <div className="eyebrow">
         {classroomId ? "CLASSROOM" : "GLOBAL"} / LEADERBOARD
       </div>
@@ -606,7 +606,7 @@ export function TeacherDashboard({ authError }: { authError?: string }) {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <div className="eyebrow">CLASSROOM / TEACHER</div>
       <h1>
         Turn experiments

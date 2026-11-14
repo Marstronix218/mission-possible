@@ -162,7 +162,7 @@ export default function MissionMap() {
     (m) => filter === "all" || m.category === filter,
   );
   return (
-    <main>
+    <main id="main-content" tabIndex={-1}>
       <div className="eyebrow">MISSION CONTROL / 01 — EXPLORE</div>
       <div className="title-row">
         <div>
