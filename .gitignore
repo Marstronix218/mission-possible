@@ -8,3 +8,7 @@ Thumbs.db
 # Editor settings
 .vscode/
 .idea/
+node_modules/
+.next/
+next-env.d.ts
+.env*
