@@ -1,0 +1,95 @@
+[
+  {
+    "slug": "los-angeles",
+    "city": "Los Angeles",
+    "category": "wildfire",
+    "objective": {
+      "en": "Detect active wildfire cells quickly enough to support community evacuation planning."
+    },
+    "bbox": [
+      -118.95,
+      33.65,
+      -117.55,
+      34.45
+    ],
+    "defaultConstraints": {
+      "budgetM": 250,
+      "massKg": 500
+    },
+    "durationDays": 7,
+    "seed": 2182026,
+    "targetResponseHours": 6,
+    "sources": [
+      {
+        "name": "NASA FIRMS / VIIRS (reference dataset)",
+        "url": "https://firms.modaps.eosdis.nasa.gov/",
+        "usage": "Hazard placement is an educational model inspired by FIRMS fire-detection products; cells are not current observations.",
+        "accessedOn": "2026-11-14",
+        "provenance": "educational-model"
+      }
+    ],
+    "gridCellCount": 400
+  },
+  {
+    "slug": "houston",
+    "city": "Houston",
+    "category": "flood",
+    "objective": {
+      "en": "Map flooded neighborhoods through cloud cover and deliver actionable coverage within 12 hours."
+    },
+    "bbox": [
+      -96.05,
+      29.35,
+      -94.95,
+      30.15
+    ],
+    "defaultConstraints": {
+      "budgetM": 250,
+      "massKg": 500
+    },
+    "durationDays": 7,
+    "seed": 7132026,
+    "targetResponseHours": 12,
+    "sources": [
+      {
+        "name": "NASA GPM IMERG and OPERA DSWx (reference datasets)",
+        "url": "https://gpm.nasa.gov/data/imerg",
+        "usage": "Flood and cloud patterns are educational models inspired by precipitation and surface-water products; cells are not current observations.",
+        "accessedOn": "2026-11-14",
+        "provenance": "educational-model"
+      }
+    ],
+    "gridCellCount": 400
+  },
+  {
+    "slug": "phoenix",
+    "city": "Phoenix",
+    "category": "heat",
+    "objective": {
+      "en": "Identify the hottest urban areas with sufficient accuracy to prioritize heat-response resources."
+    },
+    "bbox": [
+      -112.55,
+      33.15,
+      -111.55,
+      33.85
+    ],
+    "defaultConstraints": {
+      "budgetM": 250,
+      "massKg": 500
+    },
+    "durationDays": 7,
+    "seed": 6022026,
+    "targetResponseHours": 24,
+    "sources": [
+      {
+        "name": "NASA ECOSTRESS land-surface temperature (reference dataset)",
+        "url": "https://ecostress.jpl.nasa.gov/",
+        "usage": "Heat intensity is an educational model inspired by ECOSTRESS products; cells are not current observations.",
+        "accessedOn": "2026-11-14",
+        "provenance": "educational-model"
+      }
+    ],
+    "gridCellCount": 400
+  }
+]
