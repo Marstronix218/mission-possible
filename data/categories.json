@@ -1,0 +1,10 @@
+{
+  "wildfire": { "weights": { "accuracy": 30, "responseTime": 30, "coverage": 20, "costEfficiency": 10, "reliability": 10 }, "targetResponseHours": 6, "cloudImpact": 0.65 },
+  "heat": { "weights": { "accuracy": 40, "responseTime": 15, "coverage": 20, "costEfficiency": 15, "reliability": 10 }, "targetResponseHours": 24, "cloudImpact": 1.0 },
+  "flood": { "weights": { "accuracy": 25, "responseTime": 25, "coverage": 30, "costEfficiency": 10, "reliability": 10 }, "targetResponseHours": 12, "cloudImpact": 1.0 },
+  "snow": { "weights": { "accuracy": 25, "responseTime": 15, "coverage": 35, "costEfficiency": 15, "reliability": 10 }, "targetResponseHours": 24, "cloudImpact": 1.0 },
+  "drought": { "weights": { "accuracy": 25, "responseTime": 5, "coverage": 25, "costEfficiency": 15, "reliability": 30 }, "targetResponseHours": 72, "cloudImpact": 0.2 },
+  "storm": { "weights": { "accuracy": 20, "responseTime": 30, "coverage": 30, "costEfficiency": 10, "reliability": 10 }, "targetResponseHours": 3, "cloudImpact": 0.15 },
+  "glacier": { "weights": { "accuracy": 40, "responseTime": 5, "coverage": 20, "costEfficiency": 15, "reliability": 20 }, "targetResponseHours": 72, "cloudImpact": 0.65 },
+  "volcano": { "weights": { "accuracy": 35, "responseTime": 20, "coverage": 15, "costEfficiency": 10, "reliability": 20 }, "targetResponseHours": 12, "cloudImpact": 0.65 }
+}
