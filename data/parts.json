@@ -1,0 +1,45 @@
+{
+  "bus": { "costM": 35, "massKg": 90, "powerW": 45 },
+  "instruments": [
+    { "id": "opt_hr", "name": "High-Res Optical Camera", "kind": "optical", "costM": 40, "massKg": 60, "powerW": 80, "dataGBPerDay": 40, "resolutionScore": 1.0, "cloudPenetrating": false, "categoryFit": { "flood": 0.75, "glacier": 0.9 } },
+    { "id": "msi", "name": "Multispectral Imager", "kind": "multispectral", "costM": 25, "massKg": 40, "powerW": 50, "dataGBPerDay": 15, "resolutionScore": 0.75, "cloudPenetrating": false, "categoryFit": { "snow": 0.9, "heat": 0.65, "flood": 0.65, "glacier": 0.7 } },
+    { "id": "tir", "name": "Thermal Infrared Sensor", "kind": "thermal", "costM": 30, "massKg": 45, "powerW": 70, "dataGBPerDay": 10, "resolutionScore": 0.8, "cloudPenetrating": false, "categoryFit": { "wildfire": 1.0, "heat": 1.0, "volcano": 0.95 } },
+    { "id": "pmw", "name": "Passive Microwave Radiometer", "kind": "microwave", "costM": 35, "massKg": 70, "powerW": 90, "dataGBPerDay": 3, "resolutionScore": 0.35, "cloudPenetrating": true, "categoryFit": { "storm": 0.9, "drought": 0.9, "snow": 0.8, "flood": 0.6 } },
+    { "id": "sar", "name": "Synthetic Aperture Radar", "kind": "radar", "costM": 60, "massKg": 120, "powerW": 400, "dataGBPerDay": 50, "resolutionScore": 0.95, "cloudPenetrating": true, "categoryFit": { "flood": 1.0, "volcano": 0.9, "glacier": 0.7 } },
+    { "id": "pr", "name": "Precipitation Radar", "kind": "radar", "costM": 50, "massKg": 100, "powerW": 250, "dataGBPerDay": 8, "resolutionScore": 0.5, "cloudPenetrating": true, "categoryFit": { "storm": 1.0, "snow": 0.7, "flood": 0.6 } },
+    { "id": "lidar", "name": "Laser Altimeter", "kind": "lidar", "costM": 45, "massKg": 80, "powerW": 150, "dataGBPerDay": 5, "resolutionScore": 0.9, "cloudPenetrating": false, "categoryFit": { "glacier": 1.0 } },
+    { "id": "grav", "name": "Gravity Mission Package", "kind": "gravimetry", "costM": 70, "massKg": 150, "powerW": 120, "dataGBPerDay": 1, "resolutionScore": 0.15, "cloudPenetrating": true, "categoryFit": { "drought": 1.0 } }
+  ],
+  "orbits": [
+    { "id": "leo_400", "name": "Low LEO", "costM": 10, "massKg": 15, "revisitFactor": 1.0, "swathFactor": 0.6, "resolutionFactor": 1.3, "reliabilityFactor": 0.85 },
+    { "id": "sso_700", "name": "Sun-Synchronous", "costM": 15, "massKg": 20, "revisitFactor": 0.8, "swathFactor": 1.0, "resolutionFactor": 1.0, "reliabilityFactor": 1.0 },
+    { "id": "meo_tilt", "name": "Inclined Mid Orbit", "costM": 20, "massKg": 28, "revisitFactor": 1.2, "swathFactor": 1.6, "resolutionFactor": 0.7, "reliabilityFactor": 0.95 },
+    { "id": "geo", "name": "Geostationary", "costM": 80, "massKg": 65, "revisitFactor": 0.1, "swathFactor": 4.0, "resolutionFactor": 0.1, "reliabilityFactor": 1.0 }
+  ],
+  "solar": [
+    { "id": "solar_s", "name": "Small Solar Array", "costM": 8, "massKg": 18, "generationW": 150 },
+    { "id": "solar_m", "name": "Medium Solar Array", "costM": 16, "massKg": 35, "generationW": 400 },
+    { "id": "solar_l", "name": "Large Solar Array", "costM": 28, "massKg": 65, "generationW": 800 }
+  ],
+  "batteries": [
+    { "id": "battery_s", "name": "Small Battery", "costM": 5, "massKg": 15, "eclipseContinuity": 0.65 },
+    { "id": "battery_m", "name": "Medium Battery", "costM": 10, "massKg": 30, "eclipseContinuity": 0.82 },
+    { "id": "battery_l", "name": "Large Battery", "costM": 18, "massKg": 55, "eclipseContinuity": 0.96 }
+  ],
+  "communications": [
+    { "id": "uhf", "name": "UHF", "costM": 4, "massKg": 8, "powerW": 20, "rateGbps": 0.1 },
+    { "id": "s_band", "name": "S-band", "costM": 8, "massKg": 12, "powerW": 35, "rateGbps": 0.5 },
+    { "id": "x_band", "name": "X-band", "costM": 16, "massKg": 18, "powerW": 60, "rateGbps": 2 },
+    { "id": "ka_band", "name": "Ka-band", "costM": 26, "massKg": 25, "powerW": 95, "rateGbps": 8 }
+  ],
+  "storage": [
+    { "id": "storage_32", "name": "32 GB Storage", "costM": 3, "massKg": 4, "capacityGB": 32 },
+    { "id": "storage_128", "name": "128 GB Storage", "costM": 8, "massKg": 8, "capacityGB": 128 },
+    { "id": "storage_512", "name": "512 GB Storage", "costM": 18, "massKg": 15, "capacityGB": 512 }
+  ],
+  "groundStations": {
+    "1": { "costM": 2, "accessMinutesPerDay": 8 },
+    "3": { "costM": 8, "accessMinutesPerDay": 22 },
+    "5": { "costM": 15, "accessMinutesPerDay": 36 }
+  }
+}
