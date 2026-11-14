@@ -8,3 +8,17 @@ Thumbs.db
 # Editor settings
 .vscode/
 .idea/
+
+# Dependencies and build outputs
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Credentials and local tooling
+.env*
+!.env.example
+.vercel/
+supabase/.temp/
+supabase/.branches/
