@@ -58,7 +58,7 @@ Local branch: `feat/wako/world-results`. Integration base: `develop` at `617701e
 
 The simulation dependency is Ryohei's branch commit `00efd67345a036735664136ebc01d8eda90c8ffb`. Its source is copied unchanged, and its origin is recorded here. The dependency is already present in the current integration base. Sakura’s shared designer, stores, UI primitives, and tokens are preserved; the mock briefing/designer entrypoints select Wako’s local demo only when mock mode is active.
 
-GitHub is connected for feature-branch delivery. This work is submitted as a draft integration PR; it does not change protected branches or claim production readiness.
+GitHub read access is connected, but writes to Marstronix218/mission-possible currently fail with HTTP 403 “Resource not accessible by integration.” The repository owner must authorize the GitHub app for this repository. The feature branch is prepared for a draft PR; it has not been pushed and protected branches have not been changed.
 
 Nori’s foundation migration `20261114000000_profiles_and_attempts.sql` is preserved unchanged from the current main branch. The classroom migration extends that schema rather than creating a competing attempts table. The repository main branch gained this foundation while implementation was in progress; the delivery branch has now been reconciled with the updated `develop` foundation.
 

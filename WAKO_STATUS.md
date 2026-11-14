@@ -25,7 +25,7 @@ Only Los Angeles, Houston, and Phoenix have playable mission data. The other 15 
 
 The mock classroom is browser-local roleplay, not multi-device authentication or an authoritative shared service. Live backend and deployment checks remain outside the requested mock-data continuation. The live adapter will need the agreed authoritative classroom/status/history contracts before production acceptance.
 
-Delivery branch: `feat/wako/world-results`. GitHub access is connected; this snapshot is being published for draft integration review. The upstream shared designer and UI components are preserved, with Wako’s mock screens selected only in mock mode.
+Delivery branch: `feat/wako/world-results`. GitHub read access is connected. Publication was attempted, but GitHub rejected blob creation and branch creation with HTTP 403 “Resource not accessible by integration.” The visible installation is under wakohomma-stack and exposes no repositories; the target repository is owned by Marstronix218. Repository installation authorization is still required before this branch can be pushed. The upstream shared designer and UI components are preserved, with Wako’s mock screens selected only in mock mode.
 
 ## Upstream reconciliation before publication
 
