@@ -15,7 +15,9 @@
     "db:check": "node --env-file=.env.local scripts/migrate.mjs",
     "db:migrate": "node --env-file=.env.local scripts/migrate.mjs --apply",
     "db:bundle": "node scripts/prepare-database-bundle.mjs",
-    "pretest": "node scripts/prepare-database-bundle.mjs"
+    "pretest": "node scripts/prepare-database-bundle.mjs",
+    "format:check": "prettier --check .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
@@ -29,7 +31,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.0.0",
-    "zustand": "^5.0.0"
+    "zustand": "^5.0.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.16",
@@ -44,9 +47,11 @@
     "vitest": "^5.1.0",
     "tailwindcss": "^4.1.0",
     "@tailwindcss/postcss": "^4.1.0",
-    "postcss": "^8.5.0"
+    "postcss": "^8.5.0",
+    "prettier": "^3.7.4"
   },
   "engines": {
     "node": ">=22.13.0"
-  }
+  },
+  "packageManager": "pnpm@10.28.2"
 }

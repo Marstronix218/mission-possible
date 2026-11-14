@@ -2,10 +2,10 @@ import pg from "pg";
 import { readdir, readFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
 const apply = process.argv.includes("--apply");
-const connection = process.env.SUPABASE_DB_URL;
+const connection = process.env.SUPABASE_DB_URL || process.env.DATABASE_URL;
 if (!connection) {
   console.error(
-    "SUPABASE_DB_URL is empty. Add the PostgreSQL connection string to .env.local.",
+    "SUPABASE_DB_URL / DATABASE_URL is empty. Add the PostgreSQL connection string to .env.local.",
   );
   process.exit(1);
 }

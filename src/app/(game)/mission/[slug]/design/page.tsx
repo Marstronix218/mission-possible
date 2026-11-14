@@ -10,16 +10,16 @@ export default async function Page({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ classroom?: string; attempt?: string }>;
 }) {
-  if (!isMockMode)
-    return (
-      <main id="main-content" tabIndex={-1}>
-        <UpstreamDesign params={params} />
-      </main>
-    );
   const { slug } = await params;
   const query = await searchParams;
   const mission = getMission(slug);
   if (!mission) notFound();
+  if (!isMockMode && !query.classroom)
+    return (
+      <main id="main-content" tabIndex={-1}>
+        <UpstreamDesign params={Promise.resolve({ slug })} />
+      </main>
+    );
   return (
     <MissionExperience
       key={slug + ":design:" + query.attempt + ":" + query.classroom}

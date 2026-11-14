@@ -1,0 +1,2 @@
+-- No student identities or fabricated mission scores are seeded.
+-- Game catalogs and NASA snapshots belong to data/, not the database.

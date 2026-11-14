@@ -1,12 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { useStore } from "zustand";
 import { Button } from "@/components/ui/button";
 import { partsCatalog } from "@/lib/sim/catalog";
 import { summarizeResources } from "@/lib/sim/resources";
 import { createDesignStore } from "@/stores/design";
+import { draftKey } from "@/components/results/session";
 import type { Mission, SatelliteDesign } from "@/types/game";
 
 type Part = { id: string; name: string; costM: number; massKg: number };
@@ -57,6 +59,7 @@ function Gauge({ label, value, limit, detail, exceeded = value > limit }: {
 }
 
 export function SatelliteDesigner({ mission }: { mission: Mission }) {
+  const router = useRouter();
   const [store] = useState(() => createDesignStore(mission.slug));
   const [ready, setReady] = useState(false);
   const [launching, setLaunching] = useState(false);
@@ -84,25 +87,15 @@ export function SatelliteDesigner({ mission }: { mission: Mission }) {
     return (id: string) => update({ [field]: id });
   }
 
-  async function launch() {
+  function launch() {
     if (launching || !ready || resources.violations.length) return;
     setLaunching(true);
     setError("");
     try {
-      const response = await fetch("/api/attempts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ missionSlug: mission.slug, design }),
-      });
-      if (response.status === 404) throw new Error("The launch service is not available yet. Your draft is still available.");
-      if (!response.ok) throw new Error("The launch could not be saved. Try again.");
-      const result = await response.json() as { id?: string; attemptId?: string };
-      const id = result.attemptId ?? result.id;
-      if (!id) throw new Error("The launch service did not return an attempt ID.");
-      window.location.assign(`/mission/${mission.slug}/run?attemptId=${encodeURIComponent(id)}`);
-    } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Launch failed. Try again.");
-    } finally {
+      localStorage.setItem(draftKey(mission.slug), JSON.stringify(design));
+      router.push(`/mission/${mission.slug}/run`);
+    } catch {
+      setError("Your draft could not be prepared for launch. Enable browser storage and try again.");
       setLaunching(false);
     }
   }

@@ -2,7 +2,7 @@
 
 Mock mode is the default. Existing Supabase credentials are preserved but are not used. No database migration, anonymous sign-in, email sign-in, or Supabase connection is required.
 
-Start with `npm ci` and `npm run dev`, or use `run-local.command` in this workspace. The app shows a persistent **MOCK DATA MODE** banner.
+Start with `pnpm install --frozen-lockfile` and `pnpm dev`, or use `run-local.command` in this workspace. The app shows a persistent **MOCK DATA MODE** banner.
 
 1. Open **Join class**, use code **ORBIT1**, and choose a new nickname. The three `Demo …` classmates are fictional, and their displayed scores are calculated by the real simulation engine.
 2. Open the class mission, design a satellite, launch, then view the computed result and class ranking. The sample classroom allows three attempts per demo student.
