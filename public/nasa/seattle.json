@@ -1,0 +1,13 @@
+{
+  "source": "NASA GIBS / Terra MODIS corrected reflectance, true color",
+  "observedOn": "2025-12-11",
+  "accessedOn": "2026-11-14",
+  "bbox": [
+    -122.75,
+    47.15,
+    -121.45,
+    48.05
+  ],
+  "url": "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&STYLES=&FORMAT=image%2Fjpeg&WIDTH=640&HEIGHT=443&SRS=EPSG%3A4326&BBOX=-122.75%2C47.15%2C-121.45%2C48.05&TIME=2025-12-11",
+  "usage": "Observed true-color imagery during the December 2025 Pacific Northwest atmospheric river for geographical context; storm clouds hide the ground, which is why ordinary cameras struggle. Not a hazard label or scoring ground truth."
+}

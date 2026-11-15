@@ -12,8 +12,8 @@
     30.15
   ],
   "defaultConstraints": {
-    "budgetM": 250,
-    "massKg": 500
+    "budgetM": 320,
+    "massKg": 650
   },
   "durationDays": 7,
   "seed": 7132026,
@@ -4424,7 +4424,7 @@
     {
       "name": "NASA GPM IMERG and OPERA DSWx (reference datasets)",
       "url": "https://gpm.nasa.gov/data/imerg",
-      "usage": "Flood and cloud patterns are educational models inspired by precipitation and surface-water products; cells are not current observations.",
+      "usage": "Flood and cloud patterns are educational models inspired by precipitation and surface-water products; cells are not current observations. The MODIS flood product for Hurricane Beryl (Jul 2024) was checked but is almost entirely cloud-obscured, so it is not used.",
       "accessedOn": "2026-11-14",
       "provenance": "educational-model"
     }

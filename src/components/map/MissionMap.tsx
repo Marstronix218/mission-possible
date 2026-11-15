@@ -5,14 +5,19 @@ import { loadAttempts } from "../results/session";
 import { api, backendAvailable } from "../results/cloud";
 import { playableMissions } from "../results/missions";
 import { ENGINE_VERSION } from "@/lib/sim";
-import type { SimResult } from "@/types/game";
+import type { Category, SimResult } from "@/types/game";
+import { categoryLabel } from "@/lib/story/missions";
 import { useReducedMotion } from "../results/use-reduced-motion";
 import * as maplibregl from "maplibre-gl";
+import EmergencyHero from "./EmergencyHero";
+import MissionJourney from "./MissionJourney";
 import {
   missions,
+  featuredMission,
   categories,
   categoryColors,
-  type Category,
+  categorySymbols,
+  type MapMission,
 } from "./missions";
 export default function MissionMap() {
   const [best, setBest] = useState<
@@ -81,7 +86,9 @@ export default function MissionMap() {
   }, []);
   const host = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
-  const [selected, setSelected] = useState(missions[0]);
+  const [selectedSlug, setSelectedSlug] = useState(featuredMission?.slug);
+  const [heroSlug, setHeroSlug] = useState(featuredMission?.slug);
+  const hero = missions.find((m) => m.slug === heroSlug);
   const [filter, setFilter] = useState<Category | "all">("all");
   const [offline, setOffline] = useState(false);
   useEffect(() => {
@@ -120,8 +127,8 @@ export default function MissionMap() {
             },
           ],
         },
-        center: [-101, 38],
-        zoom: 3.2,
+        center: [-104, 33],
+        zoom: 3.4,
         attributionControl: { compact: true },
       });
       map.current = instance;
@@ -130,7 +137,7 @@ export default function MissionMap() {
     } catch {
       if (host.current)
         host.current.textContent =
-          "Interactive map unavailable. Choose a mission from the city list below.";
+          "Interactive map unavailable. Every mission is listed below.";
       return;
     }
     return () => {
@@ -138,6 +145,9 @@ export default function MissionMap() {
       map.current = null;
     };
   }, []);
+  const visible = missions.filter(
+    (m) => filter === "all" || m.category === filter,
+  );
   useEffect(() => {
     if (!map.current) return;
     const markers = missions
@@ -146,163 +156,196 @@ export default function MissionMap() {
         const b = document.createElement("button");
         b.className = "city-pin";
         b.style.setProperty("--pin", categoryColors[m.category]);
-        b.textContent = m.category.slice(0, 1).toUpperCase();
-        b.title = m.city + " — " + m.category;
+        b.textContent = categorySymbols[m.category];
+        b.title = `${m.city}: ${categoryLabel[m.category]}, ${m.deadlineHours}-hour deadline`;
         b.setAttribute("aria-label", b.title);
-        b.onclick = () => setSelected(m);
-        b.onmouseenter = () => setSelected(m);
-        b.onfocus = () => setSelected(m);
+        b.onclick = () => {
+          setSelectedSlug(m.slug);
+          document.getElementById("mission-" + m.slug)?.scrollIntoView({
+            behavior: reducedMotion ? "auto" : "smooth",
+            block: "nearest",
+          });
+        };
+        b.onfocus = () => setSelectedSlug(m.slug);
         return new maplibregl.Marker({ element: b })
           .setLngLat(m.coordinates)
           .addTo(map.current!);
       });
     return () => markers.forEach((m) => m.remove());
-  }, [filter]);
-  const visible = missions.filter(
-    (m) => filter === "all" || m.category === filter,
-  );
-  return (
-    <main id="main-content" tabIndex={-1}>
-      <div className="eyebrow">MISSION CONTROL / 01 — EXPLORE</div>
-      <div className="title-row">
-        <div>
-          <h1>
-            Your community.
-            <br />
-            <em>Your mission.</em>
-          </h1>
-          <p className="intro">
-            Start with a challenge on Earth. Discover what a satellite can do.
-          </p>
-        </div>
-        <div className="stat">
-          <strong>18</strong> cities to explore{" "}
-          <span>8 observation challenges</span>
-        </div>
-      </div>
-      <div className="filter" aria-label="Filter by disaster">
-        <button
-          aria-pressed={filter === "all"}
-          onClick={() => setFilter("all")}
-        >
-          All missions · 18
-        </button>
-        {categories.map((c) => (
-          <button
-            key={c}
-            aria-pressed={filter === c}
-            onClick={() => {
-              setFilter(c);
-              if (selected.category !== c)
-                setSelected(missions.find((m) => m.category === c)!);
-            }}
-          >
-            <i style={{ background: categoryColors[c] }} />
-            {c}
-          </button>
-        ))}
-      </div>
-      <div className="map-layout">
-        <section className="map-panel" aria-label="USA mission map">
-          <div ref={host} className="map-canvas" />
-          <div className="map-caption">
-            USA / EARTH OBSERVATION{" "}
-            <span>Explore Alaska & Hawaii by zooming out</span>
-          </div>
-          {offline && (
-            <p className="map-notice" role="status">
-              Map tiles unavailable. All missions remain available in the city
-              list below.
-            </p>
-          )}
-          <div className="map-key">
-            Letters + colors identify disaster categories. Select a city to
-            explore.
-          </div>
-        </section>
-        <aside className="mission-card">
-          <div className="eyebrow">SELECTED MISSION</div>
+  }, [filter, reducedMotion]);
+  const card = (m: MapMission) => {
+    const isSelected = m.slug === selectedSlug;
+    const record = best[m.slug];
+    return (
+      <li
+        key={m.slug}
+        id={"mission-" + m.slug}
+        className={
+          "flex flex-col rounded-lg border bg-[#122430] p-4 text-[#eaf1f5] " +
+          (isSelected
+            ? "border-[#9ae6d3] shadow-[0_0_0_1px_#9ae6d3]"
+            : "border-[#2a3d4b]")
+        }
+      >
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <span
             className="category"
-            style={{ color: categoryColors[selected.category] }}
+            style={{ color: categoryColors[m.category] }}
           >
-            {selected.category}
+            <span aria-hidden="true">{categorySymbols[m.category]} </span>
+            {categoryLabel[m.category]}
           </span>
-          <h2>{selected.city}</h2>
-          <p>{selected.objective}</p>
-          <dl>
-            <div>
-              <dt>Mission duration</dt>
-              <dd>7 days</dd>
-            </div>
-            <div>
-              <dt>Budget limit</dt>
-              <dd>$250M</dd>
-            </div>
-            <div>
-              <dt>Mass limit</dt>
-              <dd>500 kg</dd>
-            </div>
-          </dl>
-          {selected.ready ? (
-            <Link
-              className="primary"
-              href={"/mission/" + selected.slug + "/brief"}
-            >
-              Explore mission <span>↗</span>
-            </Link>
-          ) : (
-            <p className="notice">
-              Mission preview only. The playable MVP covers Los Angeles,
-              Houston, and Phoenix.
-            </p>
-          )}
-          <small>
-            3 playable missions · NASA imagery is available in results.
-          </small>
-        </aside>
-      </div>
-      {progressError && (
-        <p role="status" className="notice">
-          {progressError}
-        </p>
-      )}
-      <section className="cities">
-        <div className="section-heading">
-          <h2>Choose your next challenge</h2>
-          <span>{visible.length} missions</span>
+          <span className="rounded-full border border-[#617a9a] px-2 py-0.5 font-mono text-xs">
+            <span aria-hidden="true">⏱ </span>
+            {m.deadlineHours} h deadline
+          </span>
         </div>
-        <div className="city-grid">
-          {visible.map((m) => (
+        <h4 className="m-0 text-xl font-medium">{m.city}</h4>
+        <p className="mt-1 mb-1 text-sm leading-snug text-[#eaf1f5]">
+          {m.headline}
+        </p>
+        <p className="mt-0 mb-3 text-sm">{m.goal}</p>
+        <p className="mt-auto mb-3 text-xs">
+          {record ? (
+            <>
+              <span aria-hidden="true">{record.success ? "✓ " : "△ "}</span>
+              {record.success ? "Completed" : "In progress"} · Best{" "}
+              {record.score.toFixed(1)}/100
+            </>
+          ) : (
+            "Not attempted yet"
+          )}
+        </p>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            className="primary"
+            href={"/mission/" + m.slug + "/brief"}
+            aria-label={`${record ? "Replay" : "Start"} the ${m.city} mission`}
+          >
+            {record ? "Replay mission" : "Start mission"}{" "}
+            <span aria-hidden="true">→</span>
+          </Link>
+          <button
+            type="button"
+            aria-pressed={isSelected}
+            aria-label={`Show ${m.city} on the map`}
+            onClick={() => {
+              setSelectedSlug(m.slug);
+              map.current?.flyTo({
+                center: m.coordinates,
+                zoom: 5,
+                duration: reducedMotion ? 0 : 900,
+              });
+              host.current?.scrollIntoView({
+                behavior: reducedMotion ? "auto" : "smooth",
+                block: "nearest",
+              });
+            }}
+          >
+            {isSelected ? "Shown on map" : "Show on map"}
+          </button>
+        </div>
+      </li>
+    );
+  };
+  const groups = categories
+    .filter((c) => filter === "all" || c === filter)
+    .map((c) => ({ c, items: visible.filter((m) => m.category === c) }));
+  return (
+    <main id="main-content" tabIndex={-1}>
+      {hero && (
+        <EmergencyHero
+          mission={hero}
+          onNext={
+            missions.length > 1
+              ? () => {
+                  const i = missions.findIndex((m) => m.slug === heroSlug);
+                  setHeroSlug(missions[(i + 1) % missions.length].slug);
+                }
+              : undefined
+          }
+        />
+      )}
+      <MissionJourney />
+      <section aria-labelledby="missions-heading" className="mt-12">
+        <div className="section-heading flex-wrap">
+          <h2 id="missions-heading" className="mb-1">
+            Emergencies you can respond to
+          </h2>
+          <span>
+            {missions.length} {missions.length === 1 ? "city" : "cities"} ·{" "}
+            {categories.length} hazard{" "}
+            {categories.length === 1 ? "type" : "types"}
+          </span>
+        </div>
+        <p className="mt-0 mb-4 text-sm">
+          Each hazard needs a different kind of satellite. Start with the
+          featured emergency, then take on the rest. All missions are training
+          scenarios.
+        </p>
+        <div className="filter mt-0" role="group" aria-label="Filter by hazard">
+          <button
+            aria-pressed={filter === "all"}
+            onClick={() => setFilter("all")}
+          >
+            All · {missions.length}
+          </button>
+          {categories.map((c) => (
             <button
-              key={m.slug}
-              aria-pressed={selected.slug === m.slug}
+              key={c}
+              aria-pressed={filter === c}
               onClick={() => {
-                setSelected(m);
-                map.current?.flyTo({
-                  center: m.coordinates,
-                  zoom: 4,
-                  duration: reducedMotion ? 0 : 900,
-                });
+                setFilter(c);
+                const first = missions.find((m) => m.category === c);
+                if (first) setSelectedSlug(first.slug);
               }}
             >
-              <span
-                className="category"
-                style={{ color: categoryColors[m.category] }}
-              >
-                {m.category}
+              <span aria-hidden="true" style={{ color: categoryColors[c] }}>
+                {categorySymbols[c]}{" "}
               </span>
-              <strong>{m.city}</strong>
-              {best[m.slug] && (
-                <span>
-                  {best[m.slug].success ? "✓ Completed" : "△ In progress"} ·
-                  Best {best[m.slug].score.toFixed(1)}/100
-                </span>
-              )}
-              <span>{m.ready ? "Explore mission ↗" : "Preview"}</span>
+              {categoryLabel[c]} ·{" "}
+              {missions.filter((m) => m.category === c).length}
             </button>
           ))}
         </div>
+        {progressError && (
+          <p role="status" className="notice">
+            {progressError}
+          </p>
+        )}
+        <section
+          className="map-panel min-h-[300px] sm:min-h-[400px]"
+          aria-label="Mission locations map"
+        >
+          <div ref={host} className="map-canvas" />
+          <div className="map-caption">
+            MISSION LOCATIONS{" "}
+            <span>Select a marker to jump to its mission</span>
+          </div>
+          {offline && (
+            <p className="map-notice" role="status">
+              Map tiles unavailable. Every mission is listed below the map.
+            </p>
+          )}
+        </section>
+        {groups.map(({ c, items }) => (
+          <section key={c} aria-labelledby={"group-" + c} className="mt-8">
+            <h3
+              id={"group-" + c}
+              className="mt-0 mb-3 text-lg"
+              style={{ color: categoryColors[c] }}
+            >
+              <span aria-hidden="true">{categorySymbols[c]} </span>
+              {categoryLabel[c]}{" "}
+              <span className="text-sm text-[#a5bac9]">
+                · {items.length} {items.length === 1 ? "city" : "cities"}
+              </span>
+            </h3>
+            <ul className="m-0 grid list-none grid-cols-1 gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
+              {items.map(card)}
+            </ul>
+          </section>
+        ))}
       </section>
     </main>
   );

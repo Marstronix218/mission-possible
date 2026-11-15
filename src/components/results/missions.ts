@@ -1,10 +1,7 @@
-import la from "../../../data/missions/los-angeles.json";
-import houston from "../../../data/missions/houston.json";
-import phoenix from "../../../data/missions/phoenix.json";
-import type { Mission, SatelliteDesign } from "@/types/game";
-export const playableMissions = [la, houston, phoenix] as Mission[];
-export const getMission = (slug: string) =>
-  playableMissions.find((m) => m.slug === slug);
+import { allMissions, getMissionBySlug } from "@/lib/missions/registry";
+import type { SatelliteDesign } from "@/types/game";
+export const playableMissions = allMissions;
+export const getMission = getMissionBySlug;
 export const defaultDesign: SatelliteDesign = {
   instruments: ["tir"],
   orbit: "sso_700",

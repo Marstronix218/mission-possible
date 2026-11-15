@@ -12,10 +12,10 @@
     33.85
   ],
   "defaultConstraints": {
-    "budgetM": 250,
-    "massKg": 500
+    "budgetM": 180,
+    "massKg": 380
   },
-  "durationDays": 7,
+  "durationDays": 10,
   "seed": 6022026,
   "targetResponseHours": 24,
   "grid": [
@@ -399,7 +399,7 @@
       "column": 14,
       "lat": 33.2025,
       "lon": -111.825,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.02,
       "detectability": 0.936,
       "eventDay": 0
@@ -410,7 +410,7 @@
       "column": 15,
       "lat": 33.2025,
       "lon": -111.775,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.147,
       "detectability": 0.748,
       "eventDay": 0
@@ -1004,7 +1004,7 @@
       "column": 9,
       "lat": 33.3075,
       "lon": -112.075,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.19,
       "detectability": 0.81,
       "eventDay": 0
@@ -1026,7 +1026,7 @@
       "column": 11,
       "lat": 33.3075,
       "lon": -111.975,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.02,
       "detectability": 0.747,
       "eventDay": 0
@@ -1246,7 +1246,7 @@
       "column": 11,
       "lat": 33.3425,
       "lon": -111.975,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.201,
       "detectability": 0.963,
       "eventDay": 0
@@ -1444,7 +1444,7 @@
       "column": 9,
       "lat": 33.3775,
       "lon": -112.075,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.096,
       "detectability": 0.954,
       "eventDay": 0
@@ -1466,7 +1466,7 @@
       "column": 11,
       "lat": 33.3775,
       "lon": -111.975,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.229,
       "detectability": 0.813,
       "eventDay": 0
@@ -1477,7 +1477,7 @@
       "column": 12,
       "lat": 33.3775,
       "lon": -111.925,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.02,
       "detectability": 0.831,
       "eventDay": 0
@@ -1488,10 +1488,10 @@
       "column": 13,
       "lat": 33.3775,
       "lon": -111.875,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.101,
       "detectability": 0.85,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r06c14",
@@ -1620,7 +1620,7 @@
       "column": 5,
       "lat": 33.4125,
       "lon": -112.275,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.217,
       "detectability": 0.848,
       "eventDay": 0
@@ -1631,7 +1631,7 @@
       "column": 6,
       "lat": 33.4125,
       "lon": -112.225,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.231,
       "detectability": 0.965,
       "eventDay": 0
@@ -1667,7 +1667,7 @@
       "truth": 1,
       "cloudProbability": 0.177,
       "detectability": 0.688,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r07c10",
@@ -1675,7 +1675,7 @@
       "column": 10,
       "lat": 33.4125,
       "lon": -112.025,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.197,
       "detectability": 0.685,
       "eventDay": 0
@@ -1711,7 +1711,7 @@
       "truth": 1,
       "cloudProbability": 0.208,
       "detectability": 0.884,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r07c14",
@@ -1722,7 +1722,7 @@
       "truth": 1,
       "cloudProbability": 0.184,
       "detectability": 0.791,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r07c15",
@@ -1733,7 +1733,7 @@
       "truth": 1,
       "cloudProbability": 0.089,
       "detectability": 0.94,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r07c16",
@@ -1741,7 +1741,7 @@
       "column": 16,
       "lat": 33.4125,
       "lon": -111.725,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.065,
       "detectability": 0.826,
       "eventDay": 0
@@ -1752,7 +1752,7 @@
       "column": 17,
       "lat": 33.4125,
       "lon": -111.675,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.255,
       "detectability": 0.866,
       "eventDay": 0
@@ -1774,7 +1774,7 @@
       "column": 19,
       "lat": 33.4125,
       "lon": -111.575,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.246,
       "detectability": 0.687,
       "eventDay": 0
@@ -1840,7 +1840,7 @@
       "column": 5,
       "lat": 33.4475,
       "lon": -112.275,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.12,
       "detectability": 0.86,
       "eventDay": 0
@@ -1862,7 +1862,7 @@
       "column": 7,
       "lat": 33.4475,
       "lon": -112.175,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.078,
       "detectability": 0.772,
       "eventDay": 0
@@ -1887,7 +1887,7 @@
       "truth": 1,
       "cloudProbability": 0.217,
       "detectability": 0.848,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r08c10",
@@ -1895,10 +1895,10 @@
       "column": 10,
       "lat": 33.4475,
       "lon": -112.025,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.139,
       "detectability": 0.829,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r08c11",
@@ -1906,7 +1906,7 @@
       "column": 11,
       "lat": 33.4475,
       "lon": -111.975,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.157,
       "detectability": 0.808,
       "eventDay": 0
@@ -1917,7 +1917,7 @@
       "column": 12,
       "lat": 33.4475,
       "lon": -111.925,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.046,
       "detectability": 0.782,
       "eventDay": 0
@@ -1928,7 +1928,7 @@
       "column": 13,
       "lat": 33.4475,
       "lon": -111.875,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.201,
       "detectability": 0.949,
       "eventDay": 0
@@ -1939,7 +1939,7 @@
       "column": 14,
       "lat": 33.4475,
       "lon": -111.825,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.126,
       "detectability": 0.849,
       "eventDay": 0
@@ -1950,10 +1950,10 @@
       "column": 15,
       "lat": 33.4475,
       "lon": -111.775,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.198,
       "detectability": 0.684,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r08c16",
@@ -1972,7 +1972,7 @@
       "column": 17,
       "lat": 33.4475,
       "lon": -111.675,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.028,
       "detectability": 0.95,
       "eventDay": 0
@@ -2085,7 +2085,7 @@
       "truth": 1,
       "cloudProbability": 0.105,
       "detectability": 0.709,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r09c08",
@@ -2096,7 +2096,7 @@
       "truth": 1,
       "cloudProbability": 0.138,
       "detectability": 0.962,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r09c09",
@@ -2104,10 +2104,10 @@
       "column": 9,
       "lat": 33.4825,
       "lon": -112.075,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.105,
       "detectability": 0.718,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r09c10",
@@ -2126,7 +2126,7 @@
       "column": 11,
       "lat": 33.4825,
       "lon": -111.975,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.02,
       "detectability": 0.879,
       "eventDay": 0
@@ -2294,7 +2294,7 @@
       "truth": 1,
       "cloudProbability": 0.158,
       "detectability": 0.84,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r10c07",
@@ -2316,7 +2316,7 @@
       "truth": 1,
       "cloudProbability": 0.136,
       "detectability": 0.77,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r10c09",
@@ -2324,10 +2324,10 @@
       "column": 9,
       "lat": 33.5175,
       "lon": -112.075,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.02,
       "detectability": 0.758,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r10c10",
@@ -2335,10 +2335,10 @@
       "column": 10,
       "lat": 33.5175,
       "lon": -112.025,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.105,
       "detectability": 0.957,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r10c11",
@@ -2346,10 +2346,10 @@
       "column": 11,
       "lat": 33.5175,
       "lon": -111.975,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.02,
       "detectability": 0.905,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r10c12",
@@ -2357,10 +2357,10 @@
       "column": 12,
       "lat": 33.5175,
       "lon": -111.925,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.193,
       "detectability": 0.794,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r10c13",
@@ -2368,7 +2368,7 @@
       "column": 13,
       "lat": 33.5175,
       "lon": -111.875,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.02,
       "detectability": 0.7,
       "eventDay": 0
@@ -2525,7 +2525,7 @@
       "truth": 1,
       "cloudProbability": 0.078,
       "detectability": 0.747,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r11c08",
@@ -2536,7 +2536,7 @@
       "truth": 1,
       "cloudProbability": 0.02,
       "detectability": 0.69,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r11c09",
@@ -2544,7 +2544,7 @@
       "column": 9,
       "lat": 33.5525,
       "lon": -112.075,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.174,
       "detectability": 0.747,
       "eventDay": 0
@@ -2555,10 +2555,10 @@
       "column": 10,
       "lat": 33.5525,
       "lon": -112.025,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.165,
       "detectability": 0.805,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r11c11",
@@ -2566,7 +2566,7 @@
       "column": 11,
       "lat": 33.5525,
       "lon": -111.975,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.02,
       "detectability": 0.709,
       "eventDay": 0
@@ -2577,7 +2577,7 @@
       "column": 12,
       "lat": 33.5525,
       "lon": -111.925,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.02,
       "detectability": 0.852,
       "eventDay": 0
@@ -2709,7 +2709,7 @@
       "column": 4,
       "lat": 33.5875,
       "lon": -112.325,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.02,
       "detectability": 0.802,
       "eventDay": 0
@@ -2731,7 +2731,7 @@
       "column": 6,
       "lat": 33.5875,
       "lon": -112.225,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.086,
       "detectability": 0.894,
       "eventDay": 0
@@ -2745,7 +2745,7 @@
       "truth": 1,
       "cloudProbability": 0.166,
       "detectability": 0.782,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r12c08",
@@ -2756,7 +2756,7 @@
       "truth": 1,
       "cloudProbability": 0.02,
       "detectability": 0.841,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r12c09",
@@ -2786,10 +2786,10 @@
       "column": 11,
       "lat": 33.5875,
       "lon": -111.975,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.067,
       "detectability": 0.681,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r12c12",
@@ -2918,7 +2918,7 @@
       "column": 3,
       "lat": 33.6225,
       "lon": -112.375,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.162,
       "detectability": 0.925,
       "eventDay": 0
@@ -2929,7 +2929,7 @@
       "column": 4,
       "lat": 33.6225,
       "lon": -112.325,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.247,
       "detectability": 0.928,
       "eventDay": 0
@@ -2962,7 +2962,7 @@
       "column": 7,
       "lat": 33.6225,
       "lon": -112.175,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.077,
       "detectability": 0.816,
       "eventDay": 0
@@ -2973,7 +2973,7 @@
       "column": 8,
       "lat": 33.6225,
       "lon": -112.125,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.14,
       "detectability": 0.682,
       "eventDay": 0
@@ -2984,10 +2984,10 @@
       "column": 9,
       "lat": 33.6225,
       "lon": -112.075,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.223,
       "detectability": 0.699,
-      "eventDay": 1
+      "eventDay": 0
     },
     {
       "id": "r13c10",
@@ -2995,7 +2995,7 @@
       "column": 10,
       "lat": 33.6225,
       "lon": -112.025,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.182,
       "detectability": 0.827,
       "eventDay": 0
@@ -3006,7 +3006,7 @@
       "column": 11,
       "lat": 33.6225,
       "lon": -111.975,
-      "truth": 1,
+      "truth": 0,
       "cloudProbability": 0.258,
       "detectability": 0.744,
       "eventDay": 0
@@ -3149,7 +3149,7 @@
       "column": 4,
       "lat": 33.6575,
       "lon": -112.325,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.144,
       "detectability": 0.789,
       "eventDay": 0
@@ -3182,7 +3182,7 @@
       "column": 7,
       "lat": 33.6575,
       "lon": -112.175,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.187,
       "detectability": 0.738,
       "eventDay": 0
@@ -3193,7 +3193,7 @@
       "column": 8,
       "lat": 33.6575,
       "lon": -112.125,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.21,
       "detectability": 0.811,
       "eventDay": 0
@@ -3204,7 +3204,7 @@
       "column": 9,
       "lat": 33.6575,
       "lon": -112.075,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.226,
       "detectability": 0.834,
       "eventDay": 0
@@ -3391,7 +3391,7 @@
       "column": 6,
       "lat": 33.6925,
       "lon": -112.225,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.179,
       "detectability": 0.741,
       "eventDay": 0
@@ -3413,7 +3413,7 @@
       "column": 8,
       "lat": 33.6925,
       "lon": -112.125,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.028,
       "detectability": 0.687,
       "eventDay": 0
@@ -3611,7 +3611,7 @@
       "column": 6,
       "lat": 33.7275,
       "lon": -112.225,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.075,
       "detectability": 0.8,
       "eventDay": 0
@@ -3622,7 +3622,7 @@
       "column": 7,
       "lat": 33.7275,
       "lon": -112.175,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.17,
       "detectability": 0.978,
       "eventDay": 0
@@ -4293,7 +4293,7 @@
       "column": 8,
       "lat": 33.8325,
       "lon": -112.125,
-      "truth": 0,
+      "truth": 1,
       "cloudProbability": 0.079,
       "detectability": 0.796,
       "eventDay": 0
@@ -4422,11 +4422,18 @@
   ],
   "sources": [
     {
-      "name": "NASA ECOSTRESS land-surface temperature (reference dataset)",
-      "url": "https://ecostress.jpl.nasa.gov/",
-      "usage": "Heat intensity is an educational model inspired by ECOSTRESS products; cells are not current observations.",
+      "name": "NASA MODIS Aqua 8-day daytime land-surface temperature (via NASA GIBS)",
+      "url": "https://www.earthdata.nasa.gov/data/catalog/lpcloud-myd11a2-061",
+      "usage": "Heat cells are the hottest 40% of populated cells by observed daytime land-surface temperature, 11-18 Jul 2024. Cloud blocking and sensor detectability are modelled.",
       "accessedOn": "2026-11-14",
-      "provenance": "educational-model"
+      "provenance": "nasa-observed"
+    },
+    {
+      "name": "NASA SEDAC Gridded Population of the World v4, 2020 density (via NASA GIBS)",
+      "url": "https://www.earthdata.nasa.gov/data/projects/gpw",
+      "usage": "Cells with at least 500 people per square kilometre count as populated neighbourhoods.",
+      "accessedOn": "2026-11-14",
+      "provenance": "nasa-observed"
     }
   ]
 }
