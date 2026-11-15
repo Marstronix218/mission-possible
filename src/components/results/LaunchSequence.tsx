@@ -6,6 +6,20 @@ import { StoryEventCard } from "./StoryEventCard";
 import { SatelliteWorkbench } from "@/components/gameplay/SatelliteWorkbench";
 import styles from "@/components/gameplay/gameplay.module.css";
 
+const launchStages = [
+  {
+    title: "SYSTEMS READY",
+    detail: "Final spacecraft checks complete.",
+  },
+  { title: "3… IGNITION", detail: "Launch sequence started." },
+  { title: "2… LIFTOFF", detail: "Vehicle climbing away from Earth." },
+  { title: "1… DEPLOY", detail: "Spacecraft separating from the vehicle." },
+  {
+    title: "SATELLITE IN ORBIT",
+    detail: "Solar arrays deployed. Mission control has the spacecraft.",
+  },
+] as const;
+
 /** A short optional cinematic; the calling screen still runs and saves the engineering simulation. */
 export function LaunchSequence({
   events,
@@ -28,13 +42,17 @@ export function LaunchSequence({
   const [step, setStep] = useState(0);
   useEffect(() => {
     if (!started || reducedMotion) return;
-    if (step >= 3) {
-      onComplete();
-      return;
-    }
-    const t = setTimeout(() => setStep((s) => s + 1), 800);
+    const last = launchStages.length - 1;
+    const t = setTimeout(
+      () => {
+        if (step >= last) onComplete();
+        else setStep((current) => current + 1);
+      },
+      step >= last ? 1100 : 760,
+    );
     return () => clearTimeout(t);
   }, [started, step, reducedMotion, onComplete]);
+  const current = launchStages[step];
   return (
     <section
       className={`${styles.shell} ${styles.launch}`}
@@ -42,7 +60,7 @@ export function LaunchSequence({
     >
       <p className={styles.kicker}>Launch control / {city}</p>
       <h2 id="launch-heading">
-        {started ? ["3…", "2…", "1…", "IN ORBIT"][step] : "READY FOR LAUNCH?"}
+        {started ? current.title : "READY FOR LAUNCH?"}
       </h2>
       {blocker ? (
         <p role="alert" className={styles.warning}>
@@ -64,16 +82,50 @@ export function LaunchSequence({
         </button>
       )}
 
-      <SatelliteWorkbench design={design} />
+      {started ? (
+        <div
+          className={styles.launchScene}
+          data-stage={step}
+          aria-hidden="true"
+        >
+          <div className={styles.launchStars} />
+          <div className={styles.earthHorizon} />
+          <div className={styles.rocket}>
+            <span className={styles.rocketNose} />
+            <span className={styles.rocketBody} />
+            <span className={styles.rocketFinLeft} />
+            <span className={styles.rocketFinRight} />
+            <span className={styles.rocketFlame} />
+          </div>
+          <div className={styles.deployedSatellite}>
+            <span />
+            <strong />
+            <span />
+          </div>
+          <div className={styles.launchTrack}>
+            {launchStages.map((stage, index) => (
+              <span
+                key={stage.title}
+                className={index <= step ? styles.trackDone : undefined}
+              />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <SatelliteWorkbench design={design} />
+      )}
+      {started && (
+        <p className={styles.launchStatus} role="status">
+          {current.detail}
+        </p>
+      )}
       <div className={styles.launchIndicators} aria-label="Mission readiness">
-        <span>{blocker ? "! Check design" : "✓ Satellite ready"}</span>
-        <span>◎ {city}</span>
+        <span>{blocker ? "! Check design" : "✓ Spacecraft configured"}</span>
+        <span>◎ Target: {city}</span>
         <span>◷ {responseHours ?? "—"} h response target</span>
       </div>
       <p className="sr-only" role="status">
-        {started
-          ? `Launch countdown ${3 - step}`
-          : "Ready for your launch command"}
+        {started ? current.detail : "Ready for your launch command"}
       </p>
       <details className="mt-6 text-left">
         <summary>Optional engineering details</summary>

@@ -2,6 +2,12 @@
 
 This implementation follows the supplied 11-page gameplay/UI brief and its workshop and pentagon-chart references. It starts from `develop` at `8ebacf0f3ed7091dd3be014a2bc30ac22a5a8d83`, which already includes PR #15. The original PDF and its third-party reference screenshots are not copied into the repository.
 
+## Alignment with current main
+
+Merged `main` at `dd27e4ce9468887fb0dbb5f6ba1a23649f9f2e4e` (Ryohei's immersive mission redesign). The incoming launch sequence, mission-control telemetry, shared `MissionOrbit` visualization, observation screens and styles are preserved. The full photographic flight briefing and science/source panels remain available beneath the mission envelope through `MissionFlightBrief`. The workbench combines drag-to-rotate and sensor-specific appearances with removable modules and attachment mounts; controls and modules do not accidentally start camera dragging.
+
+After integration, all 256 tests, ESLint and TypeScript pass.
+
 ## Entry and letters
 
 - The world map is the first major screen, using the existing NASA Blue Marble layer and all 18 registered mission locations. These are the repository's current U.S. scenarios, not newly invented international missions.

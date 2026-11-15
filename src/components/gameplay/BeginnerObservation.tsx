@@ -6,7 +6,9 @@ import type {
   SatelliteDesign,
   SimResult,
 } from "@/types/game";
+import { partsCatalog } from "@/lib/sim";
 import { MissionMap } from "@/components/results/MissionMap";
+import { MissionOrbit } from "@/components/results/MissionOrbit";
 import {
   cellFrame,
   deliveries,
@@ -16,7 +18,9 @@ import {
   nextMomentHour,
   observationWindowHours,
   playbackPlan,
+  storageAt,
   storageSeries,
+  windowState,
 } from "@/components/results/mission-playback";
 import styles from "./gameplay.module.css";
 
@@ -42,25 +46,19 @@ export function BeginnerObservation({
   const [visible, setVisible] = useState(true);
   const plan = useMemo(() => playbackPlan(mission, result), [mission, result]);
   const span = plan.spanHours;
+  const windowHours = useMemo(() => observationWindowHours(design), [design]);
+  const latency = downlinkLatency(result, resources);
   const packages = useMemo(
-    () => deliveries(result, downlinkLatency(result, resources)),
-    [result, resources],
+    () => deliveries(result, latency),
+    [result, latency],
+  );
+  const storage = useMemo(
+    () => storageSeries(resources, latency, windowHours, span),
+    [resources, latency, windowHours, span],
   );
   const moments = useMemo(() => {
-    const windows = observationWindowHours(design);
-    return missionMoments(
-      mission,
-      result,
-      packages,
-      windows,
-      storageSeries(
-        resources,
-        downlinkLatency(result, resources),
-        windows,
-        span,
-      ),
-    );
-  }, [mission, result, packages, design, resources, span]);
+    return missionMoments(mission, result, packages, windowHours, storage);
+  }, [mission, result, packages, windowHours, storage]);
   useEffect(() => {
     const el = root.current;
     if (!el) return;
@@ -95,14 +93,29 @@ export function BeginnerObservation({
     if (hour >= span) onEnd();
   }, [hour, span, onEnd]);
   let found = 0;
+  let active = 0;
+  let observed = 0;
   const grid = new Map(mission.grid.map((c) => [c.id, c]));
   for (const c of result.cells) {
     const g = grid.get(c.id);
     if (!g) continue;
     const f = cellFrame(g, c, hour, span);
+    if (f.hazardActive) active++;
+    if (f.seen) observed++;
     if (f.flagged && !f.falseAlarm) found++;
   }
-  const delivered = deliveryStatus(packages, hour);
+  const delivery = deliveryStatus(packages, hour);
+  const stored = storageAt(storage, hour);
+  const window = windowState(windowHours, hour, span);
+  const payload = partsCatalog.instruments.find(
+    (part) => part.id === design.instruments[0],
+  );
+  const progress = Math.min(100, (hour / span) * 100);
+  const day = Math.min(mission.durationDays, Math.floor(hour / 24) + 1);
+  const deadlineRemaining = Math.max(0, mission.targetResponseHours - hour);
+  const deliveredInTime =
+    result.firstDeliveryHours !== null &&
+    result.firstDeliveryHours <= mission.targetResponseHours;
   const latest = moments.filter((m) => m.hour <= hour).at(-1);
   const momentCopy =
     latest?.kind === "blocked"
@@ -125,49 +138,174 @@ export function BeginnerObservation({
   return (
     <section
       ref={root}
-      className={`${styles.shell} ${styles.observation}`}
+      className={`${styles.shell} ${styles.missionControl}`}
       aria-label="Simulated Earth observation"
     >
-      <p className={styles.kicker}>
-        Simulated observation / Hour {Math.floor(hour)} of {Math.round(span)}
-      </p>
-      <MissionMap
-        mission={mission}
-        result={result}
-        hour={hour}
-        mode="live"
-        animate={!paused && !reducedMotion && visible}
-        label={`${found} hazard zones found by hour ${Math.floor(hour)}.`}
-      />
-      <p role="status" className={styles.outcomeText}>
-        {momentCopy}
-      </p>
-      <div className={styles.launchIndicators}>
-        <span>◎ {found} zones found</span>
-        <span>↗ {delivered.delivered} data packages delivered</span>
+      <header className={styles.controlHeader}>
+        <div>
+          <p className={styles.kicker}>Orbital operations / {mission.city}</p>
+          <h2>Satellite Mission Control</h2>
+          <p>{mission.objective.en}</p>
+        </div>
+        <div className={styles.missionClock}>
+          <span>MISSION ELAPSED</span>
+          <strong>H+{Math.floor(hour).toString().padStart(3, "0")}</strong>
+          <small>
+            Day {day} of {mission.durationDays}
+          </small>
+        </div>
+      </header>
+
+      <div className={styles.controlGrid}>
+        <div className={styles.earthPanel}>
+          <div className={styles.panelHeader}>
+            <div>
+              <span>EARTH OBSERVATION</span>
+              <strong>{mission.city} mission area</strong>
+            </div>
+            <span
+              className={`${styles.passState} ${window.open ? styles.passOpen : ""}`}
+            >
+              {window.open ? "● SENSOR LOOK ACTIVE" : "○ BETWEEN PASSES"}
+            </span>
+          </div>
+          <MissionMap
+            mission={mission}
+            result={result}
+            hour={hour}
+            mode="live"
+            animate={!paused && !reducedMotion && visible}
+            label={`${found} of ${active} active hazard zones found and ${observed} of ${result.cells.length} cells observed by hour ${Math.floor(hour)}.`}
+          />
+          <p role="status" className={styles.eventCallout}>
+            <span aria-hidden="true">
+              {latest?.kind === "blocked"
+                ? "☁"
+                : latest?.kind === "delivery"
+                  ? "📡"
+                  : latest?.kind === "detect"
+                    ? "◎"
+                    : "🛰️"}
+            </span>
+            {momentCopy}
+          </p>
+          <div className={styles.mapLegend} aria-label="Observation map legend">
+            <span>▧ simulated mission cell</span>
+            <span>◇ cyan outline: sensor look</span>
+            <span>☁ blocked by cloud or smoke</span>
+            <span>! detected hazard</span>
+          </div>
+        </div>
+
+        <aside className={styles.telemetryRail} aria-label="Mission telemetry">
+          <section className={styles.orbitCard}>
+            <div className={styles.panelHeader}>
+              <div>
+                <span>SPACECRAFT</span>
+                <strong>{payload?.name ?? "Mission satellite"}</strong>
+              </div>
+              <span className={styles.liveDot}>LIVE</span>
+            </div>
+            <MissionOrbit
+              city={mission.city}
+              windowHours={windowHours}
+              hour={hour}
+              span={span}
+              stations={design.groundStations}
+              transmitting={delivery.onboard > 0 || stored > 0.05}
+              geo={design.orbit === "geo"}
+              animate={!paused && !reducedMotion && visible}
+            />
+            <p className={styles.orbitStatus}>
+              {window.open
+                ? `Passing over ${mission.city} — collecting observations.`
+                : Number.isFinite(window.untilOpen)
+                  ? `Next modeled observation window in ${window.untilOpen.toFixed(1)} h.`
+                  : "Final observation window complete."}
+            </p>
+          </section>
+
+          <section className={styles.telemetryCard}>
+            <h3>Mission telemetry</h3>
+            <dl className={styles.telemetryList}>
+              <div>
+                <dt>Area observed</dt>
+                <dd>
+                  {observed} / {result.cells.length}
+                </dd>
+              </div>
+              <div>
+                <dt>Confirmed detections</dt>
+                <dd>
+                  {found} / {active} active
+                </dd>
+              </div>
+              <div>
+                <dt>Data packages</dt>
+                <dd>
+                  {delivery.delivered} ground · {delivery.onboard} onboard
+                </dd>
+              </div>
+              <div>
+                <dt>Storage estimate</dt>
+                <dd>
+                  {stored.toFixed(1)} / {storage.capacityGB} GB
+                </dd>
+              </div>
+            </dl>
+            <div
+              className={styles.storageMeter}
+              role="meter"
+              aria-label="Estimated onboard storage used"
+              aria-valuemin={0}
+              aria-valuemax={storage.capacityGB}
+              aria-valuenow={Number(stored.toFixed(1))}
+            >
+              <span
+                style={{
+                  width: `${storage.capacityGB ? Math.min(100, (stored / storage.capacityGB) * 100) : 0}%`,
+                }}
+              />
+            </div>
+            <p className={styles.deadlineStatus}>
+              {delivery.delivered > 0
+                ? deliveredInTime
+                  ? `✓ First data met the ${mission.targetResponseHours} h target.`
+                  : `! First data arrived after the ${mission.targetResponseHours} h target.`
+                : deadlineRemaining > 0
+                  ? `${deadlineRemaining.toFixed(1)} h until the first-data target.`
+                  : "First-data target passed; no package delivered yet."}
+            </p>
+          </section>
+        </aside>
       </div>
-      <p className={styles.credit}>
-        ! identified hazard · ☁ blocked look · outline: sensor footprint. Map
-        cells and timing come from the engine; this is not live satellite
-        footage.
-      </p>
-      <div className={styles.row}>
-        <button
-          className={styles.secondary}
-          disabled={hour >= span || reducedMotion}
-          onClick={() => setPaused(!paused)}
-        >
-          {paused ? "Resume" : "Pause"}
-        </button>
-        <button
-          className={styles.secondary}
-          disabled={next === null || hour >= span}
-          onClick={() => {
-            if (next !== null) setHour(next);
-          }}
-        >
-          Next observation →
-        </button>
+
+      <div className={styles.controlFooter}>
+        <div className={styles.missionProgress}>
+          <span style={{ width: `${progress}%` }} />
+        </div>
+        <div className={styles.controlActions}>
+          <button
+            className={styles.secondary}
+            disabled={hour >= span || reducedMotion}
+            onClick={() => setPaused(!paused)}
+          >
+            {paused ? "▶ Resume mission" : "❚❚ Pause mission"}
+          </button>
+          <button
+            className={styles.secondary}
+            disabled={next === null || hour >= span}
+            onClick={() => {
+              if (next !== null) setHour(next);
+            }}
+          >
+            Next mission event →
+          </button>
+        </div>
+        <p className={styles.simulationNote}>
+          Engine-backed cells, timing, detections, storage, and delivery ·
+          simplified orbit diagram · not live satellite footage
+        </p>
       </div>
     </section>
   );

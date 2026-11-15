@@ -4,6 +4,7 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type PointerEvent,
   type RefObject,
   type ReactNode,
 } from "react";
@@ -59,6 +60,29 @@ export function SatelliteWorkbench({
   onRemove?: (slot: string, id: string) => void;
 }) {
   const [rotation, setRotation] = useState(-25);
+  const rotationDrag = useRef<{ x: number; rotation: number } | null>(null);
+  function startRotation(event: PointerEvent<HTMLDivElement>) {
+    if (
+      event.button !== 0 ||
+      (event.target as HTMLElement).closest("input,button,a,label")
+    )
+      return;
+    rotationDrag.current = { x: event.clientX, rotation };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+  function rotate(event: PointerEvent<HTMLDivElement>) {
+    if (rotationDrag.current)
+      setRotation(
+        rotationDrag.current.rotation +
+          (event.clientX - rotationDrag.current.x) * 0.65,
+      );
+  }
+  function stopRotation(event: PointerEvent<HTMLDivElement>) {
+    rotationDrag.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+  }
+
   const [openBody, setOpenBody] = useState(false);
   const [drag, setDrag] = useState<PartDragDetail | null>(null);
   const localRef = useRef<HTMLDivElement>(null);
@@ -107,7 +131,11 @@ export function SatelliteWorkbench({
         localRef.current = el;
         if (targetRef) targetRef.current = el;
       }}
-      className={`${styles.workbench} ${attaching || drag ? styles.highlight : ""}`}
+      className={`${styles.workbench} ${styles.interactiveWorkbench} ${attaching || drag ? styles.highlight : ""}`}
+      onPointerDown={startRotation}
+      onPointerMove={rotate}
+      onPointerUp={stopRotation}
+      onPointerCancel={stopRotation}
       aria-label="Satellite workbench"
     >
       <div
@@ -130,7 +158,7 @@ export function SatelliteWorkbench({
               design.instruments.map((id, i) => (
                 <PhysicalPart
                   key={id}
-                  className={`${styles.sensorLens} ${id === "sar" || id === "pr" ? styles.sensorRadar : ""}`}
+                  className={`${styles.sensorLens} ${id === "sar" || id === "pr" ? styles.sensorRadar : id === "tir" || id === "pmw" ? styles.sensorThermal : styles.sensorOptical}`}
                   label={payloadNames[i]}
                   onRemove={remove("instruments", id)}
                   style={
@@ -239,7 +267,7 @@ export function SatelliteWorkbench({
             type="range"
             min="-180"
             max="180"
-            value={rotation}
+            value={Math.max(-180, Math.min(180, rotation))}
             onChange={(e) => setRotation(Number(e.target.value))}
           />
         </label>
