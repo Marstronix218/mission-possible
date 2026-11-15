@@ -1,154 +1,116 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { findMission, missions } from "@/components/designer/missions";
+import { findMission } from "@/components/designer/missions";
 import { MissionSteps } from "@/components/story/MissionSteps";
-import { Button } from "@/components/ui/button";
-import type { DataSource, Mission } from "@/types/game";
+import type { DataSource } from "@/types/game";
+import { challengeLine, hazardEmoji } from "./builder-copy";
+import { COVERAGE_TARGET } from "./builder-model";
 import { HazardScene } from "./HazardScene";
 import { storyFor } from "./story-fallback";
+import styles from "./designer.module.css";
 
-const beatIcons: Record<string, string[]> = {
-  wildfire: ["🌬️", "🌫️", "🛰️"],
-  flood: ["🌧️", "☁️", "🛰️"],
-  heat: ["🌡️", "🚰", "🛰️"],
-  snow: ["❄️", "🚧", "🛰️"],
-  drought: ["☀️", "🌾", "🛰️"],
-  storm: ["🌀", "⚡", "🛰️"],
-  glacier: ["🧊", "🌊", "🛰️"],
-  volcano: ["🌋", "🌫️", "🛰️"],
+const provenanceLabel: Record<DataSource["provenance"], { text: string; icon: string }> = {
+  "nasa-observed": { text: "NASA-observed data", icon: "🛰️" },
+  "educational-model": { text: "Modeled scenario inspired by NASA data", icon: "🧪" },
 };
 
-const provenanceLabel: Record<DataSource["provenance"], string> = {
-  "educational-model": "Modeled scenario inspired by NASA data",
-  "nasa-observed": "Based on NASA observations",
-};
-
-function LimitTile({ icon, label, value, reason, compare }: {
-  icon: string; label: string; value: string; reason: string; compare: string;
-}) {
+function LimitChip({ icon, label, value, why }: { icon: string; label: string; value: string; why: string }) {
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-border bg-card p-4">
-      <dt className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-        <span aria-hidden="true" className="text-xl">{icon}</span>{label}
-      </dt>
-      <dd className="space-y-2">
-        <span className="block text-3xl font-bold">{value}</span>
-        <span className="block text-sm"><span className="font-semibold">Why: </span>{reason}</span>
-        <span className="block text-xs text-muted-foreground">{compare}</span>
-      </dd>
-    </div>
+    <li>
+      <details className="group rounded-2xl border-[3px] border-space-950 bg-space-800 shadow-[var(--shadow-pop)] open:bg-space-700">
+        <summary className="flex min-h-16 cursor-pointer list-none items-center gap-2.5 rounded-2xl px-3 py-2 [&::-webkit-details-marker]:hidden">
+          <span aria-hidden="true" className="text-2xl">{icon}</span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-display text-xl leading-tight font-bold">{value}</span>
+            <span className="block text-xs font-bold tracking-wider text-muted-foreground uppercase">{label}</span>
+          </span>
+          <span aria-hidden="true" className="flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-border text-xs font-bold text-muted-foreground group-open:rotate-45">+</span>
+          <span className="sr-only">Why?</span>
+        </summary>
+        <p className="px-3 pb-3 text-sm text-muted-foreground">{why}</p>
+      </details>
+    </li>
   );
 }
 
-/** "Across all 18 missions: $150M to $400M." so players see the limits are mission-specific. */
-function missionRange(format: (value: number) => string, pick: (mission: Mission) => number) {
-  const values = missions.map(pick);
-  if (values.length < 2) return "";
-  const low = Math.min(...values);
-  const high = Math.max(...values);
-  return low === high
-    ? `Same for all ${values.length} missions.`
-    : `Across all ${values.length} missions: ${format(low)} to ${format(high)}.`;
-}
-
+/** The disaster briefing: a short, dramatic scene with one big call to action. */
 export default async function BriefPage({ params }: { params: Promise<{ slug: string }> }) {
   const mission = findMission((await params).slug);
   if (!mission) notFound();
   const story = storyFor(mission);
   const { budgetM, massKg } = mission.defaultConstraints;
   const hours = mission.targetResponseHours;
-  const icons = beatIcons[mission.category] ?? ["⚠️", "⚠️", "🛰️"];
+  const tint = `var(--hazard-${mission.category})`;
+  const hh = String(hours).padStart(2, "0");
 
   return (
-    <article className="max-w-5xl space-y-8">
-      <MissionSteps slug={mission.slug} current="emergency" />
+    <article className="mx-auto max-w-5xl">
+      <MissionSteps slug={mission.slug} current="disaster" />
 
-      <header className="space-y-4">
-        <p className="inline-flex items-center gap-2 rounded-lg border-2 border-destructive bg-destructive/15 px-4 py-2 text-sm font-bold uppercase tracking-wider text-destructive">
-          <span aria-hidden="true">🚨</span>{story.alert}
-        </p>
-        <h1 className="text-3xl font-bold leading-tight sm:text-5xl">{story.headline}</h1>
-      </header>
-
-      <section aria-label="Situation" className="grid items-center gap-6 md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
+      <section aria-label="The disaster" className="relative mx-auto max-w-3xl overflow-hidden rounded-[var(--radius)] border-4 shadow-[var(--shadow-pop)]" style={{ borderColor: tint }}>
         <HazardScene category={mission.category} city={mission.city} />
-        <ol className="space-y-3">
-          {story.situation.map((beat, index) => (
-            <li key={beat} className="flex gap-3 rounded-lg border border-border bg-card/60 p-3">
-              <span aria-hidden="true" className="text-2xl leading-none">{icons[index] ?? "•"}</span>
-              <span>{beat}</span>
+        <p className="absolute top-2 left-2 inline-flex max-w-[calc(100%-1rem)] items-center gap-2 rounded-full border-[3px] border-space-950 px-3 py-1 font-display text-xs font-bold tracking-wider text-space-950 uppercase shadow-[0_3px_0_rgba(0,0,0,0.35)] sm:top-4 sm:left-4 sm:text-base"
+          style={{ background: tint }}>
+          <span aria-hidden="true" className={styles.pulse}>🚨</span>
+          <span className="truncate">{story.alert}</span>
+        </p>
+      </section>
+
+      <div className="mt-6 grid gap-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+        <div className="min-w-0">
+          <h1 className="!m-0 font-display text-4xl !leading-[1.05] font-bold !tracking-normal sm:text-6xl">
+            <span aria-hidden="true">{hazardEmoji[mission.category]} </span>{challengeLine[mission.category]}
+          </h1>
+          <p className="mt-3 max-w-2xl text-lg font-semibold sm:text-xl">{story.goal}</p>
+        </div>
+        <div className="flex flex-col items-center rounded-[var(--radius)] border-4 border-pop-pink bg-space-950 px-6 py-4 text-center shadow-[var(--shadow-pop)]">
+          <span className="text-xs font-black tracking-[0.25em] text-pop-pink uppercase">Response target</span>
+          <span className="sr-only">{hours} hours to deliver data</span>
+          <span aria-hidden="true" className="font-mono text-5xl leading-none font-bold tabular-nums sm:text-6xl">
+            {hh}<span className={styles.blink}>:</span>00<span className={styles.blink}>:</span>00
+          </span>
+          <span aria-hidden="true" className="mt-1 text-sm text-muted-foreground">hours to get data home</span>
+        </div>
+      </div>
+
+      <section aria-labelledby="limits-heading" className="mt-6">
+        <h2 id="limits-heading" className="sr-only">Mission limits</h2>
+        <ul className="grid grid-cols-2 items-start gap-3 lg:grid-cols-4">
+          <LimitChip icon="💰" label="Budget" value={`$${budgetM}M`} why={story.constraintReasons.budget} />
+          <LimitChip icon="🚀" label="Rocket lift" value={`${massKg} kg`} why={story.constraintReasons.mass} />
+          <LimitChip icon="📅" label="Mission" value={`${mission.durationDays} days`} why={story.constraintReasons.duration} />
+          <LimitChip icon="⏱" label="Response target" value={`${hours} h`} why={story.deadlineReason} />
+        </ul>
+        <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+          <span className="font-bold text-foreground">To win:</span>
+          <span><span aria-hidden="true">🗺 </span>watch {COVERAGE_TARGET}%+ of the area</span>
+          <span><span aria-hidden="true">🏅 </span>score 60+</span>
+        </p>
+      </section>
+
+      <div className="mt-8 flex flex-col items-center gap-3">
+        <Link href={`/mission/${mission.slug}/design`}
+          className="inline-flex min-h-16 w-full items-center justify-center gap-3 rounded-full border-4 border-space-950 bg-pop-yellow px-8 py-4 text-center font-display text-2xl font-bold tracking-wide text-space-950 shadow-[0_8px_0_rgba(0,0,0,0.4)] transition-transform hover:-translate-y-1 focus-visible:outline-[3px] focus-visible:outline-offset-4 focus-visible:outline-ring active:translate-y-1 sm:w-auto sm:text-3xl">
+          BUILD YOUR SATELLITE <span aria-hidden="true">🛠️</span>
+        </Link>
+        <Link href="/map" className="text-sm font-bold text-muted-foreground underline-offset-4 hover:underline">All missions</Link>
+      </div>
+
+      <details className="mt-8 rounded-2xl border-2 border-border bg-space-800/60 px-4 py-3 text-sm">
+        <summary className="cursor-pointer font-bold">Where does this data come from?</summary>
+        <ul className="mt-3 space-y-3">
+          {mission.sources.map((source) => (
+            <li key={source.url}>
+              <span className="mb-1 inline-flex items-center gap-1 rounded-full border-2 border-border px-2 py-0.5 text-xs font-bold">
+                <span aria-hidden="true">{provenanceLabel[source.provenance].icon}</span>{provenanceLabel[source.provenance].text}
+              </span>
+              <p className="!m-0"><a href={source.url} className="font-bold text-pop-cyan underline" target="_blank" rel="noreferrer">{source.name}</a></p>
+              <p className="!m-0 text-muted-foreground">{source.usage}</p>
             </li>
           ))}
-        </ol>
-      </section>
-
-      <section aria-labelledby="goal-heading" className="grid gap-4 rounded-2xl border-2 border-primary bg-card p-5 sm:p-6 md:grid-cols-[minmax(0,1fr)_auto]">
-        <div className="space-y-4">
-          <h2 id="goal-heading" className="text-sm font-bold uppercase tracking-wider text-primary">Your goal</h2>
-          <p className="text-2xl font-bold leading-snug">{story.goal}</p>
-          <p className="text-sm text-muted-foreground">{story.dependents} are counting on your data.</p>
-          <div>
-            <h3 className="text-sm font-semibold">You succeed if:</h3>
-            <ul className="mt-2 grid gap-2 sm:grid-cols-3">
-              <li className="rounded-lg border border-border p-3 text-sm"><span aria-hidden="true">⏱ </span>First data reaches the ground within <b>{hours} hours</b></li>
-              <li className="rounded-lg border border-border p-3 text-sm"><span aria-hidden="true">🗺 </span>You watch at least <b>50%</b> of the area</li>
-              <li className="rounded-lg border border-border p-3 text-sm"><span aria-hidden="true">🏅 </span>Your mission score is <b>60 or more</b></li>
-            </ul>
-          </div>
-        </div>
-        <div className="flex flex-col items-center justify-center rounded-xl border-2 border-destructive bg-background px-6 py-5 text-center">
-          <span className="sr-only">Deadline: {hours} hours to deliver</span>
-          <span className="text-xs font-bold uppercase tracking-widest text-destructive" aria-hidden="true">Deadline</span>
-          <span className="font-mono text-5xl font-bold tabular-nums" aria-hidden="true">{String(hours).padStart(2, "0")}:00:00</span>
-          <span className="mt-1 text-sm text-muted-foreground" aria-hidden="true">hours to deliver</span>
-        </div>
-      </section>
-
-      <section aria-labelledby="limits-heading" className="space-y-3">
-        <div>
-          <h2 id="limits-heading" className="text-2xl font-bold">Your mission limits</h2>
-          <p className="text-sm text-muted-foreground">Every emergency is different, so every mission has its own limits.</p>
-        </div>
-        <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <LimitTile icon="💰" label="Budget" value={`$${budgetM}M`} reason={story.constraintReasons.budget}
-            compare={missionRange((value) => `$${value}M`, (other) => other.defaultConstraints.budgetM)} />
-          <LimitTile icon="🚀" label="Max mass" value={`${massKg} kg`} reason={story.constraintReasons.mass}
-            compare={missionRange((value) => `${value} kg`, (other) => other.defaultConstraints.massKg)} />
-          <LimitTile icon="📅" label="Mission length" value={`${mission.durationDays} days`} reason={story.constraintReasons.duration}
-            compare={missionRange((value) => `${value} days`, (other) => other.durationDays)} />
-          <LimitTile icon="⏱" label="Deadline" value={`${hours} hours`} reason={story.deadlineReason}
-            compare={missionRange((value) => `${value} h`, (other) => other.targetResponseHours)} />
-        </dl>
-      </section>
-
-      <section aria-labelledby="obstacle-heading" className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-xl border border-border bg-card p-4">
-          <h2 id="obstacle-heading" className="font-bold"><span aria-hidden="true">🌫️ </span>What makes it hard</h2>
-          <p className="mt-2">{story.obstacle}</p>
-        </div>
-        <details className="rounded-xl border border-border bg-card p-4">
-          <summary className="cursor-pointer font-bold"><span aria-hidden="true">💡 </span>Need a hint?</summary>
-          <p className="mt-2">{story.hint}</p>
-        </details>
-      </section>
-
-      <section aria-labelledby="sources-heading" className="space-y-3">
-        <h2 id="sources-heading" className="text-lg font-semibold">Where this scenario comes from</h2>
-        {mission.sources.map((source) => (
-          <div key={source.url} className="rounded-lg border border-border p-3">
-            <span className="mb-1 inline-block rounded border border-border px-2 py-0.5 text-xs font-semibold">
-              {provenanceLabel[source.provenance]}
-            </span>
-            <p><a href={source.url} className="text-primary underline" target="_blank" rel="noreferrer">{source.name}</a></p>
-            <p className="text-sm text-muted-foreground">{source.usage}</p>
-          </div>
-        ))}
-      </section>
-
-      <div className="flex flex-wrap items-center gap-4">
-        <Button asChild className="px-6 text-lg"><Link href={`/mission/${mission.slug}/design`}>Build your satellite →</Link></Button>
-        <Link href="/" className="text-sm text-primary underline">All missions</Link>
-      </div>
+        </ul>
+        <p className="mt-3 text-xs text-muted-foreground">Training scenario. Your satellite&apos;s results are simulated.</p>
+      </details>
     </article>
   );
 }

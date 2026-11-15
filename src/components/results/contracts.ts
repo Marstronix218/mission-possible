@@ -1,5 +1,18 @@
 import { z } from "zod";
 import { missionSlugs } from "@/lib/missions/registry";
+export const decisionsSchema = z
+  .object({
+    focus: z.enum(["wide", "hazard"]).optional(),
+    downlink: z.enum(["fast", "save-power"]).optional(),
+    retask: z
+      .object({
+        day: z.number().int().min(0).max(30),
+        quadrant: z.enum(["nw", "ne", "sw", "se"]),
+      })
+      .strict()
+      .optional(),
+  })
+  .strict();
 export const designSchema = z
   .object({
     instruments: z.array(z.string().max(30)).min(1).max(8),
@@ -9,6 +22,7 @@ export const designSchema = z
     comm: z.string().max(30),
     groundStations: z.union([z.literal(1), z.literal(3), z.literal(5)]),
     storage: z.string().max(30),
+    decisions: decisionsSchema.optional(),
   })
   .strict();
 export const classSchema = z.object({

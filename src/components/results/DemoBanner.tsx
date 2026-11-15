@@ -8,20 +8,22 @@ export default function DemoBanner() {
   if (!isMockMode) return null;
   return (
     <aside className="demo-banner" aria-label="Demo mode">
-      <div>
-        <strong>MOCK DATA MODE</strong>
-        <span>
-          Fictional classmates · Browser-local classrooms · Real simulation
-          scores · No Supabase requests
+      <span className="chip chip--solid">
+        <strong>DEMO</strong>
+      </span>
+      <span>
+        Sample class code <b className="join-code">ORBIT1</b>
+        <span className="sr-only">
+          {" "}
+          — fictional classmates, browser-local classrooms, real simulation
+          scores
         </span>
-        <span>
-          Sample class code: <b>ORBIT1</b>
-        </span>
-      </div>
+      </span>
       <div className="actions">
-        <Link href="/classroom">Try student flow ↗</Link>
-        <Link href="/teacher">Try teacher flow ↗</Link>
+        <Link href="/classroom">Student ↗</Link>
+        <Link href="/teacher">Teacher ↗</Link>
         <button
+          type="button"
           onClick={() => {
             if (
               window.confirm(

@@ -1,9 +1,10 @@
 "use client";
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type {
   Mission,
+  MissionDecisions,
   SatelliteDesign,
   Constraints,
   SimResult,
@@ -23,25 +24,30 @@ import {
   designerDraftKey,
   type SavedAttempt,
 } from "./session";
+import { savedAttemptSchema } from "./history-model";
 import { classroomBlocker, attemptsRemaining } from "./classroom-policy";
 import { loadClassroomState } from "./classroom-state";
 import { useReducedMotion } from "./use-reduced-motion";
-import { comparableAttempts, previousComparableAttempt } from "./history-model";
 import { MissionSteps } from "@/components/story/MissionSteps";
-import { buildMissionStory, diagnoseMission } from "@/lib/story/events";
+import { buildMissionStory } from "@/lib/story/events";
+import { getMissionStory } from "@/lib/story/missions";
+import type { PartSlot } from "@/lib/story/parts";
 import { LaunchSequence } from "./LaunchSequence";
-import { MissionTimeline } from "./MissionTimeline";
-import { OutcomeStory } from "./OutcomeStory";
-import { AttemptComparison } from "./AttemptComparison";
-import { HazardGrid } from "./HazardGrid";
-import { NasaVsSimulated, hazardProvenance } from "./DataProvenance";
-const metrics = [
-  "Observation accuracy",
-  "Response time",
-  "Coverage",
-  "Cost efficiency",
-  "Reliability",
-];
+import { ObserveDeck } from "./ObserveDeck";
+import { DecisionPrompt } from "./DecisionPrompt";
+import { Debrief } from "./Debrief";
+import { hazardProvenance } from "./DataProvenance";
+import { fixHref, stripDecisions } from "./mission-debrief";
+import {
+  missionCheckpoints,
+  retaskOffer,
+  type CheckpointId,
+} from "./mission-playback";
+import {
+  applyDecision,
+  decisionCopy,
+  describeChange,
+} from "./mission-decisions";
 export default function MissionExperience({
   mission,
   stage,
@@ -58,14 +64,14 @@ export default function MissionExperience({
   const [constraints, setConstraints] = useState<Constraints>(
     mission.defaultConstraints,
   );
-  const [progress, setProgress] = useState(0);
   const [launchDone, setLaunchDone] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const [observeEnded, setObserveEnded] = useState(false);
+  const [decisions, setDecisions] = useState<MissionDecisions>({});
+  const [answered, setAnswered] = useState<Set<CheckpointId>>(() => new Set());
+  const [change, setChange] = useState<string | null>(null);
   const reducedMotion = useReducedMotion();
-  const [manualPlayback, setManualPlayback] = useState(false);
   const [stillPlayback, setStillPlayback] = useState(false);
   const motionReduced = reducedMotion || stillPlayback;
-  const elapsedPlayback = useRef(0);
   const [clock, setClock] = useState(0);
   const [classProgress, setClassProgress] = useState<ClassroomProgress | null>(
     null,
@@ -75,7 +81,6 @@ export default function MissionExperience({
   const [busy, setBusy] = useState(false);
   const [history, setHistory] = useState<SavedAttempt[]>([]);
   const [attempt, setAttempt] = useState<SavedAttempt | null>(null);
-  const [compare, setCompare] = useState("");
   const [classroom, setClassroom] = useState<Classroom | null>(null);
   const requestId = useRef<string | null>(null);
   const base = "/mission/" + mission.slug;
@@ -99,7 +104,7 @@ export default function MissionExperience({
             : localStorage.getItem(draftKey(mission.slug, classroomId));
         if (draft) {
           const parsed = designSchema.safeParse(JSON.parse(draft));
-          if (parsed.success && active) setDesign(parsed.data);
+          if (parsed.success && active) setDesign(stripDecisions(parsed.data));
         }
         const rows = (backendAvailable ? [] : loadAttempts())
           .filter(
@@ -138,16 +143,23 @@ export default function MissionExperience({
               classroom_id: string | null;
             }[]
           >("history", { missionSlug: mission.slug, classroomId });
-          const rows: SavedAttempt[] = remote.map((a) => ({
-            id: a.id,
-            slug: a.mission_slug,
-            design: a.design,
-            constraints: a.constraints ?? mission.defaultConstraints,
-            result: a.result,
-            at: a.created_at,
-            classroomId: a.classroom_id ?? undefined,
-            verified: !isMockMode,
-          }));
+          const rows: SavedAttempt[] = remote.map((a) => {
+            const parsed = savedAttemptSchema.safeParse({
+              id: a.id,
+              slug: a.mission_slug,
+              design: a.design,
+              constraints: a.constraints ?? mission.defaultConstraints,
+              result: a.result,
+              at: a.created_at,
+              classroomId: a.classroom_id ?? undefined,
+              verified: !isMockMode,
+            });
+            if (!parsed.success)
+              throw new Error(
+                "A saved mission result is invalid. Please try loading your history again.",
+              );
+            return parsed.data;
+          });
           if (active) {
             setHistory(rows);
             setAttempt(
@@ -204,45 +216,11 @@ export default function MissionExperience({
       window.removeEventListener("mission-possible:mock-updated", changed);
     };
   }, [classroomId]);
-  useEffect(() => {
-    if (
-      stage !== "run" ||
-      !launchDone ||
-      paused ||
-      !loaded ||
-      error ||
-      (motionReduced && !manualPlayback)
-    )
-      return;
-    const before = elapsedPlayback.current;
-    if (before >= 18000) return;
-    const start = performance.now();
-    const timer = setInterval(() => {
-      const elapsed = Math.min(18000, before + performance.now() - start);
-      setProgress(elapsed / 18000);
-      if (elapsed === 18000) clearInterval(timer);
-    }, 100);
-    return () => {
-      elapsedPlayback.current = Math.min(
-        18000,
-        before + performance.now() - start,
-      );
-      clearInterval(timer);
-    };
-  }, [stage, launchDone, paused, loaded, error, motionReduced, manualPlayback]);
   const resources = useMemo(
     () => summarizeResources(design, constraints),
     [design, constraints],
   );
   const result = attempt?.result;
-  const previous = attempt
-    ? previousComparableAttempt(history, attempt)
-    : undefined;
-  const comparison = attempt
-    ? (history.find(
-        (a) => a.id === compare && comparableAttempts(attempt, a),
-      ) ?? previous)
-    : undefined;
   const classBlocker = classroomId
     ? (classroomBlocker(classroom, classProgress?.attemptsUsed ?? 0, clock) ??
       (!classProgress
@@ -254,7 +232,6 @@ export default function MissionExperience({
   const remaining = classroom
     ? attemptsRemaining(classroom, classProgress?.attemptsUsed ?? 0)
     : null;
-  const playbackPaused = paused || (motionReduced && !manualPlayback);
   function update(next: SatelliteDesign) {
     setDesign(next);
     try {
@@ -301,7 +278,7 @@ export default function MissionExperience({
       if (backendAvailable) {
         const saved = await api<{ result: SimResult }>("attempt", {
           missionSlug: mission.slug,
-          design,
+          design: runDesign,
           classroomId,
           requestId: id,
         });
@@ -310,12 +287,12 @@ export default function MissionExperience({
       } else {
         if (classroomId)
           throw new Error("Live classrooms require the backend connection.");
-        outcome = runSimulation(mission, design, constraints);
+        outcome = runSimulation(mission, runDesign, constraints);
       }
       const row: SavedAttempt = {
         id,
         slug: mission.slug,
-        design,
+        design: runDesign,
         constraints,
         result: outcome,
         at: new Date().toISOString(),
@@ -342,44 +319,52 @@ export default function MissionExperience({
       setBusy(false);
     }
   }
-  const values = result
-    ? [
-        result.score.accuracy,
-        result.score.responseTime,
-        result.score.coverage,
-        result.score.costEfficiency,
-        result.score.reliability,
-      ]
-    : [];
+  // ── Run: design + in-mission decisions → one engine result ────────────
+  const runDesign: SatelliteDesign = { ...stripDecisions(design), decisions };
   const simulated = useMemo(
-    () => runSimulation(mission, design, constraints),
-    [mission, design, constraints],
+    () =>
+      runSimulation(
+        mission,
+        { ...stripDecisions(design), decisions },
+        constraints,
+      ),
+    [mission, design, decisions, constraints],
   );
+  // The retask offer is read from the result *without* a retask, so answering it cannot move it.
+  const preRetask = useMemo(() => {
+    const { retask: _r, ...rest } = decisions;
+    void _r;
+    return runSimulation(
+      mission,
+      { ...stripDecisions(design), decisions: rest },
+      constraints,
+    );
+  }, [mission, design, decisions, constraints]);
+  const offer = useMemo(
+    () => retaskOffer(mission, preRetask),
+    [mission, preRetask],
+  );
+  const checkpoints = useMemo(() => missionCheckpoints(offer), [offer]);
+  const hazardNoun = getMissionStory(mission.slug)?.hazardNoun ?? "hazard";
   const runEvents = useMemo(
     () => buildMissionStory(mission, design, resources, simulated),
     [mission, design, resources, simulated],
   );
-  const resultResources = useMemo(
-    () => (attempt ? summarizeResources(attempt.design, attempt.constraints) : null),
-    [attempt],
-  );
-  const resultEvents = useMemo(
-    () =>
-      attempt && resultResources
-        ? buildMissionStory(mission, attempt.design, resultResources, attempt.result)
-        : [],
-    [mission, attempt, resultResources],
-  );
-  const resultDiagnosis = useMemo(
-    () =>
-      attempt && resultResources
-        ? diagnoseMission(mission, attempt.design, resultResources, attempt.result)
-        : null,
-    [mission, attempt, resultResources],
-  );
-  function redesign(from: SatelliteDesign, slot?: string) {
-    update(from);
-    router.push(base + "/design" + suffix + (slot ? "#slot-" + slot : ""));
+  function answer(id: CheckpointId, choice: string) {
+    const next = applyDecision(decisions, id, choice, offer);
+    const after = runSimulation(
+      mission,
+      { ...stripDecisions(design), decisions: next },
+      constraints,
+    );
+    setChange(describeChange(id, choice, simulated, after, offer));
+    setDecisions(next);
+    setAnswered((prev) => new Set([...prev, id]));
+  }
+  const onObserveEnd = useCallback(() => setObserveEnded(true), []);
+  function fixAndRetry(from: SatelliteDesign, slots: PartSlot[]) {
+    update(stripDecisions(from));
+    router.push(fixHref(mission.slug, slots, classroomId));
   }
   return (
     <main id="main-content" tabIndex={-1}>
@@ -402,19 +387,25 @@ export default function MissionExperience({
               : "Mission debrief: "}
         <em>{mission.city}</em>
       </h1>
-      <p className="notice">
+      <p
+        className={
+          stage === "run" || stage === "result"
+            ? "text-xs text-muted-foreground"
+            : "notice"
+        }
+      >
         Educational simulation · {hazardProvenance(mission)}{" "}
         {isMockMode
-          ? "Mock classroom data stays in this browser. Scores are computed by the real simulation engine."
+          ? "Mock data stays in this browser; scores come from the real engine."
           : backendAvailable
             ? "Cloud submissions are recalculated on the server."
-            : "Solo attempts are saved in this browser. Live classrooms and rankings require cloud configuration."}
+            : "Solo attempts are saved in this browser."}
       </p>
       {(stage === "run" || stage === "result") && (
         <MissionSteps
           slug={mission.slug}
           current={
-            stage === "result" ? "debrief" : launchDone ? "observe" : "launch"
+            stage === "result" ? "discover" : launchDone ? "observe" : "launch"
           }
           query={suffix}
         />
@@ -619,16 +610,13 @@ export default function MissionExperience({
         </div>
       )}
       {stage === "run" && (
-        <section className="panel" aria-busy={busy}>
+        <section aria-busy={busy} className="grid gap-4">
           <label className="choice">
             <input
               type="checkbox"
               checked={motionReduced}
               disabled={reducedMotion}
-              onChange={(e) => {
-                setStillPlayback(e.target.checked);
-                setManualPlayback(false);
-              }}
+              onChange={(e) => setStillPlayback(e.target.checked)}
             />
             <span>
               Reduce motion{reducedMotion ? " (system preference)" : ""}
@@ -652,44 +640,43 @@ export default function MissionExperience({
           )}
           {loaded && launchDone && (
             <>
-              <h2 id="observe-heading" tabIndex={-1}>
-                Observe: race the deadline
+              <h2
+                id="observe-heading"
+                tabIndex={-1}
+                className="m-0 font-display"
+              >
+                🛰️ Observe {mission.city}
               </h2>
-              {motionReduced && !manualPlayback && (
-                <p role="status" className="notice">
-                  Reduced motion is on. Choose Play animation to start, or skip
-                  directly to your results.
-                </p>
-              )}
-              <MissionTimeline
+              <ObserveDeck
                 mission={mission}
-                design={design}
+                design={runDesign}
+                resources={resources}
                 result={simulated}
-                events={runEvents}
-                progress={progress}
+                reducedMotion={motionReduced}
+                checkpoints={checkpoints}
+                answered={answered}
+                change={change}
+                onEnd={onObserveEnd}
+                renderDecision={(id) => {
+                  const copy = decisionCopy(id, hazardNoun, offer);
+                  return (
+                    <DecisionPrompt
+                      alarm={copy.alarm}
+                      title={copy.title}
+                      subtitle={copy.subtitle}
+                      options={copy.options}
+                      onChoose={(choice) => answer(id, choice)}
+                    />
+                  );
+                }}
               />
             </>
           )}
           <div className="actions">
-            {launchDone && (
-              <button
-                onClick={() => {
-                  if (motionReduced && !manualPlayback) {
-                    setManualPlayback(true);
-                    setPaused(false);
-                  } else setPaused((p) => !p);
-                }}
-                disabled={progress >= 1 || busy}
-              >
-                {motionReduced && !manualPlayback
-                  ? "Play animation"
-                  : playbackPaused
-                    ? "Resume"
-                    : "Pause"}
-              </button>
-            )}
             <button
-              className="primary"
+              className={
+                observeEnded ? "btn-pop btn-pop--lg" : "btn-pop btn-pop--ghost"
+              }
               disabled={
                 !loaded ||
                 busy ||
@@ -700,112 +687,32 @@ export default function MissionExperience({
             >
               {busy
                 ? "Submitting…"
-                : progress === 1
-                  ? "View results →"
-                  : "Skip to results →"}
+                : observeEnded
+                  ? "🔎 See what happened →"
+                  : "⏩ Skip to results"}
             </button>
-            <Link href={base + "/design" + suffix}>Return to design</Link>
+            <Link href={base + "/design" + suffix}>Back to design</Link>
           </div>
         </section>
       )}
       {stage === "result" &&
         loaded &&
-        (result && attempt && resultDiagnosis ? (
-          <>
-            <OutcomeStory
-              mission={mission}
-              design={attempt.design}
-              result={result}
-              events={resultEvents}
-              diagnosis={resultDiagnosis}
-              onRedesign={(slot) => redesign(attempt.design, slot)}
-            />
-            <NasaVsSimulated mission={mission}>
-              <HazardGrid
-                mission={mission}
-                cells={result.cells}
-                label={`Simulated observations of ${mission.city}`}
-              />
-              <p className="text-sm">
-                {result.cells.filter((c) => c.observed).length} of{" "}
-                {result.cells.length} map cells observed during the{" "}
-                {mission.durationDays}-day simulated mission.
-              </p>
-            </NasaVsSimulated>
-            <AttemptComparison
-              attempt={attempt}
-              comparison={comparison}
-              history={history}
-              compare={compare}
-              onCompareChange={setCompare}
-              resultHref={(id) =>
-                base +
-                "/result?attempt=" +
-                id +
-                (classroomId ? "&classroom=" + classroomId : "")
-              }
-            />
-            <details className="panel">
-              <summary>
-                Score details · {result.score.total.toFixed(1)} / 100 ·{" "}
-                {result.success ? "✓ Mission successful" : "△ Keep experimenting"}
-              </summary>
-              <div className="two-column">
-                <div>
-                  <div className="eyebrow">
-                    MISSION SCORE · ENGINE {result.engineVersion}
-                  </div>
-                  <div className="score">
-                    {result.score.total.toFixed(1)}
-                    <small>/100</small>
-                  </div>
-                  <p>
-                    Coverage {result.score.coverage.toFixed(1)}% ·{" "}
-                    {isMockMode
-                      ? "Local demo attempt"
-                      : attempt.verified
-                        ? "Submitted to cloud"
-                        : "Local attempt"}
-                  </p>
-                  <Radar values={values} />
-                  <dl>
-                    {metrics.map((m, i) => (
-                      <div key={m}>
-                        <dt>{m}</dt>
-                        <dd>{values[i].toFixed(1)} / 100</dd>
-                      </div>
-                    ))}
-                  </dl>
-                </div>
-                <div>
-                  <h2>Engine feedback</h2>
-                  {result.feedback.map((f, i) => (
-                    <article className="feedback" key={f.key + ":" + i}>
-                      <span className="eyebrow">{f.type.toUpperCase()}</span>
-                      <p>{f.message}</p>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            </details>
-            <div className="actions">
-              <button
-                className="primary"
-                onClick={() => redesign(attempt.design)}
-              >
-                Redesign this satellite ↗
-              </button>
-              <Link
-                href={
-                  "/leaderboard?mission=" +
-                  mission.slug +
-                  (classroomId ? "&classroom=" + classroomId : "")
-                }
-              >
-                View ranking
-              </Link>
-            </div>
-          </>
+        (result && attempt ? (
+          <Debrief
+            key={attempt.id}
+            mission={mission}
+            attempt={attempt}
+            history={history}
+            reducedMotion={motionReduced}
+            classroomId={classroomId}
+            resultHref={(id) =>
+              base +
+              "/result?attempt=" +
+              id +
+              (classroomId ? "&classroom=" + classroomId : "")
+            }
+            onFix={(slots) => fixAndRetry(attempt.design, slots)}
+          />
         ) : (
           <section className="panel">
             <h2>No attempt selected</h2>
@@ -816,62 +723,5 @@ export default function MissionExperience({
           </section>
         ))}
     </main>
-  );
-}
-function Radar({ values }: { values: number[] }) {
-  const point = (i: number, r: number) =>
-    [
-      160 + Math.sin((i * Math.PI * 2) / 5) * r,
-      140 - Math.cos((i * Math.PI * 2) / 5) * r,
-    ].join(",");
-  return (
-    <svg
-      className="radar"
-      viewBox="0 0 320 290"
-      role="img"
-      aria-label={
-        "Score breakdown: " +
-        metrics.map((m, i) => m + " " + values[i]).join(", ")
-      }
-    >
-      {[25, 50, 75, 100].map((r) => (
-        <polygon
-          key={r}
-          points={values.map((_, i) => point(i, r)).join(" ")}
-          fill="none"
-          stroke="#344f64"
-        />
-      ))}
-      {values.map((_, i) => (
-        <line
-          key={i}
-          x1="160"
-          y1="140"
-          x2={point(i, 100).split(",")[0]}
-          y2={point(i, 100).split(",")[1]}
-          stroke="#344f64"
-        />
-      ))}
-      <polygon
-        points={values.map((v, i) => point(i, v)).join(" ")}
-        fill="#78e3ce44"
-        stroke="#78e3ce"
-        strokeWidth="2"
-      />
-      {["Accuracy", "Response", "Coverage", "Cost", "Reliability"].map(
-        (m, i) => (
-          <text
-            key={m}
-            x={point(i, 125).split(",")[0]}
-            y={Number(point(i, 125).split(",")[1]) + 4}
-            textAnchor="middle"
-            fill="#c2d4de"
-            fontSize="11"
-          >
-            {m}
-          </text>
-        ),
-      )}
-    </svg>
   );
 }

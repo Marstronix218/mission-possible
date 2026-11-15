@@ -32,6 +32,15 @@ describe("designer route integration", () => {
     expect((page.props.children as ReactElement).type).toBe(UpstreamDesign);
   });
 
+  it("forwards retry slots to the solo designer without choosing parts", async () => {
+    const page = await Page({
+      params: params(), searchParams: Promise.resolve({ fix: ["orbit,comm", "storage"] }),
+    });
+    const designer = page.props.children as ReactElement<{ fix?: string[] }>;
+    expect(designer.type).toBe(UpstreamDesign);
+    expect(designer.props.fix).toEqual(["orbit,comm", "storage"]);
+  });
+
   it("retains classroom and attempt context in the live classroom designer", async () => {
     const page = await Page({
       params: params(),
