@@ -11,6 +11,11 @@ import {
 } from "@/components/results/contracts";
 import { getMission } from "@/components/results/missions";
 import { runSimulation, summarizeResources, ENGINE_VERSION } from "@/lib/sim";
+import {
+  leaderboardSubmission,
+  publicRanking,
+  type RankingSource,
+} from "@/lib/api/leaderboard";
 export const runtime = "nodejs";
 const uuid = z.string().uuid();
 const inputSchema = z.discriminatedUnion("action", [
@@ -45,6 +50,12 @@ const inputSchema = z.discriminatedUnion("action", [
     action: z.literal("history"),
     missionSlug: z.string(),
     classroomId: uuid.optional(),
+  }),
+  z.object({
+    // Publishes an already server-scored attempt; the client never sends a score.
+    action: z.literal("submitScore"),
+    attemptId: uuid,
+    nickname: nicknameSchema.optional(),
   }),
   z.object({
     action: z.literal("ranking"),
@@ -273,24 +284,45 @@ export async function POST(request: Request) {
       });
       check(error);
       return NextResponse.json(
-        (data ?? []).map(
-          (
-            row: {
-              nickname: string;
-              score: number;
-              attempts: number;
-              improvement: number;
-              achieved: string;
-            },
-            i: number,
-          ) => ({
-            entry_id: i + 1,
-            nickname: row.nickname,
-            score: row.score,
-            attempts: row.attempts,
-            improvement: row.improvement,
-            achieved: row.achieved,
-          }),
+        publicRanking((data ?? []) as RankingSource[], user.id),
+      );
+    }
+    if (input.action === "submitScore") {
+      const { data: attempt, error } = await db
+        .from("attempts")
+        .select("id,mission_slug,classroom_id,score_total,engine_version")
+        .eq("id", input.attemptId)
+        .eq("user_id", user.id)
+        .maybeSingle();
+      check(error);
+      if (!attempt)
+        throw new HttpError(
+          404,
+          "This mission result is not saved on the server yet.",
+        );
+      if (attempt.classroom_id) await member(attempt.classroom_id);
+      else {
+        if (!input.nickname)
+          throw new HttpError(400, "Choose a pilot name first.");
+        // Idempotent: repeating the same name on refresh changes nothing.
+        const { error: e } = await db
+          .from("profiles")
+          .update({ nickname: input.nickname })
+          .eq("id", user.id);
+        check(e);
+      }
+      const { data, error: e } = await db.rpc("mission_ranking", {
+        p_slug: attempt.mission_slug,
+        p_class: attempt.classroom_id,
+        p_engine: ENGINE_VERSION,
+      });
+      check(e);
+      return NextResponse.json(
+        leaderboardSubmission(
+          (data ?? []) as RankingSource[],
+          user.id,
+          attempt,
+          ENGINE_VERSION,
         ),
       );
     }

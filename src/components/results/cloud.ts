@@ -54,6 +54,9 @@ export async function api<T>(
     body: JSON.stringify({ action, ...input }),
   });
   const body = await response.json();
-  if (!response.ok) throw new Error(body.error?.message ?? "Request failed.");
+  if (!response.ok)
+    throw Object.assign(new Error(body.error?.message ?? "Request failed."), {
+      status: response.status,
+    });
   return body as T;
 }

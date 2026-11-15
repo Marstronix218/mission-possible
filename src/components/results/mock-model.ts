@@ -3,11 +3,15 @@ import {
   designSchema,
   nicknameSchema,
   type Classroom,
-  type Ranking,
 } from "./contracts";
 import { getMission, defaultDesign } from "./missions";
 import { runSimulation, summarizeResources, ENGINE_VERSION } from "@/lib/sim";
 import type { Constraints, SatelliteDesign, SimResult } from "@/types/game";
+import {
+  leaderboardSubmission,
+  publicRanking,
+  type RankingSource,
+} from "@/lib/api/leaderboard";
 export const demoClassId = "d0000000-0000-4000-8000-000000000001";
 export const demoTeacherId = "d0000000-0000-4000-8000-000000000002";
 export const demoCode = "ORBIT1";
@@ -303,53 +307,90 @@ export function performDemoAction(
       member(input.classroomId).mission_slug !== input.missionSlug
     )
       throw new Error("Mission does not match the classroom.");
-    const rows = state.attempts
-      .filter(
-        (a) =>
-          a.mission_slug === input.missionSlug &&
-          a.classroom_id === (input.classroomId ?? null) &&
-          a.engine_version === ENGINE_VERSION,
-      )
-      .sort((a, b) => a.created_at.localeCompare(b.created_at));
-    const grouped = new Map<string, Ranking & { first: number }>();
-    for (const a of rows) {
-      const membership = state.members.find(
-        (m) => m.classroom_id === input.classroomId && m.user_id === a.user_id,
+    return publicRanking(
+      demoRanking(
+        state,
+        String(input.missionSlug),
+        (input.classroomId as string | undefined) ?? null,
+      ),
+      ctx.userId,
+    );
+  }
+  if (action === "submitScore") {
+    const attempt = state.attempts.find(
+      (a) => a.id === input.attemptId && a.user_id === ctx.userId,
+    );
+    if (!attempt)
+      throw new Error("This mission result is not saved in the demo yet.");
+    if (attempt.classroom_id) member(attempt.classroom_id);
+    else {
+      if (input.nickname === undefined || input.nickname === null)
+        throw new Error("Choose a pilot name first.");
+      // Idempotent: repeating the same name on refresh changes nothing.
+      state.profiles[ctx.userId].nickname = nicknameSchema.parse(
+        input.nickname,
       );
-      const nickname = input.classroomId
-        ? membership?.nickname
-        : state.profiles[a.user_id]?.nickname;
-      if (!nickname) continue;
-      const existing = grouped.get(a.user_id);
-      if (!existing)
-        grouped.set(a.user_id, {
-          entry_id: 0,
-          nickname,
-          score: a.score_total,
-          attempts: 1,
-          improvement: 0,
-          achieved: a.created_at,
-          first: a.score_total,
-        });
-      else {
-        existing.attempts++;
-        if (a.score_total > existing.score) {
-          existing.score = a.score_total;
-          existing.achieved = a.created_at;
-        }
-        existing.improvement = existing.score - existing.first;
-      }
     }
-    return [...grouped.values()]
-      .sort((a, b) => b.score - a.score || a.achieved.localeCompare(b.achieved))
-      .map((r, i) => ({
-        entry_id: i + 1,
-        nickname: r.nickname,
-        score: r.score,
-        attempts: r.attempts,
-        improvement: r.improvement,
-        achieved: r.achieved,
-      }));
+    return leaderboardSubmission(
+      demoRanking(state, attempt.mission_slug, attempt.classroom_id),
+      ctx.userId,
+      attempt,
+      ENGINE_VERSION,
+    );
   }
   throw new Error("Unsupported demo operation.");
+}
+
+/** Best score per player, mirroring public.mission_ranking (ties: earliest). */
+function demoRanking(
+  state: DemoState,
+  slug: string,
+  classroomId: string | null,
+): RankingSource[] {
+  const rows = state.attempts
+    .filter(
+      (a) =>
+        a.mission_slug === slug &&
+        a.classroom_id === classroomId &&
+        a.engine_version === ENGINE_VERSION,
+    )
+    .sort((a, b) => a.created_at.localeCompare(b.created_at));
+  const grouped = new Map<string, RankingSource & { first: number }>();
+  for (const a of rows) {
+    const nickname = classroomId
+      ? state.members.find(
+          (m) => m.classroom_id === classroomId && m.user_id === a.user_id,
+        )?.nickname
+      : state.profiles[a.user_id]?.nickname;
+    if (!nickname) continue;
+    const existing = grouped.get(a.user_id);
+    if (!existing)
+      grouped.set(a.user_id, {
+        user_id: a.user_id,
+        nickname,
+        score: a.score_total,
+        attempts: 1,
+        improvement: 0,
+        achieved: a.created_at,
+        first: a.score_total,
+      });
+    else {
+      existing.attempts++;
+      if (a.score_total > existing.score) {
+        existing.score = a.score_total;
+        existing.achieved = a.created_at;
+      }
+      existing.improvement = existing.score - existing.first;
+    }
+  }
+  return [...grouped.values()]
+    .sort((a, b) => b.score - a.score || a.achieved.localeCompare(b.achieved))
+    .map((r) => ({
+      user_id: r.user_id,
+      nickname: r.nickname,
+      score: r.score,
+      attempts: r.attempts,
+      improvement: r.improvement,
+      achieved: r.achieved,
+    }));
 }

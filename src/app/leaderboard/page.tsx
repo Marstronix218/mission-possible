@@ -1,9 +1,11 @@
-import { GlobalRanking } from "@/components/results/ClassroomUI";
+import { LeaderboardView } from "@/components/player/LeaderboardView";
 export default async function Page({
   searchParams,
 }: {
   searchParams: Promise<{ mission?: string; classroom?: string }>;
 }) {
   const q = await searchParams;
-  return <GlobalRanking initialMission={q.mission} classroomId={q.classroom} />;
+  return (
+    <LeaderboardView initialMission={q.mission} classroomId={q.classroom} />
+  );
 }

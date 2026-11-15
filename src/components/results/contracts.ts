@@ -65,6 +65,8 @@ export type Ranking = {
   attempts: number;
   improvement: number;
   achieved: string;
+  /** Set by the server/demo model for the requesting player's own row. */
+  mine?: boolean;
 };
 
 export type ClassroomProgress = {
