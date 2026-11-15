@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <small>CODE BLUE</small>
           </Link>
           <nav aria-label="Main">
-            <Link href="/map">Mission map</Link>
+            <Link href="/map">Missions</Link>
             <Link href="/classroom">Join class</Link>
             <Link href="/teacher">Teacher</Link>
             <Link href="/leaderboard">Rankings</Link>
@@ -30,7 +30,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <footer>
           MISSION: POSSIBLE / CODE BLUE{" "}
-          <span>Learn through exploration. Build for your community.</span>
+          <span>
+            Training scenarios. Real satellite trade-offs. Your city is counting on
+            you.
+          </span>
         </footer>
       </body>
     </html>

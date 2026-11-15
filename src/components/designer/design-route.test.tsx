@@ -26,7 +26,7 @@ const params = () => Promise.resolve({ slug: "los-angeles" });
 describe("designer route integration", () => {
   beforeEach(() => { mode.isMockMode = false; });
 
-  it("keeps the live solo designer available", async () => {
+  it("uses the story-driven designer for live solo players", async () => {
     const page = await Page({ params: params(), searchParams: Promise.resolve({}) });
     expect(page.type).toBe("main");
     expect((page.props.children as ReactElement).type).toBe(UpstreamDesign);
@@ -43,14 +43,21 @@ describe("designer route integration", () => {
     });
   });
 
-  it("preserves the shared mock solo experience", async () => {
+  it("uses the story-driven designer for mock solo players too", async () => {
     mode.isMockMode = true;
     const page = await Page({ params: params(), searchParams: Promise.resolve({}) });
-    expect(page.type).toBe(MissionExperience);
-    expect(page.props.stage).toBe("design");
+    expect(page.type).toBe("main");
+    expect((page.props.children as ReactElement).type).toBe(UpstreamDesign);
   });
 
-  it("keeps the live solo briefing available", async () => {
+  it("keeps the shared classroom designer in mock mode", async () => {
+    mode.isMockMode = true;
+    const page = await Page({ params: params(), searchParams: Promise.resolve({ classroom: "class-123" }) });
+    expect(page.type).toBe(MissionExperience);
+    expect(page.props).toMatchObject({ stage: "design", classroomId: "class-123" });
+  });
+
+  it("uses the story-driven briefing for live solo players", async () => {
     const page = await BriefPage({ params: params(), searchParams: Promise.resolve({}) });
     expect(page.type).toBe("main");
     expect((page.props.children as ReactElement).type).toBe(UpstreamBrief);
@@ -67,11 +74,18 @@ describe("designer route integration", () => {
     });
   });
 
-  it("preserves the shared mock solo briefing", async () => {
+  it("uses the story-driven briefing for mock solo players too", async () => {
     mode.isMockMode = true;
     const page = await BriefPage({ params: params(), searchParams: Promise.resolve({}) });
+    expect(page.type).toBe("main");
+    expect((page.props.children as ReactElement).type).toBe(UpstreamBrief);
+  });
+
+  it("keeps the shared classroom briefing in mock mode", async () => {
+    mode.isMockMode = true;
+    const page = await BriefPage({ params: params(), searchParams: Promise.resolve({ classroom: "class-123" }) });
     expect(page.type).toBe(MissionExperience);
-    expect(page.props.stage).toBe("brief");
+    expect(page.props).toMatchObject({ stage: "brief", classroomId: "class-123" });
   });
 
   it("rejects unknown missions before rendering a designer", async () => {

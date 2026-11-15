@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { missionSlugs } from "@/lib/missions/registry";
 export const designSchema = z
   .object({
     instruments: z.array(z.string().max(30)).min(1).max(8),
@@ -12,7 +13,7 @@ export const designSchema = z
   .strict();
 export const classSchema = z.object({
   name: z.string().trim().min(1).max(80),
-  mission_slug: z.enum(["los-angeles", "houston", "phoenix"]),
+  mission_slug: z.enum(missionSlugs),
   budget_m: z.number().min(80).max(1000),
   mass_kg: z.number().min(150).max(1500),
   max_attempts: z.number().int().min(1).max(100).nullable(),

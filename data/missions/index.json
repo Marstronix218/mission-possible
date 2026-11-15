@@ -13,19 +13,19 @@
       34.45
     ],
     "defaultConstraints": {
-      "budgetM": 250,
-      "massKg": 500
+      "budgetM": 220,
+      "massKg": 450
     },
-    "durationDays": 7,
+    "durationDays": 6,
     "seed": 2182026,
-    "targetResponseHours": 6,
+    "targetResponseHours": 8,
     "sources": [
       {
-        "name": "NASA FIRMS / VIIRS (reference dataset)",
+        "name": "NASA FIRMS VIIRS 375 m active fire detections, Suomi NPP and NOAA-20 (via NASA GIBS)",
         "url": "https://firms.modaps.eosdis.nasa.gov/",
-        "usage": "Hazard placement is an educational model inspired by FIRMS fire-detection products; cells are not current observations.",
+        "usage": "Fire cells and their first-detection day come from VIIRS 375 m thermal anomaly detections, 7-13 Jan 2025 (Palisades, Eaton, Hurst and Kenneth fires). The mission runs 8-13 Jan UTC (day 0 = 8 Jan); cells already burning on 7 Jan start on day 0. Persistent industrial heat sources are masked with a Nov 2024 baseline. Smoke/cloud blocking and sensor detectability are modelled.",
         "accessedOn": "2026-11-14",
-        "provenance": "educational-model"
+        "provenance": "nasa-observed"
       }
     ],
     "gridCellCount": 400
@@ -44,8 +44,8 @@
       30.15
     ],
     "defaultConstraints": {
-      "budgetM": 250,
-      "massKg": 500
+      "budgetM": 320,
+      "massKg": 650
     },
     "durationDays": 7,
     "seed": 7132026,
@@ -54,7 +54,7 @@
       {
         "name": "NASA GPM IMERG and OPERA DSWx (reference datasets)",
         "url": "https://gpm.nasa.gov/data/imerg",
-        "usage": "Flood and cloud patterns are educational models inspired by precipitation and surface-water products; cells are not current observations.",
+        "usage": "Flood and cloud patterns are educational models inspired by precipitation and surface-water products; cells are not current observations. The MODIS flood product for Hurricane Beryl (Jul 2024) was checked but is almost entirely cloud-obscured, so it is not used.",
         "accessedOn": "2026-11-14",
         "provenance": "educational-model"
       }
@@ -75,19 +75,26 @@
       33.85
     ],
     "defaultConstraints": {
-      "budgetM": 250,
-      "massKg": 500
+      "budgetM": 180,
+      "massKg": 380
     },
-    "durationDays": 7,
+    "durationDays": 10,
     "seed": 6022026,
     "targetResponseHours": 24,
     "sources": [
       {
-        "name": "NASA ECOSTRESS land-surface temperature (reference dataset)",
-        "url": "https://ecostress.jpl.nasa.gov/",
-        "usage": "Heat intensity is an educational model inspired by ECOSTRESS products; cells are not current observations.",
+        "name": "NASA MODIS Aqua 8-day daytime land-surface temperature (via NASA GIBS)",
+        "url": "https://www.earthdata.nasa.gov/data/catalog/lpcloud-myd11a2-061",
+        "usage": "Heat cells are the hottest 40% of populated cells by observed daytime land-surface temperature, 11-18 Jul 2024. Cloud blocking and sensor detectability are modelled.",
         "accessedOn": "2026-11-14",
-        "provenance": "educational-model"
+        "provenance": "nasa-observed"
+      },
+      {
+        "name": "NASA SEDAC Gridded Population of the World v4, 2020 density (via NASA GIBS)",
+        "url": "https://www.earthdata.nasa.gov/data/projects/gpw",
+        "usage": "Cells with at least 500 people per square kilometre count as populated neighbourhoods.",
+        "accessedOn": "2026-11-14",
+        "provenance": "nasa-observed"
       }
     ],
     "gridCellCount": 400

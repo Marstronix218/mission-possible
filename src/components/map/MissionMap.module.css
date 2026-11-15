@@ -1,0 +1,69 @@
+.hero {
+  background:
+    radial-gradient(120% 90% at 85% 100%, #6b2a1c 0%, transparent 60%),
+    linear-gradient(160deg, #1b1420 0%, #0f1b2a 55%, #0b1722 100%);
+}
+
+.pulse {
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.flicker {
+  transform-origin: 50% 100%;
+  animation: flicker 1.2s ease-in-out infinite alternate;
+}
+
+.beam {
+  animation: beam 2.4s ease-in-out infinite;
+}
+
+.drift {
+  animation: drift 6s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes flicker {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(1.12);
+  }
+}
+
+@keyframes beam {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse,
+  .flicker,
+  .beam,
+  .drift {
+    animation: none;
+  }
+}

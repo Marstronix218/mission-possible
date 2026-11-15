@@ -31,15 +31,25 @@ The database tests run the SQL in PGlite with Supabase Auth stand-ins. They veri
 
 ## NASA sources
 
-`public/nasa/*.jpg` contains NASA GIBS / Terra MODIS corrected-reflectance true-color snapshots dated **2024-07-01**. Each image has a matching JSON file with the exact request, bounding box, date, and usage. These images provide observed geographic context beside the modeled observation grid; they are not hazard labels or scoring truth.
-
-Regenerate from the official GIBS WMS service:
+All data comes from the public NASA GIBS WMS (`https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi`, no key). Scripts need Python 3.9+, Pillow and curl.
 
 ```sh
-python3 scripts/data/fetch-nasa-images.py
+python3 scripts/data/fetch-nasa-hazards.py   # observations -> scripts/data/observed/<slug>.json
+node scripts/data/generate-mvp-missions.mjs   # -> data/missions/{los-angeles,houston,phoenix}.json + index.json entries
+python3 scripts/data/fetch-nasa-images.py [slug]  # -> public/nasa/<slug>.jpg|json
 ```
 
-Scoring uses Ryohei's explicitly educational-model mission grids. Replacing them with real hazard grids (FIRMS, OPERA, ECOSTRESS) remains a data-owner integration and must preserve provenance and engine versioning.
+| Mission | Hazard truth | Provenance |
+| --- | --- | --- |
+| Los Angeles | VIIRS 375 m thermal anomalies (`VIIRS_SNPP_Thermal_Anomalies_375m_All`, `VIIRS_NOAA20_Thermal_Anomalies_375m_All`), 7–13 Jan 2025 UTC. A cell is a fire cell on a day if it has ≥ 20 opaque detection pixels (700×400 render, max of both satellites) and ≥ 3× its maximum over 18–27 Nov 2024, which masks refinery/landfill flares. The mission runs 8–13 Jan: `eventDay` = first such day counted from 8 Jan, and cells already burning on 7 Jan start at day 0. | `nasa-observed` |
+| Phoenix | `MODIS_Aqua_L3_Land_Surface_Temp_8Day_Day` (11–18 Jul 2024) decoded with the GIBS colormap; cells with ≥ 500 people/km² in `GPW_Population_Density_2020` are populated; the hottest 40 % of those are heat cells. | `nasa-observed` |
+| Houston | `MODIS_Combined_Flood_3-Day` for Hurricane Beryl (9–12 Jul 2024) is 52–100 % cloud-obscured, so it is recorded but not used. | `educational-model` |
+
+Cloud/smoke probability and sensor detectability are modelled for every mission. In Los Angeles, smoke adds +0.15 cloud probability to cells next to an observed fire cell and +0.08 two cells away, and fire cells get detectability ≥ 0.9 (strong thermal targets).
+
+`public/nasa/los-angeles.jpg` is Suomi NPP VIIRS true color on 2025-01-08 with that day's VIIRS fire detections in red, over the mission bounding box. Houston and Phoenix use Terra MODIS true color on 2024-07-01 for context only. Each image has a JSON file with the exact requests, date, bounding box and usage.
+
+Per-mission conditions: Los Angeles $220M / 450 kg / 6 days / 8 h target; Houston $320M / 650 kg / 7 days / 12 h; Phoenix $180M / 380 kg / 10 days / 24 h.
 
 ## Verification
 

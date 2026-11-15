@@ -13,7 +13,7 @@ import { createSeededRng, mixSeed } from "./rng";
 import { calculateScore } from "./scoring";
 import { summarizeResources } from "./resources";
 
-export const ENGINE_VERSION = "1.0.0";
+export const ENGINE_VERSION = "1.1.0";
 
 const clamp01 = (value: number): number => Math.min(1, Math.max(0, value));
 

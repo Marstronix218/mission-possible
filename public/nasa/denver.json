@@ -1,0 +1,13 @@
+{
+  "source": "NASA GIBS / Terra MODIS corrected reflectance, true color",
+  "observedOn": "2024-03-16",
+  "accessedOn": "2026-11-14",
+  "bbox": [
+    -105.7,
+    39.3,
+    -104.3,
+    40.2
+  ],
+  "url": "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&STYLES=&FORMAT=image%2Fjpeg&WIDTH=512&HEIGHT=512&SRS=EPSG%3A4326&BBOX=-105.7%2C39.3%2C-104.3%2C40.2&TIME=2024-03-16",
+  "usage": "Observed true-color imagery for geographical context. Not a hazard label or scoring ground truth."
+}
