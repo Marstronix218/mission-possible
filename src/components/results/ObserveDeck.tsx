@@ -7,7 +7,7 @@ import type {
   SimResult,
 } from "@/types/game";
 import { getMissionStory } from "@/lib/story/missions";
-import { MissionMap } from "./MissionMap";
+import { ObservationView } from "./observation/ObservationView";
 import { MissionOrbit } from "./MissionOrbit";
 import {
   advanceHour,
@@ -263,82 +263,23 @@ export function ObserveDeck({
             {deadlineBadge.text}
           </span>
         </div>
-        <div className={styles.mapFrame}>
-          <MissionMap
-            mission={mission}
-            result={result}
-            hour={hour}
-            mode="live"
-            animate={!still && visible}
-            retask={retask ?? undefined}
-            label={`Live ${hazard} map of ${mission.city}, day ${day}: ${active} danger zones active, ${found} found by your satellite.`}
-          />
-          {due && (
-            <div className={styles.overlay} key={due.id}>
-              {renderDecision(due.id)}
-            </div>
-          )}
-        </div>
-        <ul className={styles.legend} aria-label="Map legend">
-          <li>
-            <span
-              className={styles.swatch}
-              style={{ background: `var(--hazard-${mission.category})` }}
-              aria-hidden="true"
-            />
-            {hazard} (mission data)
-          </li>
-          <li>
-            <span
-              className={styles.swatch}
-              style={{ background: "#e9edff", opacity: 0.6 }}
-              aria-hidden="true"
-            />
-            {mission.category === "wildfire" || mission.category === "volcano"
-              ? "Smoke"
-              : "Cloud"}{" "}
-            cover chance
-          </li>
-          <li>
-            <span
-              className={styles.swatch}
-              style={{
-                outline: "3px solid var(--pop-cyan)",
-                outlineOffset: -3,
-              }}
-              aria-hidden="true"
-            />
-            Sensor look
-          </li>
-          <li>
-            <span
-              className={styles.swatch}
-              style={{ background: "#c9cde6" }}
-              aria-hidden="true"
-            >
-              ☁
-            </span>
-            Look blocked
-          </li>
-          <li>
-            <span
-              className={styles.swatch}
-              style={{ background: "var(--pop-yellow)", borderRadius: 999 }}
-              aria-hidden="true"
-            >
-              !
-            </span>
-            Found
-          </li>
-          <li>
-            <span
-              className={styles.swatch}
-              style={{ background: "#2b3a92" }}
-              aria-hidden="true"
-            />
-            Scanned
-          </li>
-        </ul>
+        <ObservationView
+          mission={mission}
+          design={design}
+          resources={resources}
+          result={result}
+          hour={hour}
+          mode="live"
+          animate={!still && visible}
+          retask={retask ?? undefined}
+          overlay={
+            due ? (
+              <div className={styles.overlay} key={due.id}>
+                {renderDecision(due.id)}
+              </div>
+            ) : undefined
+          }
+        />
         {change && (
           <p className={styles.change} role="status">
             <strong>What changed:</strong> {change}
@@ -525,7 +466,7 @@ export function ObserveDeck({
         </section>
         <p className={styles.caption}>
           {
-            "Every pass, cloud block, find and delivery comes from the simulation engine. The orbit drawing and storage gauge are simplified pictures of your design's real rates."
+            "Every pass, cloud block, find and delivery comes from the simulation engine. The background is a real NASA image for reference only; your satellite's view is simulated from it. The orbit drawing, footprint band and storage gauge are simplified pictures of your design's real rates."
           }
         </p>
       </div>

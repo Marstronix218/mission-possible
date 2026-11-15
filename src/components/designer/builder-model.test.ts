@@ -12,6 +12,7 @@ import {
   stageComplete,
   stageOfSlot,
   stageUnlocked,
+  stages as stages_,
 } from "./builder-model";
 import { partCopy } from "./builder-copy";
 import { partsCatalog } from "@/lib/sim/catalog";
@@ -46,12 +47,13 @@ const full: SatelliteDesign = {
 const roomy = { budgetM: 1000, massKg: 2000 };
 
 describe("build stages", () => {
-  it("unlocks steps in order: sensor, orbit, radio, power", () => {
+  it("guides steps in order: sensor, orbit, power & storage, communications", () => {
+    expect(stages_.map((stage) => stage.id)).toEqual(["eyes", "orbit", "power", "radio"]);
     expect(stageUnlocked(empty, "eyes")).toBe(true);
     expect(stageUnlocked(empty, "orbit")).toBe(false);
     const withSensor = { ...empty, instruments: ["msi"] };
     expect(stageUnlocked(withSensor, "orbit")).toBe(true);
-    expect(stageUnlocked(withSensor, "radio")).toBe(false);
+    expect(stageUnlocked(withSensor, "power")).toBe(false);
     expect(stageComplete({ ...withSensor, comm: "uhf" }, "radio")).toBe(true);
     expect(stageComplete({ ...full, storage: "" }, "power")).toBe(false);
     expect(stages(full)).toEqual([true, true, true, true]);

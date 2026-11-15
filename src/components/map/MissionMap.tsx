@@ -12,7 +12,10 @@ import { WelcomeLetter } from "@/components/planning/EnvelopeLetter";
 import planning from "@/components/planning/planning.module.css";
 import HazardIcon from "./HazardIcon";
 import Stars from "./Stars";
+import CollectionShelf, { CollectionBadge } from "./CollectionShelf";
 import { useInView } from "./useInView";
+import { MissionGuide } from "@/components/guide/MissionGuide";
+import { HowToPlayButton } from "@/components/tutorial/HowToPlay";
 import {
   selectMissions,
   categoryColors,
@@ -204,22 +207,33 @@ export default function MissionMap({ missions }: { missions: MapMission[] }) {
       <section className={planning.mapLead} aria-labelledby="world-heading">
         <div className={planning.mapHead}>
           <div>
-            <p className="eyebrow">CODE BLUE / Earth observation</p>
+            <CollectionBadge />
             <h1 id="world-heading">Your mission starts on Earth.</h1>
             <p>
-              Design and operate a satellite to help a community understand a hazard on Earth.
+              Design and operate a satellite to help a community understand a
+              hazard on Earth.
             </p>
           </div>
           {featuredMission && (
             <div>
-              <p>{featuredMission.city} · {categoryLabel[featuredMission.category]}</p>
+              <p>
+                {featuredMission.city} ·{" "}
+                {categoryLabel[featuredMission.category]}
+              </p>
               <Link className="btn-pop" href={briefHref(featuredMission.slug)}>
                 Start your first mission
               </Link>
+              <p className="mt-3">
+                <HowToPlayButton />
+              </p>
             </div>
           )}
         </div>
       </section>
+
+      <div className="mt-6">
+        <MissionGuide stage="map" />
+      </div>
 
       <section aria-labelledby="map-heading" className="mt-6">
         <div className={styles.sectionHead}>
@@ -329,6 +343,8 @@ export default function MissionMap({ missions }: { missions: MapMission[] }) {
           ))}
         </ul>
       </section>
+
+      <CollectionShelf />
     </main>
   );
 }

@@ -1,0 +1,479 @@
+/* Launch cinematic. Owned by results/launch; uses the global pop palette tokens. */
+.shell {
+  --lc-ink: #06123a;
+  --lc-panel: #0d1a2c;
+  --lc-edge: #2c4560;
+  --lc-text: #f6f7ff;
+  --lc-dim: #a9bccb;
+  --lc-go: var(--pop-yellow, #cbf36b);
+  --lc-hot: var(--pop-orange, #ff8a3d);
+  --lc-cyan: var(--pop-cyan, #8ed5dc);
+  position: relative;
+  display: grid;
+  gap: 18px;
+  padding: clamp(16px, 3vw, 32px);
+  border: 2px solid var(--lc-edge);
+  border-radius: 20px;
+  background:
+    radial-gradient(120% 80% at 0% 0%, #17305080 0%, transparent 60%),
+    var(--lc-panel);
+  color: var(--lc-text);
+}
+
+.header {
+  display: grid;
+  gap: 6px;
+}
+.kicker {
+  margin: 0;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lc-cyan);
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+/* Programmatic focus target only; it is not interactive. */
+.title:focus,
+.title:focus-visible {
+  outline: none;
+}
+
+.layout {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+}
+@media (min-width: 760px) {
+  .layout {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  max-width: calc(68vh * 400 / 440);
+  margin: 0 auto;
+  border: 3px solid var(--lc-ink);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow:
+    0 6px 0 #04091d,
+    0 16px 30px #0007;
+  background: #02040d;
+}
+.scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 400 / 440;
+}
+
+/* ---------- Progress ---------- */
+.progress {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: phase;
+}
+.phase {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--lc-dim);
+}
+.phase::before {
+  content: "";
+  height: 6px;
+  border-radius: 99px;
+  background: #2a3d55;
+  transition: background 300ms ease;
+}
+.phase[data-state="current"] {
+  color: var(--lc-text);
+}
+.phase[data-state="current"]::before {
+  background: linear-gradient(90deg, var(--lc-go) 0 50%, #2a3d55 50%);
+}
+.phase[data-state="done"]::before {
+  background: var(--lc-go);
+}
+.phaseMark {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  margin-right: 4px;
+}
+
+/* ---------- Narration ---------- */
+.panel {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+.stepMeta {
+  margin: 0;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lc-dim);
+}
+.caption {
+  margin: 0;
+  min-height: 3em;
+  font-size: 1.08rem;
+  line-height: 1.45;
+  font-weight: 600;
+}
+.readout {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px;
+  border: 2px solid var(--lc-edge);
+  border-radius: 14px;
+  background: #091322;
+}
+.readout div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+.readout dt {
+  color: var(--lc-dim);
+}
+.readout dd {
+  margin: 0;
+  text-align: right;
+  font-weight: 700;
+}
+.note {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--lc-dim);
+}
+.warning {
+  margin: 0;
+  padding: 14px;
+  border: 2px solid #e7be75;
+  border-radius: 12px;
+  background: #3f3022;
+  color: #ffe2af;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.launchButton {
+  font-size: 1.15rem;
+}
+@media (max-width: 520px) {
+  .controls > * {
+    flex: 1 1 100%;
+  }
+  .progress {
+    font-size: 0.7rem;
+  }
+  .phase {
+    font-size: 0.7rem;
+  }
+}
+
+.indicators {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.indicators span {
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #182c3b;
+  font-size: 0.88rem;
+}
+
+/* ---------- Scene motion ---------- */
+.fade {
+  transition: opacity 900ms ease;
+}
+.earth {
+  transition:
+    transform 1400ms cubic-bezier(0.25, 0.8, 0.25, 1),
+    opacity 900ms ease;
+}
+.clouds {
+  transition: transform 2000ms cubic-bezier(0.55, 0, 0.75, 0.6);
+}
+.ground {
+  transition: transform 1700ms cubic-bezier(0.55, 0, 0.8, 0.4);
+}
+.rocket {
+  transition:
+    transform 1400ms cubic-bezier(0.5, 0, 0.75, 0.4),
+    opacity 900ms ease;
+}
+/* Spent upper stage drops back once the satellite is released, then leaves view. */
+.body {
+  transition:
+    transform 1400ms cubic-bezier(0.45, 0, 0.55, 1),
+    opacity 1200ms ease;
+}
+.body[data-stage="separating"] {
+  transform: translateY(34px);
+  opacity: 0.75;
+}
+.body[data-stage="gone"] {
+  transform: translateY(190px);
+  opacity: 0;
+}
+.satellite {
+  transition:
+    transform 1300ms cubic-bezier(0.45, 0, 0.55, 1),
+    opacity 300ms ease;
+}
+/* Fairing halves finish closing (1100ms) before the satellite stops being drawn. */
+.satellite[data-vis="enclosing"] {
+  opacity: 0;
+  transition:
+    transform 1300ms cubic-bezier(0.45, 0, 0.55, 1),
+    opacity 250ms ease 850ms;
+}
+/* Shown only as the opening halves expose it (no transition on first paint). */
+.satellite[data-vis="inside-reveal"] {
+  animation: reveal 900ms ease 150ms both;
+}
+.wing {
+  transition: transform 1100ms cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+.cable {
+  transition: opacity 500ms ease;
+}
+.cable[data-on="false"] {
+  opacity: 0;
+}
+
+.fairingL,
+.fairingR {
+  transform-box: fill-box;
+  transition:
+    transform 1100ms cubic-bezier(0.3, 0.7, 0.3, 1),
+    opacity 1000ms ease;
+}
+.fairingL {
+  transform-origin: 0% 100%;
+}
+.fairingR {
+  transform-origin: 100% 100%;
+}
+.fairingL[data-state="open"] {
+  transform: rotate(-13deg);
+}
+.fairingR[data-state="open"] {
+  transform: rotate(13deg);
+}
+.fairingL[data-state="sep"] {
+  transform: translate(-44px, 22px) rotate(-38deg);
+}
+.fairingR[data-state="sep"] {
+  transform: translate(44px, 22px) rotate(38deg);
+}
+.fairingL[data-state="gone"] {
+  transform: translate(-130px, 110px) rotate(-90deg);
+  opacity: 0;
+}
+.fairingR[data-state="gone"] {
+  transform: translate(130px, 110px) rotate(90deg);
+  opacity: 0;
+}
+
+.arms rect {
+  transform-box: fill-box;
+  transform-origin: 0% 50%;
+  transition: transform 500ms ease;
+}
+.arms[data-retracted="true"] rect {
+  transform: scaleX(0.15);
+}
+
+.flame {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  transform: scale(0.2, 0);
+  opacity: 0;
+  transition:
+    transform 500ms ease,
+    opacity 300ms ease;
+}
+.scene[data-engines="ignite"] .flame {
+  opacity: 1;
+  transform: scale(0.9, 0.55);
+  animation: flicker 120ms ease-in-out infinite alternate;
+}
+.scene[data-engines="burn"] .flame {
+  opacity: 1;
+  transform: scale(1.15, 1.35);
+  animation: flickerBig 110ms ease-in-out infinite alternate;
+}
+
+.smoke circle {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  opacity: 0;
+  transform: scale(0.2);
+}
+.scene[data-engines="ignite"] .smoke circle,
+.scene[data-engines="burn"] .smoke circle {
+  animation: billow 1400ms ease-out infinite;
+}
+
+.target {
+  opacity: 0.55;
+  transition: opacity 600ms ease;
+}
+.target[data-on="true"] {
+  opacity: 1;
+}
+.target[data-on="true"] .ping {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: ping 1200ms ease-out infinite;
+}
+
+.orbitPath {
+  animation: march 1.6s linear infinite;
+}
+.drift {
+  animation: drift 4s ease-in-out infinite;
+}
+
+.countdown {
+  font-family: var(--font-display);
+  font-size: 92px;
+  font-weight: 900;
+  fill: var(--pop-yellow, #cbf36b);
+  stroke: #06123a;
+  stroke-width: 5px;
+  paint-order: stroke;
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: tick 900ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes flicker {
+  from {
+    transform: scale(0.85, 0.5);
+  }
+  to {
+    transform: scale(0.95, 0.62);
+  }
+}
+@keyframes flickerBig {
+  from {
+    transform: scale(1.05, 1.22);
+  }
+  to {
+    transform: scale(1.2, 1.45);
+  }
+}
+@keyframes billow {
+  0% {
+    opacity: 0.95;
+    transform: translateY(0) scale(0.3);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-14px) scale(2.1);
+  }
+}
+@keyframes ping {
+  0% {
+    opacity: 1;
+    transform: scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+@keyframes march {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+@keyframes drift {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.5deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(1.5deg);
+  }
+}
+@keyframes tick {
+  0% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.2;
+    transform: scale(0.9);
+  }
+}
+
+/* Reduced motion (system preference or the playback toggle): summary frames only. */
+.reduced .scene *,
+.reduced .phase::before {
+  transition: none !important;
+  animation: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .shell .scene *,
+  .shell .phase::before {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+.reduced .scene[data-engines="ignite"] .smoke circle,
+.reduced .scene[data-engines="burn"] .smoke circle {
+  opacity: 0.9;
+  transform: scale(1.4);
+}
+@media (prefers-reduced-motion: reduce) {
+  .shell .scene[data-engines="ignite"] .smoke circle,
+  .shell .scene[data-engines="burn"] .smoke circle {
+    opacity: 0.9;
+    transform: scale(1.4);
+  }
+}

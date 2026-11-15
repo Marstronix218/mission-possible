@@ -15,12 +15,13 @@ export const sensorNames: Record<string, [string, string]> = {
     "Records reflected light in several wavelength bands.",
   ],
 };
-export function beginnerSensors(mission: Mission) {
-  if (mission.category === "glacier") return ["opt_hr", "sar", "lidar"];
-  if (mission.category === "drought") return ["msi", "pmw", "grav"];
-  if (mission.category === "storm" || mission.category === "snow")
-    return ["msi", "pmw", "pr"];
-  return ["opt_hr", "tir", "sar"];
+/**
+ * Every catalog sensor, in catalog order, for every mission: no essential part
+ * is hidden or unlocked later, and the order does not hint at an answer.
+ */
+export function beginnerSensors(mission?: Mission): string[] {
+  void mission;
+  return partsCatalog.instruments.map((part) => part.id);
 }
 /** A supplied launch platform, not an optimal answer. All choices still use engine budgets. */
 export function starterDesign(

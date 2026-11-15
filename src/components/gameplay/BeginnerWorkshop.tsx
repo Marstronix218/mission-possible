@@ -20,6 +20,8 @@ import {
   starterDesign,
 } from "./beginner-model";
 import { SatelliteWorkbench, SensorArt } from "./SatelliteWorkbench";
+import { MissionGuide } from "@/components/guide/MissionGuide";
+import { designHint } from "@/components/guide/guide-context";
 import styles from "./gameplay.module.css";
 
 type UpgradeSlot =
@@ -30,9 +32,10 @@ const upgrades: Record<
 > = {
   comm: {
     title: "How will your data get home?",
-    choices: partsCatalog.communications
-      .slice(0, 3)
-      .map((p) => ({ id: p.id, name: p.name })),
+    choices: partsCatalog.communications.map((p) => ({
+      id: p.id,
+      name: p.name,
+    })),
   },
   solar: {
     title: "Give your satellite more energy",
@@ -48,7 +51,7 @@ const upgrades: Record<
   },
   orbit: {
     title: "Try a different path",
-    choices: partsCatalog.orbits.slice(0, 3),
+    choices: partsCatalog.orbits,
   },
   groundStations: {
     title: "Give Earth more chances to listen",
@@ -79,6 +82,7 @@ export default function BeginnerWorkshop({
     reason: string;
   } | null>(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
+  const [platformSlot, setPlatformSlot] = useState<UpgradeSlot>("orbit");
   const [drag, setDrag] = useState<{
     id: string;
     x: number;
@@ -90,6 +94,18 @@ export default function BeginnerWorkshop({
   const target = useRef<HTMLDivElement>(null);
   const hasPayload = useRef(false);
   const r = summarizeResources(design, mission.defaultConstraints);
+  // The design before the last change, so the guide can react to it.
+  const [previous, setPrevious] = useState<SatelliteDesign | null>(null);
+  const hint = designHint({
+    design,
+    resources: r,
+    constraints: mission.defaultConstraints,
+    category: mission.category,
+    previousDesign: previous,
+    previousResources: previous
+      ? summarizeResources(previous, mission.defaultConstraints)
+      : null,
+  });
   useEffect(() => {
     let active = true;
     async function hydrate() {
@@ -135,6 +151,7 @@ export default function BeginnerWorkshop({
     };
   }, [mission, router, quick]);
   function persist(next: SatelliteDesign) {
+    setPrevious(design);
     setDesign(next);
     try {
       localStorage.setItem(draftKey(mission.slug), JSON.stringify(next));
@@ -162,7 +179,7 @@ export default function BeginnerWorkshop({
       next.solar = "solar_l";
     hasPayload.current = true;
     persist(next);
-    setStatus(`${sensorNames[id][0]} attached. Ready to try your prediction.`);
+    setStatus(`${sensorNames[id][0]} attached. Ready to launch.`);
   }
   function move(e: PointerEvent<HTMLButtonElement>) {
     if (!drag || drag.id !== e.currentTarget.dataset.sensor) return;
@@ -205,6 +222,12 @@ export default function BeginnerWorkshop({
       <p className={styles.kicker}>{mission.city} / Explorer workshop</p>
       <h1>How would you observe it?</h1>
       <p>{neutralObstacle(mission)}</p>
+      {ready && (
+        <MissionGuide
+          stage={design.instruments.length ? "resources" : "workshop"}
+          hint={design.instruments.length ? hint : null}
+        />
+      )}
       <SatelliteWorkbench
         design={design}
         attaching={!!drag?.moved}
@@ -329,11 +352,12 @@ export default function BeginnerWorkshop({
           </div>
           {r.violations.length > 0 && (
             <p role="alert" className={styles.warning}>
-              {r.violations.join(" ")} Change a part in Advanced Mode.
+              {r.violations.join(" ")} Change a part under &ldquo;Change the
+              supplied platform&rdquo; or in Advanced Mode.
             </p>
           )}
           <div className={styles.row}>
-            <p>Make a prediction. Then see what happens.</p>
+            <p>Launch it. Then see what happens.</p>
             <button
               className={styles.primary}
               onClick={launch}
@@ -350,6 +374,57 @@ export default function BeginnerWorkshop({
         </p>
       )}
       <details className="mt-6">
+        <summary>Change the supplied platform (optional)</summary>
+        <p>
+          Every part is available now. Pick a system, then a part; the checks
+          above update with the real resource totals.
+        </p>
+        <div className={styles.row} role="group" aria-label="System to change">
+          {(Object.keys(upgrades) as UpgradeSlot[]).map((slot) => (
+            <button
+              key={slot}
+              className={styles.secondary}
+              aria-pressed={platformSlot === slot}
+              onClick={() => setPlatformSlot(slot)}
+            >
+              {slot === "groundStations"
+                ? "Ground stations"
+                : slot === "comm"
+                  ? "Radio"
+                  : slot[0].toUpperCase() + slot.slice(1)}
+            </button>
+          ))}
+        </div>
+        <h2>{upgrades[platformSlot].title}</h2>
+        <div
+          className={styles.row}
+          role="group"
+          aria-label={upgrades[platformSlot].title}
+        >
+          {upgrades[platformSlot].choices.map((p) => (
+            <button
+              key={p.id}
+              className={styles.secondary}
+              disabled={!ready}
+              aria-pressed={String(design[platformSlot]) === p.id}
+              onClick={() => {
+                persist({
+                  ...design,
+                  [platformSlot]:
+                    platformSlot === "groundStations" ? Number(p.id) : p.id,
+                });
+                // Keep platform edits when a sensor is attached afterwards.
+                hasPayload.current = true;
+                setStatus(`${p.name} installed.`);
+              }}
+            >
+              {p.name}
+              {String(design[platformSlot]) === p.id ? " ✓" : ""}
+            </button>
+          ))}
+        </div>
+      </details>
+      <details className="mt-6">
         <summary>About your supplied platform</summary>
         <p>
           The solar array, battery, radio, memory and orbit are pre-fitted. No
@@ -357,7 +432,10 @@ export default function BeginnerWorkshop({
           attempt; thermal measurements refer to surface radiation, not air
           temperature. Radar does not measure surface temperature.
         </p>
-        <p>Advanced Mode opens all engineering decisions.</p>
+        <p>
+          Advanced Mode adds radar comparisons, a full resource dashboard and up
+          to three sensors.
+        </p>
       </details>
     </article>
   );

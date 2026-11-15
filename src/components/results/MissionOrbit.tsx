@@ -109,9 +109,12 @@ export function MissionOrbit({
         fill="var(--pop-yellow)"
         stroke="#070a24"
         strokeWidth="2"
-      />
+      >
+        <title>{`Target: ${city}`}</title>
+      </circle>
       {stationPts.map(([x, y], index) => (
         <g key={index} transform={`translate(${x} ${y})`}>
+          <title>Ground station</title>
           <path
             d="M-5 2 Q0 -6 5 2 Z"
             fill="#e8ecff"
@@ -137,6 +140,7 @@ export function MissionOrbit({
           points={`${sx},${sy} ${80 - 9},44 ${80 + 9},44`}
           fill="var(--pop-cyan)"
           opacity="0.35"
+          className={animate ? styles.scanCone : undefined}
         />
       )}
       <g transform={`translate(${sx} ${sy}) rotate(${angle})`}>

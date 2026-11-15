@@ -71,6 +71,7 @@ export async function demoApi<T>(
       "updateClass",
       "removeStudent",
       "setNickname",
+      "submitScore",
     ];
     if (mutations.includes(action))
       window.dispatchEvent(new Event(demoUpdateEvent));

@@ -1,0 +1,2086 @@
+{
+ "kind": "land-surface-temperature",
+ "source": "USGS/NASA Landsat 8 OLI/TIRS Collection 2 Level-2 Surface Temperature (ST_B10)",
+ "sceneId": "LC80440342022243LGN00",
+ "productId": "LC08_L2SP_044034_20220831_02_T1",
+ "platform": "landsat-8",
+ "sensor": "TIRS band 10 (surface temperature), OLI bands 4/3/2 (true colour)",
+ "wrsPathRow": "044/034",
+ "acquired": "2022-08-31T18:46:36.477631Z",
+ "observedOn": "2022-08-31",
+ "sceneCloudCover": 17.01,
+ "bboxCloudShare": 0.101,
+ "accessedOn": "2026-11-15",
+ "bbox": [
+  -122.85,
+  37.3,
+  -121.55,
+  38.1
+ ],
+ "width": 800,
+ "height": 492,
+ "processing": "Planetary Computer data API crop of the COGs to the mission bbox in EPSG:4326, nearest-neighbour resampling to 800x492. ST [K] = DN x 0.00341802 + 149.0, minus 273.15 for deg C. QA_PIXEL fill, dilated cloud, cirrus, cloud and cloud-shadow bits masked (transparent); water masked. True colour: SR = DN x 0.0000275 - 0.2, linear stretch to 0.3 reflectance, gamma 1.6 (display only).",
+ "url": "https://planetarycomputer.microsoft.com/api/stac/v1/collections/landsat-c2-l2/items/LC08_L2SP_044034_20220831_02_T1",
+ "dataUrls": {
+  "lst": "https://planetarycomputer.microsoft.com/api/data/v1/item/bbox/-122.85,37.3,-121.55,38.1/800x492.npy?collection=landsat-c2-l2&item=LC08_L2SP_044034_20220831_02_T1&assets=lwir11&dst_crs=epsg%3A4326&return_mask=false&reproject=nearest&resampling=nearest",
+  "qa": "https://planetarycomputer.microsoft.com/api/data/v1/item/bbox/-122.85,37.3,-121.55,38.1/800x492.npy?collection=landsat-c2-l2&item=LC08_L2SP_044034_20220831_02_T1&assets=qa_pixel&dst_crs=epsg%3A4326&return_mask=false&reproject=nearest&resampling=nearest",
+  "trueColour": [
+   "https://planetarycomputer.microsoft.com/api/data/v1/item/bbox/-122.85,37.3,-121.55,38.1/800x492.npy?collection=landsat-c2-l2&item=LC08_L2SP_044034_20220831_02_T1&assets=red&dst_crs=epsg%3A4326&return_mask=false&reproject=nearest&resampling=nearest",
+   "https://planetarycomputer.microsoft.com/api/data/v1/item/bbox/-122.85,37.3,-121.55,38.1/800x492.npy?collection=landsat-c2-l2&item=LC08_L2SP_044034_20220831_02_T1&assets=green&dst_crs=epsg%3A4326&return_mask=false&reproject=nearest&resampling=nearest",
+   "https://planetarycomputer.microsoft.com/api/data/v1/item/bbox/-122.85,37.3,-121.55,38.1/800x492.npy?collection=landsat-c2-l2&item=LC08_L2SP_044034_20220831_02_T1&assets=blue&dst_crs=epsg%3A4326&return_mask=false&reproject=nearest&resampling=nearest"
+  ]
+ },
+ "landingPage": "https://www.usgs.gov/landsat-missions/landsat-collection-2-surface-temperature",
+ "files": {
+  "lst": "/nasa/san-francisco-lst.png",
+  "trueColour": "/nasa/san-francisco-landsat.jpg"
+ },
+ "valueRangeC": {
+  "min": 16.7,
+  "p05": 24.7,
+  "median": 37.7,
+  "p95": 49.6,
+  "max": 60.9
+ },
+ "colourScale": {
+  "minC": 20.0,
+  "maxC": 55.0,
+  "stops": [
+   [
+    20.0,
+    "#313695"
+   ],
+   [
+    27.0,
+    "#4575b4"
+   ],
+   [
+    34.0,
+    "#abd9e9"
+   ],
+   [
+    40.0,
+    "#fee090"
+   ],
+   [
+    46.0,
+    "#fdae61"
+   ],
+   [
+    50.0,
+    "#f46d43"
+   ],
+   [
+    55.0,
+    "#a50026"
+   ]
+  ]
+ },
+ "usage": "Real Landsat land surface temperature on the first day of the Aug 31 - Sep 9 2022 Bay Area heat wave, used as a reference picture. Land surface temperature is the skin temperature of the ground and roofs, not air temperature. Not used for scoring; mission hazard cells come from MODIS (see mission sources).",
+ "grid": {
+  "rows": 20,
+  "columns": 20,
+  "cells": {
+   "r00c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.975
+   },
+   "r00c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r00c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r00c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r00c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.064
+   },
+   "r00c05": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r00c06": {
+    "meanC": 27.5,
+    "landShare": 0.141,
+    "cloudShare": 0.002
+   },
+   "r00c07": {
+    "meanC": 30.8,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r00c08": {
+    "meanC": 29.8,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r00c09": {
+    "meanC": 31.2,
+    "landShare": 0.999,
+    "cloudShare": 0.001
+   },
+   "r00c10": {
+    "meanC": 32.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r00c11": {
+    "meanC": 32.5,
+    "landShare": 0.994,
+    "cloudShare": 0.0
+   },
+   "r00c12": {
+    "meanC": 38.8,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r00c13": {
+    "meanC": 39.2,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r00c14": {
+    "meanC": 38.4,
+    "landShare": 0.997,
+    "cloudShare": 0.0
+   },
+   "r00c15": {
+    "meanC": 40.3,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r00c16": {
+    "meanC": 39.8,
+    "landShare": 0.99,
+    "cloudShare": 0.0
+   },
+   "r00c17": {
+    "meanC": 41.9,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r00c18": {
+    "meanC": 42.9,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r00c19": {
+    "meanC": 47.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r01c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.901
+   },
+   "r01c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r01c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r01c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.997
+   },
+   "r01c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.024
+   },
+   "r01c05": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r01c06": {
+    "meanC": 29.4,
+    "landShare": 0.148,
+    "cloudShare": 0.001
+   },
+   "r01c07": {
+    "meanC": 30.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r01c08": {
+    "meanC": 32.8,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r01c09": {
+    "meanC": 30.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r01c10": {
+    "meanC": 31.5,
+    "landShare": 0.998,
+    "cloudShare": 0.0
+   },
+   "r01c11": {
+    "meanC": 35.3,
+    "landShare": 0.998,
+    "cloudShare": 0.0
+   },
+   "r01c12": {
+    "meanC": 38.4,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r01c13": {
+    "meanC": 39.0,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r01c14": {
+    "meanC": 39.2,
+    "landShare": 0.995,
+    "cloudShare": 0.0
+   },
+   "r01c15": {
+    "meanC": 40.1,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r01c16": {
+    "meanC": 39.4,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r01c17": {
+    "meanC": 42.8,
+    "landShare": 0.997,
+    "cloudShare": 0.0
+   },
+   "r01c18": {
+    "meanC": 43.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r01c19": {
+    "meanC": 49.5,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r02c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r02c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.997
+   },
+   "r02c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r02c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.975
+   },
+   "r02c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.013
+   },
+   "r02c05": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r02c06": {
+    "meanC": 30.8,
+    "landShare": 0.455,
+    "cloudShare": 0.001
+   },
+   "r02c07": {
+    "meanC": 26.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r02c08": {
+    "meanC": 26.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r02c09": {
+    "meanC": 32.7,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r02c10": {
+    "meanC": 37.3,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r02c11": {
+    "meanC": 36.1,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r02c12": {
+    "meanC": 37.2,
+    "landShare": 0.995,
+    "cloudShare": 0.0
+   },
+   "r02c13": {
+    "meanC": 37.9,
+    "landShare": 0.983,
+    "cloudShare": 0.0
+   },
+   "r02c14": {
+    "meanC": 38.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r02c15": {
+    "meanC": 39.5,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r02c16": {
+    "meanC": 39.7,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r02c17": {
+    "meanC": 43.4,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r02c18": {
+    "meanC": 48.7,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r02c19": {
+    "meanC": 51.5,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r03c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r03c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r03c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.988
+   },
+   "r03c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.942
+   },
+   "r03c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.1
+   },
+   "r03c05": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r03c06": {
+    "meanC": 31.1,
+    "landShare": 0.665,
+    "cloudShare": 0.087
+   },
+   "r03c07": {
+    "meanC": 24.9,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r03c08": {
+    "meanC": 27.5,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r03c09": {
+    "meanC": 33.7,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r03c10": {
+    "meanC": 34.8,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r03c11": {
+    "meanC": 34.2,
+    "landShare": 0.817,
+    "cloudShare": 0.0
+   },
+   "r03c12": {
+    "meanC": 29.6,
+    "landShare": 0.477,
+    "cloudShare": 0.014
+   },
+   "r03c13": {
+    "meanC": 34.0,
+    "landShare": 0.512,
+    "cloudShare": 0.002
+   },
+   "r03c14": {
+    "meanC": 38.3,
+    "landShare": 0.985,
+    "cloudShare": 0.0
+   },
+   "r03c15": {
+    "meanC": 40.6,
+    "landShare": 0.986,
+    "cloudShare": 0.0
+   },
+   "r03c16": {
+    "meanC": 39.9,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r03c17": {
+    "meanC": 40.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r03c18": {
+    "meanC": 48.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r03c19": {
+    "meanC": 47.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r04c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r04c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r04c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.979
+   },
+   "r04c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r04c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.311
+   },
+   "r04c05": {
+    "meanC": 29.3,
+    "landShare": 0.014,
+    "cloudShare": 0.016
+   },
+   "r04c06": {
+    "meanC": 30.5,
+    "landShare": 0.818,
+    "cloudShare": 0.083
+   },
+   "r04c07": {
+    "meanC": 26.2,
+    "landShare": 0.961,
+    "cloudShare": 0.0
+   },
+   "r04c08": {
+    "meanC": 32.0,
+    "landShare": 0.977,
+    "cloudShare": 0.0
+   },
+   "r04c09": {
+    "meanC": 36.6,
+    "landShare": 0.99,
+    "cloudShare": 0.003
+   },
+   "r04c10": {
+    "meanC": 34.2,
+    "landShare": 0.93,
+    "cloudShare": 0.056
+   },
+   "r04c11": {
+    "meanC": 30.7,
+    "landShare": 0.292,
+    "cloudShare": 0.011
+   },
+   "r04c12": {
+    "meanC": 27.8,
+    "landShare": 0.491,
+    "cloudShare": 0.107
+   },
+   "r04c13": {
+    "meanC": 35.2,
+    "landShare": 0.75,
+    "cloudShare": 0.013
+   },
+   "r04c14": {
+    "meanC": 39.2,
+    "landShare": 0.997,
+    "cloudShare": 0.0
+   },
+   "r04c15": {
+    "meanC": 42.9,
+    "landShare": 0.858,
+    "cloudShare": 0.0
+   },
+   "r04c16": {
+    "meanC": 41.5,
+    "landShare": 0.982,
+    "cloudShare": 0.0
+   },
+   "r04c17": {
+    "meanC": 43.5,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r04c18": {
+    "meanC": 46.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r04c19": {
+    "meanC": 44.5,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r05c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r05c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.727
+   },
+   "r05c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.959
+   },
+   "r05c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r05c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.669
+   },
+   "r05c05": {
+    "meanC": 27.9,
+    "landShare": 0.763,
+    "cloudShare": 0.034
+   },
+   "r05c06": {
+    "meanC": 25.3,
+    "landShare": 0.991,
+    "cloudShare": 0.008
+   },
+   "r05c07": {
+    "meanC": 29.6,
+    "landShare": 0.911,
+    "cloudShare": 0.0
+   },
+   "r05c08": {
+    "meanC": 35.3,
+    "landShare": 0.998,
+    "cloudShare": 0.0
+   },
+   "r05c09": {
+    "meanC": 31.8,
+    "landShare": 0.839,
+    "cloudShare": 0.026
+   },
+   "r05c10": {
+    "meanC": 27.9,
+    "landShare": 0.16,
+    "cloudShare": 0.046
+   },
+   "r05c11": {
+    "meanC": 28.6,
+    "landShare": 0.308,
+    "cloudShare": 0.059
+   },
+   "r05c12": {
+    "meanC": 35.3,
+    "landShare": 0.834,
+    "cloudShare": 0.083
+   },
+   "r05c13": {
+    "meanC": 39.5,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r05c14": {
+    "meanC": 38.8,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r05c15": {
+    "meanC": 38.7,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r05c16": {
+    "meanC": 44.8,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r05c17": {
+    "meanC": 42.9,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r05c18": {
+    "meanC": 38.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r05c19": {
+    "meanC": 42.7,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r06c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.75
+   },
+   "r06c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.932
+   },
+   "r06c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.999
+   },
+   "r06c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 1.0
+   },
+   "r06c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.746
+   },
+   "r06c05": {
+    "meanC": 25.3,
+    "landShare": 0.854,
+    "cloudShare": 0.009
+   },
+   "r06c06": {
+    "meanC": 25.7,
+    "landShare": 0.992,
+    "cloudShare": 0.0
+   },
+   "r06c07": {
+    "meanC": 30.9,
+    "landShare": 0.989,
+    "cloudShare": 0.0
+   },
+   "r06c08": {
+    "meanC": 35.9,
+    "landShare": 0.83,
+    "cloudShare": 0.01
+   },
+   "r06c09": {
+    "meanC": 33.5,
+    "landShare": 0.293,
+    "cloudShare": 0.0
+   },
+   "r06c10": {
+    "meanC": 25.3,
+    "landShare": 0.001,
+    "cloudShare": 0.0
+   },
+   "r06c11": {
+    "meanC": 32.9,
+    "landShare": 0.564,
+    "cloudShare": 0.019
+   },
+   "r06c12": {
+    "meanC": 37.4,
+    "landShare": 0.971,
+    "cloudShare": 0.021
+   },
+   "r06c13": {
+    "meanC": 37.4,
+    "landShare": 0.957,
+    "cloudShare": 0.0
+   },
+   "r06c14": {
+    "meanC": 40.6,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r06c15": {
+    "meanC": 39.3,
+    "landShare": 0.927,
+    "cloudShare": 0.0
+   },
+   "r06c16": {
+    "meanC": 39.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r06c17": {
+    "meanC": 38.9,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r06c18": {
+    "meanC": 41.9,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r06c19": {
+    "meanC": 45.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r07c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.943
+   },
+   "r07c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.761
+   },
+   "r07c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.961
+   },
+   "r07c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.871
+   },
+   "r07c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.604
+   },
+   "r07c05": {
+    "meanC": 28.4,
+    "landShare": 0.696,
+    "cloudShare": 0.207
+   },
+   "r07c06": {
+    "meanC": 30.3,
+    "landShare": 0.925,
+    "cloudShare": 0.007
+   },
+   "r07c07": {
+    "meanC": 35.6,
+    "landShare": 0.602,
+    "cloudShare": 0.006
+   },
+   "r07c08": {
+    "meanC": 32.8,
+    "landShare": 0.059,
+    "cloudShare": 0.01
+   },
+   "r07c09": {
+    "meanC": 22.3,
+    "landShare": 0.002,
+    "cloudShare": 0.032
+   },
+   "r07c10": {
+    "meanC": 26.2,
+    "landShare": 0.122,
+    "cloudShare": 0.055
+   },
+   "r07c11": {
+    "meanC": 33.4,
+    "landShare": 0.776,
+    "cloudShare": 0.001
+   },
+   "r07c12": {
+    "meanC": 38.0,
+    "landShare": 0.996,
+    "cloudShare": 0.0
+   },
+   "r07c13": {
+    "meanC": 35.9,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r07c14": {
+    "meanC": 37.0,
+    "landShare": 0.997,
+    "cloudShare": 0.0
+   },
+   "r07c15": {
+    "meanC": 44.9,
+    "landShare": 0.948,
+    "cloudShare": 0.0
+   },
+   "r07c16": {
+    "meanC": 44.3,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r07c17": {
+    "meanC": 43.0,
+    "landShare": 0.909,
+    "cloudShare": 0.0
+   },
+   "r07c18": {
+    "meanC": 45.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r07c19": {
+    "meanC": 47.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r08c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.815
+   },
+   "r08c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.547
+   },
+   "r08c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.22
+   },
+   "r08c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.627
+   },
+   "r08c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.504
+   },
+   "r08c05": {
+    "meanC": 29.6,
+    "landShare": 0.311,
+    "cloudShare": 0.453
+   },
+   "r08c06": {
+    "meanC": 35.3,
+    "landShare": 0.978,
+    "cloudShare": 0.016
+   },
+   "r08c07": {
+    "meanC": 35.3,
+    "landShare": 0.204,
+    "cloudShare": 0.042
+   },
+   "r08c08": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r08c09": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r08c10": {
+    "meanC": 33.2,
+    "landShare": 0.255,
+    "cloudShare": 0.007
+   },
+   "r08c11": {
+    "meanC": 38.3,
+    "landShare": 0.985,
+    "cloudShare": 0.008
+   },
+   "r08c12": {
+    "meanC": 36.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r08c13": {
+    "meanC": 35.1,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r08c14": {
+    "meanC": 35.5,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r08c15": {
+    "meanC": 41.4,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r08c16": {
+    "meanC": 41.2,
+    "landShare": 0.994,
+    "cloudShare": 0.0
+   },
+   "r08c17": {
+    "meanC": 44.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r08c18": {
+    "meanC": 46.1,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r08c19": {
+    "meanC": 49.3,
+    "landShare": 0.997,
+    "cloudShare": 0.0
+   },
+   "r09c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.112
+   },
+   "r09c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.151
+   },
+   "r09c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r09c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.026
+   },
+   "r09c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.468
+   },
+   "r09c05": {
+    "meanC": 33.6,
+    "landShare": 0.371,
+    "cloudShare": 0.346
+   },
+   "r09c06": {
+    "meanC": 33.5,
+    "landShare": 0.987,
+    "cloudShare": 0.01
+   },
+   "r09c07": {
+    "meanC": 34.3,
+    "landShare": 0.09,
+    "cloudShare": 0.041
+   },
+   "r09c08": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r09c09": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r09c10": {
+    "meanC": 35.7,
+    "landShare": 0.608,
+    "cloudShare": 0.002
+   },
+   "r09c11": {
+    "meanC": 38.2,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r09c12": {
+    "meanC": 34.4,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r09c13": {
+    "meanC": 35.4,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r09c14": {
+    "meanC": 38.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r09c15": {
+    "meanC": 40.0,
+    "landShare": 0.88,
+    "cloudShare": 0.0
+   },
+   "r09c16": {
+    "meanC": 41.5,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r09c17": {
+    "meanC": 42.7,
+    "landShare": 0.998,
+    "cloudShare": 0.0
+   },
+   "r09c18": {
+    "meanC": 47.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r09c19": {
+    "meanC": 51.8,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r10c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r10c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r10c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r10c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.007
+   },
+   "r10c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.276
+   },
+   "r10c05": {
+    "meanC": 32.4,
+    "landShare": 0.395,
+    "cloudShare": 0.543
+   },
+   "r10c06": {
+    "meanC": 34.8,
+    "landShare": 0.988,
+    "cloudShare": 0.008
+   },
+   "r10c07": {
+    "meanC": 36.8,
+    "landShare": 0.298,
+    "cloudShare": 0.022
+   },
+   "r10c08": {
+    "meanC": 21.4,
+    "landShare": 0.003,
+    "cloudShare": 0.0
+   },
+   "r10c09": {
+    "meanC": 36.8,
+    "landShare": 0.582,
+    "cloudShare": 0.0
+   },
+   "r10c10": {
+    "meanC": 38.1,
+    "landShare": 0.985,
+    "cloudShare": 0.0
+   },
+   "r10c11": {
+    "meanC": 33.8,
+    "landShare": 0.959,
+    "cloudShare": 0.0
+   },
+   "r10c12": {
+    "meanC": 33.8,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r10c13": {
+    "meanC": 38.8,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r10c14": {
+    "meanC": 42.1,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r10c15": {
+    "meanC": 44.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r10c16": {
+    "meanC": 46.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r10c17": {
+    "meanC": 44.7,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r10c18": {
+    "meanC": 44.0,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r10c19": {
+    "meanC": 48.8,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r11c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r11c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r11c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r11c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r11c04": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.049
+   },
+   "r11c05": {
+    "meanC": 32.9,
+    "landShare": 0.704,
+    "cloudShare": 0.2
+   },
+   "r11c06": {
+    "meanC": 35.8,
+    "landShare": 0.985,
+    "cloudShare": 0.014
+   },
+   "r11c07": {
+    "meanC": 36.2,
+    "landShare": 0.192,
+    "cloudShare": 0.031
+   },
+   "r11c08": {
+    "meanC": 36.0,
+    "landShare": 0.19,
+    "cloudShare": 0.009
+   },
+   "r11c09": {
+    "meanC": 37.3,
+    "landShare": 0.807,
+    "cloudShare": 0.002
+   },
+   "r11c10": {
+    "meanC": 37.2,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r11c11": {
+    "meanC": 28.8,
+    "landShare": 0.95,
+    "cloudShare": 0.0
+   },
+   "r11c12": {
+    "meanC": 37.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r11c13": {
+    "meanC": 38.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r11c14": {
+    "meanC": 42.1,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r11c15": {
+    "meanC": 45.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r11c16": {
+    "meanC": 47.5,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r11c17": {
+    "meanC": 45.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r11c18": {
+    "meanC": 43.7,
+    "landShare": 0.995,
+    "cloudShare": 0.0
+   },
+   "r11c19": {
+    "meanC": 46.3,
+    "landShare": 0.977,
+    "cloudShare": 0.0
+   },
+   "r12c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r12c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r12c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r12c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r12c04": {
+    "meanC": 23.0,
+    "landShare": 0.003,
+    "cloudShare": 0.0
+   },
+   "r12c05": {
+    "meanC": 30.2,
+    "landShare": 0.289,
+    "cloudShare": 0.058
+   },
+   "r12c06": {
+    "meanC": 34.7,
+    "landShare": 0.611,
+    "cloudShare": 0.047
+   },
+   "r12c07": {
+    "meanC": 31.8,
+    "landShare": 0.084,
+    "cloudShare": 0.067
+   },
+   "r12c08": {
+    "meanC": 38.0,
+    "landShare": 0.839,
+    "cloudShare": 0.029
+   },
+   "r12c09": {
+    "meanC": 36.6,
+    "landShare": 0.932,
+    "cloudShare": 0.003
+   },
+   "r12c10": {
+    "meanC": 29.4,
+    "landShare": 0.999,
+    "cloudShare": 0.001
+   },
+   "r12c11": {
+    "meanC": 31.9,
+    "landShare": 0.976,
+    "cloudShare": 0.0
+   },
+   "r12c12": {
+    "meanC": 36.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r12c13": {
+    "meanC": 39.1,
+    "landShare": 0.998,
+    "cloudShare": 0.0
+   },
+   "r12c14": {
+    "meanC": 40.9,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r12c15": {
+    "meanC": 45.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r12c16": {
+    "meanC": 45.6,
+    "landShare": 0.972,
+    "cloudShare": 0.0
+   },
+   "r12c17": {
+    "meanC": 44.7,
+    "landShare": 0.909,
+    "cloudShare": 0.0
+   },
+   "r12c18": {
+    "meanC": 48.3,
+    "landShare": 0.994,
+    "cloudShare": 0.0
+   },
+   "r12c19": {
+    "meanC": 45.4,
+    "landShare": 0.973,
+    "cloudShare": 0.0
+   },
+   "r13c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r13c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r13c02": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r13c03": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r13c04": {
+    "meanC": 28.3,
+    "landShare": 0.403,
+    "cloudShare": 0.003
+   },
+   "r13c05": {
+    "meanC": 29.5,
+    "landShare": 0.664,
+    "cloudShare": 0.009
+   },
+   "r13c06": {
+    "meanC": 27.5,
+    "landShare": 0.053,
+    "cloudShare": 0.017
+   },
+   "r13c07": {
+    "meanC": 34.1,
+    "landShare": 0.053,
+    "cloudShare": 0.016
+   },
+   "r13c08": {
+    "meanC": 36.6,
+    "landShare": 0.562,
+    "cloudShare": 0.01
+   },
+   "r13c09": {
+    "meanC": 33.2,
+    "landShare": 0.997,
+    "cloudShare": 0.0
+   },
+   "r13c10": {
+    "meanC": 32.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r13c11": {
+    "meanC": 35.5,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r13c12": {
+    "meanC": 34.1,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r13c13": {
+    "meanC": 38.2,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r13c14": {
+    "meanC": 37.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r13c15": {
+    "meanC": 38.8,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r13c16": {
+    "meanC": 44.4,
+    "landShare": 0.991,
+    "cloudShare": 0.0
+   },
+   "r13c17": {
+    "meanC": 48.6,
+    "landShare": 0.91,
+    "cloudShare": 0.0
+   },
+   "r13c18": {
+    "meanC": 50.9,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r13c19": {
+    "meanC": 40.9,
+    "landShare": 0.607,
+    "cloudShare": 0.0
+   },
+   "r14c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r14c01": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r14c02": {
+    "meanC": 26.5,
+    "landShare": 0.025,
+    "cloudShare": 0.0
+   },
+   "r14c03": {
+    "meanC": 26.0,
+    "landShare": 0.393,
+    "cloudShare": 0.022
+   },
+   "r14c04": {
+    "meanC": 27.5,
+    "landShare": 0.996,
+    "cloudShare": 0.0
+   },
+   "r14c05": {
+    "meanC": 31.6,
+    "landShare": 0.573,
+    "cloudShare": 0.053
+   },
+   "r14c06": {
+    "meanC": 28.4,
+    "landShare": 0.21,
+    "cloudShare": 0.001
+   },
+   "r14c07": {
+    "meanC": 25.9,
+    "landShare": 0.013,
+    "cloudShare": 0.002
+   },
+   "r14c08": {
+    "meanC": 35.3,
+    "landShare": 0.749,
+    "cloudShare": 0.006
+   },
+   "r14c09": {
+    "meanC": 30.6,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r14c10": {
+    "meanC": 34.3,
+    "landShare": 0.983,
+    "cloudShare": 0.0
+   },
+   "r14c11": {
+    "meanC": 36.8,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r14c12": {
+    "meanC": 37.7,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r14c13": {
+    "meanC": 39.4,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r14c14": {
+    "meanC": 41.4,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r14c15": {
+    "meanC": 42.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r14c16": {
+    "meanC": 46.9,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r14c17": {
+    "meanC": 49.3,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r14c18": {
+    "meanC": 46.3,
+    "landShare": 0.997,
+    "cloudShare": 0.0
+   },
+   "r14c19": {
+    "meanC": 39.1,
+    "landShare": 0.962,
+    "cloudShare": 0.0
+   },
+   "r15c00": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r15c01": {
+    "meanC": 25.8,
+    "landShare": 0.277,
+    "cloudShare": 0.0
+   },
+   "r15c02": {
+    "meanC": 27.2,
+    "landShare": 0.814,
+    "cloudShare": 0.048
+   },
+   "r15c03": {
+    "meanC": 27.9,
+    "landShare": 0.969,
+    "cloudShare": 0.025
+   },
+   "r15c04": {
+    "meanC": 27.8,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r15c05": {
+    "meanC": 34.0,
+    "landShare": 0.559,
+    "cloudShare": 0.01
+   },
+   "r15c06": {
+    "meanC": 32.2,
+    "landShare": 0.063,
+    "cloudShare": 0.02
+   },
+   "r15c07": {
+    "meanC": 36.4,
+    "landShare": 0.704,
+    "cloudShare": 0.047
+   },
+   "r15c08": {
+    "meanC": 34.0,
+    "landShare": 0.982,
+    "cloudShare": 0.001
+   },
+   "r15c09": {
+    "meanC": 30.4,
+    "landShare": 0.853,
+    "cloudShare": 0.0
+   },
+   "r15c10": {
+    "meanC": 33.2,
+    "landShare": 0.956,
+    "cloudShare": 0.001
+   },
+   "r15c11": {
+    "meanC": 36.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r15c12": {
+    "meanC": 38.7,
+    "landShare": 0.997,
+    "cloudShare": 0.0
+   },
+   "r15c13": {
+    "meanC": 39.0,
+    "landShare": 0.996,
+    "cloudShare": 0.0
+   },
+   "r15c14": {
+    "meanC": 38.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r15c15": {
+    "meanC": 44.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r15c16": {
+    "meanC": 48.1,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r15c17": {
+    "meanC": 44.1,
+    "landShare": 0.998,
+    "cloudShare": 0.0
+   },
+   "r15c18": {
+    "meanC": 45.5,
+    "landShare": 0.995,
+    "cloudShare": 0.0
+   },
+   "r15c19": {
+    "meanC": 41.6,
+    "landShare": 0.893,
+    "cloudShare": 0.0
+   },
+   "r16c00": {
+    "meanC": 23.9,
+    "landShare": 0.052,
+    "cloudShare": 0.023
+   },
+   "r16c01": {
+    "meanC": 22.1,
+    "landShare": 0.957,
+    "cloudShare": 0.003
+   },
+   "r16c02": {
+    "meanC": 25.2,
+    "landShare": 0.983,
+    "cloudShare": 0.0
+   },
+   "r16c03": {
+    "meanC": 29.9,
+    "landShare": 0.974,
+    "cloudShare": 0.0
+   },
+   "r16c04": {
+    "meanC": 31.0,
+    "landShare": 0.993,
+    "cloudShare": 0.001
+   },
+   "r16c05": {
+    "meanC": 34.3,
+    "landShare": 0.589,
+    "cloudShare": 0.014
+   },
+   "r16c06": {
+    "meanC": 31.5,
+    "landShare": 0.181,
+    "cloudShare": 0.001
+   },
+   "r16c07": {
+    "meanC": 37.2,
+    "landShare": 0.924,
+    "cloudShare": 0.0
+   },
+   "r16c08": {
+    "meanC": 34.1,
+    "landShare": 0.995,
+    "cloudShare": 0.0
+   },
+   "r16c09": {
+    "meanC": 34.1,
+    "landShare": 0.983,
+    "cloudShare": 0.0
+   },
+   "r16c10": {
+    "meanC": 35.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r16c11": {
+    "meanC": 37.5,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r16c12": {
+    "meanC": 39.5,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r16c13": {
+    "meanC": 40.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r16c14": {
+    "meanC": 40.6,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r16c15": {
+    "meanC": 44.9,
+    "landShare": 0.995,
+    "cloudShare": 0.0
+   },
+   "r16c16": {
+    "meanC": 44.3,
+    "landShare": 0.995,
+    "cloudShare": 0.0
+   },
+   "r16c17": {
+    "meanC": 43.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r16c18": {
+    "meanC": 43.2,
+    "landShare": 0.995,
+    "cloudShare": 0.0
+   },
+   "r16c19": {
+    "meanC": 37.6,
+    "landShare": 0.931,
+    "cloudShare": 0.0
+   },
+   "r17c00": {
+    "meanC": 23.8,
+    "landShare": 0.668,
+    "cloudShare": 0.008
+   },
+   "r17c01": {
+    "meanC": 26.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r17c02": {
+    "meanC": 26.5,
+    "landShare": 0.976,
+    "cloudShare": 0.0
+   },
+   "r17c03": {
+    "meanC": 33.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r17c04": {
+    "meanC": 36.5,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r17c05": {
+    "meanC": 30.2,
+    "landShare": 0.801,
+    "cloudShare": 0.021
+   },
+   "r17c06": {
+    "meanC": 31.7,
+    "landShare": 0.058,
+    "cloudShare": 0.005
+   },
+   "r17c07": {
+    "meanC": 35.4,
+    "landShare": 0.33,
+    "cloudShare": 0.0
+   },
+   "r17c08": {
+    "meanC": 36.9,
+    "landShare": 0.831,
+    "cloudShare": 0.0
+   },
+   "r17c09": {
+    "meanC": 37.4,
+    "landShare": 0.998,
+    "cloudShare": 0.0
+   },
+   "r17c10": {
+    "meanC": 35.7,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r17c11": {
+    "meanC": 37.2,
+    "landShare": 0.991,
+    "cloudShare": 0.0
+   },
+   "r17c12": {
+    "meanC": 38.4,
+    "landShare": 0.967,
+    "cloudShare": 0.0
+   },
+   "r17c13": {
+    "meanC": 39.0,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r17c14": {
+    "meanC": 40.6,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r17c15": {
+    "meanC": 41.4,
+    "landShare": 0.989,
+    "cloudShare": 0.001
+   },
+   "r17c16": {
+    "meanC": 40.4,
+    "landShare": 0.916,
+    "cloudShare": 0.0
+   },
+   "r17c17": {
+    "meanC": 37.4,
+    "landShare": 0.848,
+    "cloudShare": 0.0
+   },
+   "r17c18": {
+    "meanC": 36.6,
+    "landShare": 0.947,
+    "cloudShare": 0.001
+   },
+   "r17c19": {
+    "meanC": 36.9,
+    "landShare": 0.876,
+    "cloudShare": 0.0
+   },
+   "r18c00": {
+    "meanC": 25.2,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r18c01": {
+    "meanC": 32.1,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r18c02": {
+    "meanC": 29.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r18c03": {
+    "meanC": 35.4,
+    "landShare": 0.999,
+    "cloudShare": 0.0
+   },
+   "r18c04": {
+    "meanC": 34.1,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r18c05": {
+    "meanC": 33.9,
+    "landShare": 0.453,
+    "cloudShare": 0.0
+   },
+   "r18c06": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r18c07": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r18c08": {
+    "meanC": 35.9,
+    "landShare": 0.094,
+    "cloudShare": 0.0
+   },
+   "r18c09": {
+    "meanC": 36.3,
+    "landShare": 0.87,
+    "cloudShare": 0.018
+   },
+   "r18c10": {
+    "meanC": 34.8,
+    "landShare": 0.566,
+    "cloudShare": 0.015
+   },
+   "r18c11": {
+    "meanC": 32.6,
+    "landShare": 0.543,
+    "cloudShare": 0.005
+   },
+   "r18c12": {
+    "meanC": 32.5,
+    "landShare": 0.853,
+    "cloudShare": 0.005
+   },
+   "r18c13": {
+    "meanC": 35.8,
+    "landShare": 0.736,
+    "cloudShare": 0.003
+   },
+   "r18c14": {
+    "meanC": 33.8,
+    "landShare": 0.67,
+    "cloudShare": 0.001
+   },
+   "r18c15": {
+    "meanC": 28.5,
+    "landShare": 0.588,
+    "cloudShare": 0.0
+   },
+   "r18c16": {
+    "meanC": 27.5,
+    "landShare": 0.632,
+    "cloudShare": 0.0
+   },
+   "r18c17": {
+    "meanC": 31.2,
+    "landShare": 0.672,
+    "cloudShare": 0.0
+   },
+   "r18c18": {
+    "meanC": 34.9,
+    "landShare": 0.772,
+    "cloudShare": 0.0
+   },
+   "r18c19": {
+    "meanC": 33.9,
+    "landShare": 0.515,
+    "cloudShare": 0.0
+   },
+   "r19c00": {
+    "meanC": 29.8,
+    "landShare": 0.954,
+    "cloudShare": 0.0
+   },
+   "r19c01": {
+    "meanC": 35.1,
+    "landShare": 0.912,
+    "cloudShare": 0.0
+   },
+   "r19c02": {
+    "meanC": 37.3,
+    "landShare": 0.997,
+    "cloudShare": 0.0
+   },
+   "r19c03": {
+    "meanC": 32.3,
+    "landShare": 1.0,
+    "cloudShare": 0.0
+   },
+   "r19c04": {
+    "meanC": 35.6,
+    "landShare": 0.984,
+    "cloudShare": 0.0
+   },
+   "r19c05": {
+    "meanC": 34.5,
+    "landShare": 0.589,
+    "cloudShare": 0.0
+   },
+   "r19c06": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r19c07": {
+    "meanC": null,
+    "landShare": 0.0,
+    "cloudShare": 0.0
+   },
+   "r19c08": {
+    "meanC": 32.4,
+    "landShare": 0.305,
+    "cloudShare": 0.0
+   },
+   "r19c09": {
+    "meanC": 35.8,
+    "landShare": 0.721,
+    "cloudShare": 0.001
+   },
+   "r19c10": {
+    "meanC": 35.5,
+    "landShare": 0.952,
+    "cloudShare": 0.0
+   },
+   "r19c11": {
+    "meanC": 33.2,
+    "landShare": 0.598,
+    "cloudShare": 0.0
+   },
+   "r19c12": {
+    "meanC": 25.4,
+    "landShare": 0.189,
+    "cloudShare": 0.004
+   },
+   "r19c13": {
+    "meanC": 29.3,
+    "landShare": 0.506,
+    "cloudShare": 0.0
+   },
+   "r19c14": {
+    "meanC": 30.0,
+    "landShare": 0.705,
+    "cloudShare": 0.002
+   },
+   "r19c15": {
+    "meanC": 35.7,
+    "landShare": 0.747,
+    "cloudShare": 0.0
+   },
+   "r19c16": {
+    "meanC": 37.8,
+    "landShare": 0.811,
+    "cloudShare": 0.0
+   },
+   "r19c17": {
+    "meanC": 34.6,
+    "landShare": 0.826,
+    "cloudShare": 0.0
+   },
+   "r19c18": {
+    "meanC": 34.7,
+    "landShare": 0.77,
+    "cloudShare": 0.0
+   },
+   "r19c19": {
+    "meanC": 36.9,
+    "landShare": 0.713,
+    "cloudShare": 0.004
+   }
+  }
+ }
+}

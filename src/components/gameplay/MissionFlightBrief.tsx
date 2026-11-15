@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Mission } from "@/types/game";
 import { storyFor } from "@/components/designer/story-fallback";
+import { MissionGuide } from "@/components/guide/MissionGuide";
 import { neutralObstacle } from "./beginner-model";
 import styles from "./gameplay.module.css";
 
@@ -9,6 +10,7 @@ export function MissionFlightBrief({ mission }: { mission: Mission }) {
   const story = storyFor(mission);
   return (
     <article className={styles.shell}>
+      <MissionGuide stage="brief" />
       <section className={styles.briefing} aria-labelledby="mission-title">
         <div className={styles.briefingVisual}>
           <Image
@@ -94,7 +96,7 @@ export function MissionFlightBrief({ mission }: { mission: Mission }) {
             </p>
           </div>
           <p className={styles.briefingNote}>
-            No sensor is selected for you. Predict, build, launch, and learn
+            No sensor is selected for you. Build, launch, and learn
             from the measured result.
           </p>
         </aside>
