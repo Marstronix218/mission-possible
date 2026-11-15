@@ -1,62 +1,65 @@
 import type { Metadata, Viewport } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import DemoBanner from "@/components/results/DemoBanner";
+import { currentCollection } from "@/lib/collections";
 import ClassroomMenu from "./_components/ClassroomMenu";
 import "./globals.css";
-export const metadata: Metadata = {
-  title: "Mission: Possible — Code Blue",
-  description: "Earth is in danger. Build a satellite. Save the mission.",
-};
-export const viewport: Viewport = { themeColor: "#070a24" };
 
-function LogoMark() {
+const BRAND = "MISSION: POSSIBLE";
+const description =
+  "Design a satellite, simulate its mission, and compare what it sees with real NASA Earth observations. CODE BLUE is the first mission collection.";
+
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: `${BRAND} — Code Blue`,
+    template: `%s · ${BRAND}`,
+  },
+  description,
+  applicationName: BRAND,
+  openGraph: {
+    type: "website",
+    siteName: BRAND,
+    title: `${BRAND} — Code Blue`,
+    description,
+    images: [
+      {
+        url: "/brand/mission-possible-og.png",
+        width: 1200,
+        height: 630,
+        alt: "MISSION: POSSIBLE emblem with the CODE BLUE collection badge",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${BRAND} — Code Blue`,
+    description,
+    images: ["/brand/mission-possible-og.png"],
+  },
+};
+
+export const viewport: Viewport = { themeColor: "#0b1838" };
+
+function CollectionChip() {
   return (
-    <svg viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
-      <rect
-        x="2"
-        y="12"
-        width="9"
-        height="8"
-        rx="1.5"
-        fill="#2de2e6"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <rect
-        x="21"
-        y="12"
-        width="9"
-        height="8"
-        rx="1.5"
-        fill="#2de2e6"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <rect
-        x="11"
-        y="10"
-        width="10"
-        height="12"
-        rx="3"
-        fill="#fff"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <path
-        d="M16 10V5"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-      <circle
-        cx="16"
-        cy="4"
-        r="2"
-        fill="#ff5c8a"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      />
-    </svg>
+    <span
+      className="collection-chip"
+      style={
+        { "--collection": currentCollection.accent } as React.CSSProperties
+      }
+    >
+      <span className="collection-chip__label">Collection</span>
+      <span className="sr-only">: </span>
+      {currentCollection.name}
+    </span>
   );
 }
 
@@ -68,34 +71,56 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           Skip to content
         </a>
         <header className="site-header">
-          <Link
-            className="brand"
-            href="/map"
-            aria-label="Mission: Possible, Code Blue — home"
-          >
-            <span className="brand-icon">
-              <LogoMark />
-            </span>
-            <span className="brand-text">
-              MISSION: POSSIBLE
-              <br />
-              <small>CODE BLUE</small>
-            </span>
-          </Link>
+          <div className="brand-lockup">
+            <Link className="brand" href="/map" aria-label={`${BRAND} home`}>
+              <Image
+                className="brand-mark"
+                src="/brand/mission-possible-mark.svg"
+                alt=""
+                width={44}
+                height={44}
+                priority
+                unoptimized
+              />
+              <Image
+                className="brand-wordmark"
+                src="/brand/mission-possible-wordmark.svg"
+                alt=""
+                width={491}
+                height={40}
+                priority
+                unoptimized
+              />
+            </Link>
+            <CollectionChip />
+          </div>
           <nav aria-label="Main">
             <ClassroomMenu />
             <Link className="btn-pop btn-pop--sm" href="/map">
-              <span aria-hidden="true">▶</span> Play
+              <span aria-hidden="true">▶</span>{" "}
+              <span className="play-label">Play</span>
             </Link>
           </nav>
         </header>
         <DemoBanner />
         {children}
         <footer className="site-footer">
-          <span>
-            <strong className="font-display text-foreground">CODE BLUE</strong>{" "}
-            · Training game built on NASA Earth data
-          </span>
+          <div className="footer-brand">
+            <Image
+              src="/brand/mission-possible-wordmark.svg"
+              alt={BRAND}
+              width={491}
+              height={40}
+              unoptimized
+            />
+            <span>
+              Now playing:{" "}
+              <strong style={{ color: currentCollection.accent }}>
+                {currentCollection.name}
+              </strong>{" "}
+              · Training game built on NASA Earth data
+            </span>
+          </div>
           <nav aria-label="Classroom">
             <Link href="/classroom">Join a class</Link>
             <Link href="/teacher">Teacher</Link>
