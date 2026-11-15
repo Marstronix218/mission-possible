@@ -14,6 +14,8 @@ import HazardIcon from "./HazardIcon";
 import Stars from "./Stars";
 import CollectionShelf, { CollectionBadge } from "./CollectionShelf";
 import { useInView } from "./useInView";
+import { MissionGuide } from "@/components/guide/MissionGuide";
+import { HowToPlayButton } from "@/components/tutorial/HowToPlay";
 import {
   selectMissions,
   categoryColors,
@@ -221,10 +223,17 @@ export default function MissionMap({ missions }: { missions: MapMission[] }) {
               <Link className="btn-pop" href={briefHref(featuredMission.slug)}>
                 Start your first mission
               </Link>
+              <p className="mt-3">
+                <HowToPlayButton />
+              </p>
             </div>
           )}
         </div>
       </section>
+
+      <div className="mt-6">
+        <MissionGuide stage="map" />
+      </div>
 
       <section aria-labelledby="map-heading" className="mt-6">
         <div className={styles.sectionHead}>

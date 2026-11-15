@@ -38,8 +38,8 @@ import { DecisionPrompt } from "./DecisionPrompt";
 import { Debrief } from "./Debrief";
 import { BeginnerObservation } from "@/components/gameplay/BeginnerObservation";
 import { BeginnerDebrief } from "@/components/gameplay/BeginnerDebrief";
-import { savePrediction, type Prediction } from "@/components/gameplay/Prediction";
 import { modeKey } from "@/components/gameplay/beginner-model";
+import { MissionGuide } from "@/components/guide/MissionGuide";
 import { hazardProvenance } from "./DataProvenance";
 import { fixHref, stripDecisions } from "./mission-debrief";
 import {
@@ -69,12 +69,6 @@ export default function MissionExperience({
     mission.defaultConstraints,
   );
   const [launchDone, setLaunchDone] = useState(false);
-  const [predictionConfirmed, setPredictionConfirmed] = useState(false);
-  const prediction = useRef<Prediction | null>(null);
-  function confirmPrediction(value: Prediction | null) {
-    prediction.current = value;
-    setPredictionConfirmed(true);
-  }
   const [beginner, setBeginner] = useState(false);
   const [observeEnded, setObserveEnded] = useState(false);
   const [decisions, setDecisions] = useState<MissionDecisions>({});
@@ -322,7 +316,6 @@ export default function MissionExperience({
           /* The primary attempt store succeeded; history can reload its result. */
         }
       } else saveAttempt(row);
-      savePrediction(id, prediction.current);
       router.push(
         base +
           "/result?attempt=" +
@@ -426,6 +419,22 @@ export default function MissionExperience({
               : "Solo attempts are saved in this browser."}
         </p>
       </details>
+      <MissionGuide
+        stage={
+          stage === "design"
+            ? "workshop"
+            : stage === "run"
+              ? launchDone
+                ? "observe"
+                : resources.violations.length
+                  ? "blocked"
+                  : "launch"
+              : stage === "result"
+                ? "results"
+                : stage
+        }
+        result={stage === "result" ? result : null}
+      />
       {(stage === "run" || stage === "result") && !beginner && (
         <MissionSteps
           slug={mission.slug}
@@ -630,7 +639,6 @@ export default function MissionExperience({
             >
               Launch mission ↗
             </button>
-            <p>You can predict your delivery time before launch.</p>
           </aside>
         </div>
       )}
@@ -653,20 +661,7 @@ export default function MissionExperience({
           {busy && (
             <p role="status">Saving your attempt. Your design is preserved.</p>
           )}
-          {loaded && !predictionConfirmed && (
-            <section className="panel grid gap-4" aria-labelledby="predict-heading">
-              <div>
-                <h2 id="predict-heading">Predict your first delivery</h2>
-                <p>Will the first target detection reach Earth within {mission.targetResponseHours} hours?</p>
-              </div>
-              <div className="flex flex-wrap gap-3">
-                <button className="primary" onClick={() => confirmPrediction("on-time")}>Yes, within the target</button>
-                <button className="primary" onClick={() => confirmPrediction("late-or-none")}>No, later or never</button>
-                <button className="secondary" onClick={() => confirmPrediction(null)}>Skip prediction</button>
-              </div>
-            </section>
-          )}
-          {loaded && predictionConfirmed && !launchDone && (
+          {loaded && !launchDone && (
             <LaunchSequence
               events={runEvents.filter((e) => e.launchStage)}
               design={design}
