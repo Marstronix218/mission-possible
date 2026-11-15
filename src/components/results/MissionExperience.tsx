@@ -39,6 +39,7 @@ import { Debrief } from "./Debrief";
 import { BeginnerObservation } from "@/components/gameplay/BeginnerObservation";
 import { BeginnerDebrief } from "@/components/gameplay/BeginnerDebrief";
 import { modeKey } from "@/components/gameplay/beginner-model";
+import { MissionGuide } from "@/components/guide/MissionGuide";
 import { hazardProvenance } from "./DataProvenance";
 import { fixHref, stripDecisions } from "./mission-debrief";
 import {
@@ -418,6 +419,22 @@ export default function MissionExperience({
               : "Solo attempts are saved in this browser."}
         </p>
       </details>
+      <MissionGuide
+        stage={
+          stage === "design"
+            ? "workshop"
+            : stage === "run"
+              ? launchDone
+                ? "observe"
+                : resources.violations.length
+                  ? "blocked"
+                  : "launch"
+              : stage === "result"
+                ? "results"
+                : stage
+        }
+        result={stage === "result" ? result : null}
+      />
       {(stage === "run" || stage === "result") && !beginner && (
         <MissionSteps
           slug={mission.slug}
@@ -622,7 +639,6 @@ export default function MissionExperience({
             >
               Launch mission ↗
             </button>
-            <p>Your choices are saved before launch.</p>
           </aside>
         </div>
       )}

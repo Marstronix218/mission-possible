@@ -8,7 +8,7 @@ it('applies the SQL Editor bundle transactionally and records every migration',a
   const sql=await readFile(new URL('../supabase/setup.sql',import.meta.url),'utf8');
   await db.exec(sql.replace('alter publication supabase_realtime add table public.classroom_updates;',''));
   const {rows}=await db.query<{version:string}>('select version from supabase_migrations.schema_migrations order by version');
-  expect(rows.map(r=>r.version)).toEqual(['20261114000000','20261114000100','20261114000200','20261114000300','20261115000400']);
+  expect(rows.map(r=>r.version)).toEqual(['20261114000000','20261114000100','20261114000200','20261114000300','20261115000000','20261115000400']);
   await db.exec('set role service_role');
   expect((await db.query("select * from public.overall_ranking('1.3.0')")).rows).toEqual([]);
   await db.exec('reset role');

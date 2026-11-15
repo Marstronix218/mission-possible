@@ -20,6 +20,8 @@ import {
   starterDesign,
 } from "./beginner-model";
 import { SatelliteWorkbench, SensorArt } from "./SatelliteWorkbench";
+import { MissionGuide } from "@/components/guide/MissionGuide";
+import { designHint } from "@/components/guide/guide-context";
 import styles from "./gameplay.module.css";
 
 type UpgradeSlot =
@@ -92,6 +94,18 @@ export default function BeginnerWorkshop({
   const target = useRef<HTMLDivElement>(null);
   const hasPayload = useRef(false);
   const r = summarizeResources(design, mission.defaultConstraints);
+  // The design before the last change, so the guide can react to it.
+  const [previous, setPrevious] = useState<SatelliteDesign | null>(null);
+  const hint = designHint({
+    design,
+    resources: r,
+    constraints: mission.defaultConstraints,
+    category: mission.category,
+    previousDesign: previous,
+    previousResources: previous
+      ? summarizeResources(previous, mission.defaultConstraints)
+      : null,
+  });
   useEffect(() => {
     let active = true;
     async function hydrate() {
@@ -137,6 +151,7 @@ export default function BeginnerWorkshop({
     };
   }, [mission, router, quick]);
   function persist(next: SatelliteDesign) {
+    setPrevious(design);
     setDesign(next);
     try {
       localStorage.setItem(draftKey(mission.slug), JSON.stringify(next));
@@ -207,6 +222,12 @@ export default function BeginnerWorkshop({
       <p className={styles.kicker}>{mission.city} / Explorer workshop</p>
       <h1>How would you observe it?</h1>
       <p>{neutralObstacle(mission)}</p>
+      {ready && (
+        <MissionGuide
+          stage={design.instruments.length ? "resources" : "workshop"}
+          hint={design.instruments.length ? hint : null}
+        />
+      )}
       <SatelliteWorkbench
         design={design}
         attaching={!!drag?.moved}

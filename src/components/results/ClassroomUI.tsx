@@ -88,10 +88,14 @@ export function RankingTable({ rows }: { rows: Ranking[] }) {
     </div>
   );
 }
-export function JoinClass() {
+/** Class code + nickname form; reused by /classroom and the leaderboard class tab. */
+export function JoinClassForm({
+  onJoined,
+}: {
+  onJoined: (classroom: Classroom) => void;
+}) {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [joined, setJoined] = useState<Classroom | null>(null);
   async function join(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
@@ -99,7 +103,7 @@ export function JoinClass() {
     const data = new FormData(e.currentTarget);
     try {
       if (isMockMode) selectDemoActor("student");
-      setJoined(
+      onJoined(
         await api<Classroom>("joinClass", {
           code: String(data.get("code")).trim().toUpperCase(),
           nickname: String(data.get("nickname")).trim(),
@@ -111,6 +115,47 @@ export function JoinClass() {
       setBusy(false);
     }
   }
+  return (
+    <form className="panel form-panel" onSubmit={join}>
+      {isMockMode && (
+        <p className="notice">
+          Use code <strong>ORBIT1</strong> to join the sample classroom. All
+          sample players are fictional.
+        </p>
+      )}
+      <label className="field">
+        Class code
+        <input
+          name="code"
+          required
+          minLength={6}
+          maxLength={6}
+          autoComplete="off"
+          pattern="[A-Za-z0-9]{6}"
+          placeholder={isMockMode ? "ORBIT1" : "A1B2C3"}
+        />
+      </label>
+      <label className="field">
+        Nickname
+        <input
+          name="nickname"
+          required
+          minLength={2}
+          maxLength={24}
+          autoComplete="off"
+          placeholder="OrbitExplorer"
+        />
+      </label>
+      <ErrorMessage message={error} />
+      <button className="primary" disabled={busy}>
+        {busy ? "Joining…" : "Join classroom →"}
+      </button>
+    </form>
+  );
+}
+export function JoinClass() {
+  const [joined, setJoined] = useState<Classroom | null>(null);
+  const [formKey, setFormKey] = useState(0);
   return (
     <main id="main-content" tabIndex={-1}>
       <div className="eyebrow">CLASSROOM / STUDENT</div>
@@ -129,7 +174,7 @@ export function JoinClass() {
             onClick={() => {
               newDemoStudent();
               setJoined(null);
-              setError("");
+              setFormKey((k) => k + 1);
             }}
           >
             Use another demo student
@@ -144,43 +189,14 @@ export function JoinClass() {
           <Link className="primary" href={"/classroom/" + joined.id}>
             Open class mission ↗
           </Link>
+          <p className="mb-0 mt-3">
+            <Link href={"/leaderboard?tab=class&classroom=" + joined.id}>
+              See your class leaderboard ↗
+            </Link>
+          </p>
         </section>
       ) : (
-        <form className="panel form-panel" onSubmit={join}>
-          {isMockMode && (
-            <p className="notice">
-              Use code <strong>ORBIT1</strong> to join the sample classroom. All
-              sample players are fictional.
-            </p>
-          )}
-          <label className="field">
-            Class code
-            <input
-              name="code"
-              required
-              minLength={6}
-              maxLength={6}
-              autoComplete="off"
-              pattern="[A-Za-z0-9]{6}"
-              placeholder={isMockMode ? "ORBIT1" : "A1B2C3"}
-            />
-          </label>
-          <label className="field">
-            Nickname
-            <input
-              name="nickname"
-              required
-              minLength={2}
-              maxLength={24}
-              autoComplete="off"
-              placeholder="OrbitExplorer"
-            />
-          </label>
-          <ErrorMessage message={error} />
-          <button className="primary" disabled={busy}>
-            {busy ? "Joining…" : "Join classroom →"}
-          </button>
-        </form>
+        <JoinClassForm key={formKey} onJoined={setJoined} />
       )}
     </main>
   );
@@ -334,8 +350,11 @@ export function ClassDashboard({ id }: { id: string }) {
                   </p>
                 )}
                 <RankingTable rows={rows} />
-                <p>
-                  <Link href={`/leaderboard?mission=${c.mission_slug}`}>
+                <p className="mb-0 mt-3">
+                  <Link href={"/leaderboard?tab=class&classroom=" + id}>
+                    Open the class leaderboard ↗
+                  </Link>{" · "}
+                  <Link href={`/leaderboard?tab=global&mission=${c.mission_slug}`}>
                     Compare with the global mission ranking ↗
                   </Link>
                 </p>
@@ -483,7 +502,7 @@ export function GlobalRanking({
     </main>
   );
 }
-export function TeacherDashboard({ authError }: { authError?: string }) {
+export function TeacherDashboard() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [classes, setClasses] = useState<Classroom[]>([]);

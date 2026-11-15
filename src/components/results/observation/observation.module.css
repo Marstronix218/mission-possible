@@ -33,9 +33,21 @@
   font: 700 0.82rem var(--font-display);
   cursor: pointer;
 }
+.segmented button {
+  border: 2px solid transparent;
+  color: var(--muted-foreground, #a9bccb);
+}
+.segmented button:hover {
+  color: var(--foreground, #fff);
+  border-color: var(--space-700);
+}
+/* Selected: filled, outlined, heavier and check-marked, not colour alone. */
 .segmented button[aria-pressed="true"] {
   background: var(--pop-cyan);
+  border-color: #fff;
   color: var(--primary-foreground, #07121b);
+  font-weight: 800;
+  box-shadow: 0 0 0 2px #07121b inset, 0 2px 0 #07121b;
 }
 .segmented button:focus-visible,
 .zoomBtn:focus-visible,

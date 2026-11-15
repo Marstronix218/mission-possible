@@ -54,6 +54,9 @@ import { ComponentRadar } from "@/components/planning/ComponentRadar";
 import { PerformancePanel } from "@/components/planning/PerformancePanel";
 import { ResourceDashboard } from "@/components/planning/ResourceDashboard";
 import planning from "@/components/planning/planning.module.css";
+import { MissionGuide } from "@/components/guide/MissionGuide";
+import { designHint } from "@/components/guide/guide-context";
+import type { GuideStage } from "@/components/guide/guide-copy";
 import { storyFor } from "./story-fallback";
 import { useReducedMotion } from "./useReducedMotion";
 import styles from "./designer.module.css";
@@ -254,6 +257,27 @@ export function SatelliteDesigner({
   const hazardColor = `var(--hazard-${mission.category})`;
   const resources = summarizeResources(design, constraints);
   const perf: PerfContext = { category: mission.category, design, constraints };
+  const guideHint = designHint({
+    design,
+    resources,
+    constraints,
+    category: mission.category,
+    previousDesign,
+    previousResources: previousDesign
+      ? summarizeResources(previousDesign, constraints)
+      : null,
+  });
+  const guideStage: GuideStage = stages.every((item) =>
+    stageComplete(design, item.id),
+  )
+    ? "resources"
+    : stage === "eyes"
+      ? design.instruments.length
+        ? "sensor"
+        : "workshop"
+      : stage === "radio"
+        ? "comm"
+        : stage;
   const onPreview = (category: PerfCategory, id: string | null) =>
     setPreview((current) =>
       (current[category] ?? null) === id
@@ -527,6 +551,8 @@ export function SatelliteDesigner({
           </li>
         </ul>
       </header>
+
+      {ready && <MissionGuide stage={guideStage} hint={guideHint} />}
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
         {/* ---------- The satellite and its gauges ---------- */}

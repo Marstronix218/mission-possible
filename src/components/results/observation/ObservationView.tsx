@@ -597,9 +597,8 @@ export function ObservationView({
   );
   const band = mode === "live" ? footprintBand(design, at, windowHours) : null;
 
-  const [view, setView] = useState<ViewMode>(
-    mode === "final" ? "compare" : "sim",
-  );
+  // Compare is the default in the live run and on the final map alike.
+  const [view, setView] = useState<ViewMode>("compare");
   const [realLayer, setRealLayer] = useState<RealLayer>("lst");
   const [split, setSplit] = useState(50);
   const [t, setT] = useState<ViewTransform>({ scale: 1, x: 0, y: 0 });
@@ -992,28 +991,19 @@ export function ObservationView({
               aria-pressed={view === id}
               onClick={() => setView(id)}
             >
+              {view === id && <span aria-hidden="true">✓ </span>}
               {label}
             </button>
           ))}
         </div>
         {hasLst && showReal && (
-          <div
-            className={styles.segmented}
-            role="group"
-            aria-label="Real NASA layer"
-          >
-            <button
-              type="button"
-              aria-pressed={realLayer === "lst"}
-              onClick={() => setRealLayer("lst")}
-            >
+          <div className={styles.segmented} role="group" aria-label="Real NASA layer">
+            <button type="button" aria-pressed={realLayer === "lst"} onClick={() => setRealLayer("lst")}>
+              {realLayer === "lst" && <span aria-hidden="true">✓ </span>}
               Surface temperature
             </button>
-            <button
-              type="button"
-              aria-pressed={realLayer === "true-colour"}
-              onClick={() => setRealLayer("true-colour")}
-            >
+            <button type="button" aria-pressed={realLayer === "true-colour"} onClick={() => setRealLayer("true-colour")}>
+              {realLayer === "true-colour" && <span aria-hidden="true">✓ </span>}
               True colour
             </button>
           </div>

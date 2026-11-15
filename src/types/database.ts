@@ -227,8 +227,64 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      mission_difficulty: {
+        Args: {
+          p_budget: number
+          p_default_budget: number
+          p_default_mass: number
+          p_mass: number
+        }
+        Returns: string
+      }
       mission_ranking: {
         Args: { p_class: string; p_engine: string; p_slug: string }
+        Returns: {
+          achieved: string
+          attempts: number
+          improvement: number
+          nickname: string
+          score: number
+          user_id: string
+        }[]
+      }
+      mission_ranking_conditions: {
+        Args: {
+          p_default_budget: number
+          p_default_mass: number
+          p_difficulty: string
+          p_engine: string
+          p_slug: string
+        }
+        Returns: {
+          budget_m: number
+          mass_kg: number
+        }[]
+      }
+      mission_ranking_scoped: {
+        Args: {
+          p_budget?: number
+          p_class: string
+          p_default_budget: number
+          p_default_mass: number
+          p_difficulty: string
+          p_engine: string
+          p_mass?: number
+          p_slug: string
+          p_user?: string
+        }
+        Returns: {
+          achieved: string
+          attempts: number
+          improvement: number
+          nickname: string
+          players: number
+          rank: number
+          score: number
+          user_id: string
+        }[]
+      }
+      overall_ranking: {
+        Args: { p_engine: string }
         Returns: {
           achieved: string
           attempts: number

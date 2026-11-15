@@ -57,6 +57,7 @@ export function buildLaunchSteps({
 }): LaunchStep[] {
   const orbitName = orbitLabel(orbit);
   const lowerOrbit = orbitName.charAt(0).toLowerCase() + orbitName.slice(1);
+  const conditions = deploymentConditions(orbit);
   return [
     {
       id: "load",
@@ -141,22 +142,22 @@ export function buildLaunchSteps({
       phase: "deploy",
       title: "Fairing separation",
       caption:
-        "No air is left to push against, so the fairing halves split away.",
+        "Out of the thick air, the fairing is no longer needed. Its halves split open and your satellite is revealed, still fixed to the upper stage.",
       durationMs: 1400,
     },
     {
       id: "sat-sep",
       phase: "deploy",
       title: "Satellite separation",
-      caption:
-        "Springs push your satellite gently away from the rocket's upper stage.",
+      caption: `${conditions} Springs push your satellite gently away from the upper stage.`,
       durationMs: 1400,
     },
     {
       id: "panels",
       phase: "deploy",
       title: "Solar panels deployed",
-      caption: "The solar wings unfold and start turning sunlight into power.",
+      caption:
+        "Now clear of the rocket, the solar wings unfold and start turning sunlight into power.",
       durationMs: 1500,
     },
     {
@@ -170,10 +171,58 @@ export function buildLaunchSteps({
       id: "target",
       phase: "observe",
       title: `Turning toward ${city}`,
-      caption: `Its first pass heads for ${city}. Observation begins.`,
+      caption: `It starts moving along its orbit toward ${city}. Observation begins.`,
       durationMs: 1700,
     },
   ];
+}
+
+/**
+ * The deployment point, named from the player's chosen orbit. Illustrative:
+ * the mission engine, not this cinematic, models the orbit itself.
+ */
+export function deploymentConditions(orbitId: string): string {
+  const orbitName = orbitLabel(orbitId);
+  const lowerOrbit = orbitName.charAt(0).toLowerCase() + orbitName.slice(1);
+  return `Deployment conditions reached: the upper stage has stopped its engine at the release point for ${lowerOrbit}.`;
+}
+
+/**
+ * How the player's satellite may be drawn at a step (null = the "ready" frame).
+ * - crane / integrating: on the pad, the only time it is seen before launch.
+ * - enclosing: the fairing is closing over it; it fades out under the halves.
+ * - hidden: sealed in the fairing. Not drawn at all.
+ * - inside-reveal: fairing halves open in space; shown attached to the stage.
+ * - free: separated from the rocket.
+ */
+export type SatelliteVisibility =
+  | "crane"
+  | "integrating"
+  | "enclosing"
+  | "hidden"
+  | "inside-reveal"
+  | "free";
+
+const visibilityByStep: Record<LaunchStepId, SatelliteVisibility> = {
+  load: "integrating",
+  encapsulate: "enclosing",
+  pad: "hidden",
+  t3: "hidden",
+  t2: "hidden",
+  t1: "hidden",
+  ignition: "hidden",
+  liftoff: "hidden",
+  ascent: "hidden",
+  space: "hidden",
+  "fairing-sep": "inside-reveal",
+  "sat-sep": "free",
+  panels: "free",
+  orbit: "free",
+  target: "free",
+};
+
+export function satelliteVisibility(step: LaunchStepId | null): SatelliteVisibility {
+  return step === null ? "crane" : visibilityByStep[step];
 }
 
 export function phaseIndexOf(phase: LaunchPhaseId): number {
@@ -222,6 +271,9 @@ export interface SceneState {
   altitude: number;
   groundGone: boolean;
   fairingSeparated: boolean;
+  satellite: SatelliteVisibility;
+  /** The spent upper stage: on the stack, drifting away, or out of view. */
+  stage: "attached" | "separating" | "gone";
   satelliteFree: boolean;
   panelsOpen: boolean;
   inOrbit: boolean;
@@ -248,6 +300,8 @@ export function sceneState(steps: LaunchStep[], index: number): SceneState {
     altitude: reached("space") ? 1 : ascending ? 0.6 : 0,
     groundGone: ascending,
     fairingSeparated: reached("fairing-sep"),
+    satellite: satelliteVisibility(index >= 0 ? (steps[index]?.id ?? null) : null),
+    stage: reached("panels") ? "gone" : reached("sat-sep") ? "separating" : "attached",
     satelliteFree: reached("sat-sep"),
     panelsOpen: reached("panels"),
     inOrbit: reached("orbit"),

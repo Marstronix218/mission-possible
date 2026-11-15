@@ -9,6 +9,12 @@ import {
   nicknameSchema,
 } from "@/components/results/contracts";
 import { getMission } from "@/components/results/missions";
+import { missionSlugs } from "@/lib/missions/registry";
+import {
+  defaultRankingDifficulty,
+  difficulties,
+  difficultyOf,
+} from "@/lib/leaderboard/difficulty";
 import { runSimulation, summarizeResources, ENGINE_VERSION } from "@/lib/sim";
 import {
   leaderboardSubmission,
@@ -17,6 +23,10 @@ import {
 } from "@/lib/api/leaderboard";
 export const runtime = "nodejs";
 const uuid = z.string().uuid();
+const rankingConditions = z.object({
+  budgetM: z.number().positive().max(10000),
+  massKg: z.number().positive().max(100000),
+});
 const inputSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("setNickname"),
@@ -58,11 +68,21 @@ const inputSchema = z.discriminatedUnion("action", [
   }),
   z.object({
     action: z.literal("ranking"),
-    missionSlug: z.string(),
+    missionSlug: z.enum(missionSlugs),
     classroomId: uuid.optional(),
+    difficulty: z.enum(difficulties).optional(),
+    constraints: rankingConditions.optional(),
   }),
   z.object({ action: z.literal("overallRanking") }),
+  z.object({
+    action: z.literal("rankingConditions"),
+    missionSlug: z.enum(missionSlugs),
+    difficulty: z.enum(difficulties),
+  }),
+  z.object({ action: z.literal("myAttempts") }),
+  z.object({ action: z.literal("myClasses") }),
 ]);
+
 export async function POST(request: Request) {
   if (isMockMode)
     return NextResponse.json(
@@ -260,18 +280,43 @@ export async function POST(request: Request) {
       check(error);
       return NextResponse.json(data);
     }
+    if (input.action === "rankingConditions") {
+      const mission = getMission(input.missionSlug)!;
+      const { data, error } = await db.rpc("mission_ranking_conditions", {
+        p_slug: mission.slug,
+        p_engine: ENGINE_VERSION,
+        p_default_budget: mission.defaultConstraints.budgetM,
+        p_default_mass: mission.defaultConstraints.massKg,
+        p_difficulty: input.difficulty,
+      });
+      check(error);
+      return NextResponse.json(
+        (data ?? []).map((c: { budget_m: number; mass_kg: number }) => ({
+          budgetM: Number(c.budget_m),
+          massKg: Number(c.mass_kg),
+        })),
+      );
+    }
     if (input.action === "ranking") {
-      if (!getMission(input.missionSlug))
-        throw new HttpError(404, "Mission not found.");
-      if (input.classroomId) {
-        const c = await member(input.classroomId);
-        if (c.mission_slug !== input.missionSlug)
-          throw new HttpError(400, "Mission does not match this class.");
-      }
-      const { data, error } = await db.rpc("mission_ranking", {
-        p_slug: input.missionSlug,
+      const mission = getMission(input.missionSlug);
+      if (!mission) throw new HttpError(404, "Mission not found.");
+      const c = input.classroomId ? await member(input.classroomId) : null;
+      if (c && c.mission_slug !== input.missionSlug)
+        throw new HttpError(400, "Mission does not match this class.");
+      const defaults = mission.defaultConstraints;
+      const constraints = c
+        ? { budgetM: Number(c.budget_m), massKg: Number(c.mass_kg) }
+        : (input.constraints ?? defaults);
+      const { data, error } = await db.rpc("mission_ranking_scoped", {
+        p_slug: mission.slug,
         p_class: input.classroomId ?? null,
         p_engine: ENGINE_VERSION,
+        p_default_budget: defaults.budgetM,
+        p_default_mass: defaults.massKg,
+        p_difficulty: input.difficulty ?? defaultRankingDifficulty(defaults, c),
+        p_user: user.id,
+        p_budget: constraints.budgetM,
+        p_mass: constraints.massKg,
       });
       check(error);
       return NextResponse.json(
@@ -287,10 +332,63 @@ export async function POST(request: Request) {
         publicRanking((data ?? []) as RankingSource[], user.id),
       );
     }
+    if (input.action === "myAttempts") {
+      // Only the caller's own rows, summarized; never designs or other players.
+      const { data, error } = await db
+        .from("attempts")
+        .select(
+          "id,mission_slug,classroom_id,score_total,score_breakdown,constraints,engine_version,created_at",
+        )
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .limit(300);
+      check(error);
+      return NextResponse.json(data ?? []);
+    }
+    if (input.action === "myClasses") {
+      const { data: memberships, error } = await db
+        .from("classroom_members")
+        .select("classroom_id,nickname")
+        .eq("user_id", user.id);
+      check(error);
+      const ids = (memberships ?? []).map((m) => m.classroom_id);
+      const { data: joined, error: e1 } = ids.length
+        ? await db
+            .from("classrooms")
+            .select(
+              "id,name,mission_slug,budget_m,mass_kg,max_attempts,deadline,is_active",
+            )
+            .in("id", ids)
+        : { data: [], error: null };
+      check(e1);
+      const { data: owned, error: e2 } = await db
+        .from("classrooms")
+        .select(
+          "id,name,mission_slug,budget_m,mass_kg,max_attempts,deadline,is_active,join_code",
+        )
+        .eq("teacher_id", user.id)
+        .order("created_at", { ascending: false });
+      check(e2);
+      return NextResponse.json([
+        ...(owned ?? []).map((c) => ({
+          ...c,
+          role: "teacher",
+          nickname: null,
+        })),
+        ...(joined ?? []).map((c) => ({
+          ...c,
+          role: "student",
+          nickname:
+            memberships?.find((m) => m.classroom_id === c.id)?.nickname ?? null,
+        })),
+      ]);
+    }
     if (input.action === "submitScore") {
       const { data: attempt, error } = await db
         .from("attempts")
-        .select("id,mission_slug,classroom_id,score_total,engine_version")
+        .select(
+          "id,mission_slug,classroom_id,score_total,engine_version,constraints",
+        )
         .eq("id", input.attemptId)
         .eq("user_id", user.id)
         .maybeSingle();
@@ -300,8 +398,10 @@ export async function POST(request: Request) {
           404,
           "This mission result is not saved on the server yet.",
         );
+      const mission = getMission(attempt.mission_slug);
+      if (!mission) throw new HttpError(404, "Mission not found.");
       if (attempt.classroom_id) await member(attempt.classroom_id);
-      else {
+      if (!attempt.classroom_id || input.nickname) {
         if (!input.nickname)
           throw new HttpError(400, "Choose a pilot name first.");
         // Idempotent: repeating the same name on refresh changes nothing.
@@ -311,10 +411,22 @@ export async function POST(request: Request) {
           .eq("id", user.id);
         check(e);
       }
-      const { data, error: e } = await db.rpc("mission_ranking", {
+      // Rank within the attempt's own scope: mission + difficulty + engine.
+      const defaults = mission.defaultConstraints;
+      const constraints =
+        (attempt.constraints as { budgetM: number; massKg: number } | null) ??
+        defaults;
+      const difficulty = difficultyOf(constraints, defaults);
+      const { data, error: e } = await db.rpc("mission_ranking_scoped", {
         p_slug: attempt.mission_slug,
         p_class: attempt.classroom_id,
         p_engine: ENGINE_VERSION,
+        p_default_budget: defaults.budgetM,
+        p_default_mass: defaults.massKg,
+        p_difficulty: difficulty,
+        p_budget: constraints.budgetM,
+        p_mass: constraints.massKg,
+        p_user: user.id,
       });
       check(e);
       return NextResponse.json(
@@ -323,6 +435,12 @@ export async function POST(request: Request) {
           user.id,
           attempt,
           ENGINE_VERSION,
+          {
+            missionSlug: attempt.mission_slug,
+            difficulty,
+            engineVersion: ENGINE_VERSION,
+            constraints,
+          },
         ),
       );
     }

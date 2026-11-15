@@ -229,14 +229,35 @@
     transform 1400ms cubic-bezier(0.5, 0, 0.75, 0.4),
     opacity 900ms ease;
 }
-.rocket[data-gone="true"] {
-  opacity: 0;
+/* Spent upper stage drops back once the satellite is released, then leaves view. */
+.body {
   transition:
-    transform 1400ms ease-in,
+    transform 1400ms cubic-bezier(0.45, 0, 0.55, 1),
     opacity 1200ms ease;
 }
+.body[data-stage="separating"] {
+  transform: translateY(34px);
+  opacity: 0.75;
+}
+.body[data-stage="gone"] {
+  transform: translateY(190px);
+  opacity: 0;
+}
 .satellite {
-  transition: transform 1300ms cubic-bezier(0.3, 0.7, 0.3, 1);
+  transition:
+    transform 1300ms cubic-bezier(0.45, 0, 0.55, 1),
+    opacity 300ms ease;
+}
+/* Fairing halves finish closing (1100ms) before the satellite stops being drawn. */
+.satellite[data-vis="enclosing"] {
+  opacity: 0;
+  transition:
+    transform 1300ms cubic-bezier(0.45, 0, 0.55, 1),
+    opacity 250ms ease 850ms;
+}
+/* Shown only as the opening halves expose it (no transition on first paint). */
+.satellite[data-vis="inside-reveal"] {
+  animation: reveal 900ms ease 150ms both;
 }
 .wing {
   transition: transform 1100ms cubic-bezier(0.34, 1.4, 0.64, 1);
@@ -355,6 +376,14 @@
   animation: tick 900ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
+@keyframes reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 @keyframes flicker {
   from {
     transform: scale(0.85, 0.5);

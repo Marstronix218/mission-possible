@@ -1,0 +1,179 @@
+/* Nova, the docked mission guide. Sits in the page flow above the content,
+   so it never covers controls at any width. */
+
+.dock {
+  --g-deep: #07121b;
+  --g-gold: #ffd23f;
+  --g-lime: var(--pop-yellow, #cbf36b);
+  --g-cyan: var(--pop-cyan, #8ed5dc);
+  margin: 0 0 1rem;
+}
+
+.guide {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: end;
+  gap: 0.6rem;
+  max-width: 48rem;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 6px 10px #0007);
+  animation:
+    hop 0.5s var(--ease-pop, ease-out),
+    bob 3.6s ease-in-out 0.5s infinite;
+}
+.avatar svg,
+.miniAvatar svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.bubble {
+  position: relative;
+  min-width: 0;
+  padding: 0.7rem 0.9rem 0.55rem;
+  border: 2px solid var(--g-cyan);
+  border-radius: 18px 18px 18px 6px;
+  background: linear-gradient(180deg, #1a2266, #141c55);
+  box-shadow: 0 10px 24px #0006;
+}
+.bubble::before {
+  content: "";
+  position: absolute;
+  left: -9px;
+  bottom: 12px;
+  width: 14px;
+  height: 14px;
+  background: #141c55;
+  border-left: 2px solid var(--g-cyan);
+  border-bottom: 2px solid var(--g-cyan);
+  transform: rotate(45deg);
+}
+.bubble[data-mood="thinking"],
+.bubble[data-mood="thinking"]::before {
+  border-color: var(--g-gold);
+}
+.bubble[data-mood="happy"],
+.bubble[data-mood="happy"]::before {
+  border-color: var(--g-lime);
+}
+
+.who {
+  margin: 0 0 0.2rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: #b6c8d4;
+}
+.who strong {
+  color: var(--g-gold);
+  font-weight: 900;
+}
+.label {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.bubble[data-mood="happy"] .label {
+  color: var(--g-lime);
+}
+.bubble[data-mood="thinking"] .label {
+  color: var(--g-gold);
+}
+
+.text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.45;
+  color: #f6f7ff;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.9rem;
+  margin-top: 0.35rem;
+}
+.controls button {
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #b6c8d4;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.controls button:hover {
+  color: var(--g-cyan);
+}
+.controls button:focus-visible,
+.showButton:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.showButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  padding: 0.2rem 0.85rem 0.2rem 0.25rem;
+  border: 2px solid #ffffff40;
+  border-radius: 999px;
+  background: #0d1a25;
+  color: #f6f7ff;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+.showButton:hover {
+  border-color: var(--g-cyan);
+}
+.miniAvatar {
+  width: 32px;
+  height: 32px;
+}
+
+@media (max-width: 480px) {
+  .guide {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  .avatar {
+    width: 48px;
+    height: 48px;
+  }
+  .text {
+    font-size: 0.95rem;
+  }
+}
+
+@keyframes hop {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  40% {
+    transform: translateY(-8px) scale(1.06);
+  }
+  100% {
+    transform: none;
+  }
+}
+@keyframes bob {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .avatar {
+    animation: none;
+  }
+}
