@@ -1,6 +1,6 @@
 # Browser-local classroom demo
 
-Mock mode is the default. Existing Supabase credentials are preserved but are not used. No database migration, anonymous sign-in, email sign-in, or Supabase connection is required.
+For an offline demo, explicitly set `NEXT_PUBLIC_DATA_MODE=mock` and restart/rebuild. Production uses live Supabase. In mock mode, existing credentials are preserved but are not used. No database migration, anonymous sign-in, email sign-in, or Supabase connection is required.
 
 Start with `pnpm install --frozen-lockfile` and `pnpm dev`, or use `run-local.command` in this workspace. The app shows a persistent **MOCK DATA MODE** banner.
 
@@ -13,7 +13,7 @@ Start with `pnpm install --frozen-lockfile` and `pnpm dev`, or use `run-local.co
 
 Mock classrooms, fictional profiles, and attempts persist in this browser's local storage. Each tab has its own role/student identity in session storage. Same-origin tabs share the mock dataset and receive browser-local update events. This is not a multi-device backend or a security/authentication demonstration. Browser data can be edited or cleared by the user.
 
-`NEXT_PUBLIC_DATA_MODE=mock` is set in the local environment. Live services require explicitly changing that value to `supabase` and restarting/rebuilding. The server application API rejects live requests while mock mode is active.
+Select `NEXT_PUBLIC_DATA_MODE=mock` only in an environment intended for the offline demo. Live services use `supabase` and require restarting/rebuilding after a mode change. The server application API rejects live requests while mock mode is active.
 
 Implementation boundaries:
 - `mock-model.ts`: classroom behavior and actual simulation results, with injected time/IDs for tests.

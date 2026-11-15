@@ -11,6 +11,8 @@ export type Database = {
     Tables: {
       attempts: {
         Row: {
+          classroom_id: string | null
+          constraints: Json | null
           created_at: string
           design: Json
           engine_version: string
@@ -22,6 +24,8 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          classroom_id?: string | null
+          constraints?: Json | null
           created_at?: string
           design: Json
           engine_version: string
@@ -33,6 +37,8 @@ export type Database = {
           user_id: string
         }
         Update: {
+          classroom_id?: string | null
+          constraints?: Json | null
           created_at?: string
           design?: Json
           engine_version?: string
@@ -45,6 +51,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "attempts_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "attempts_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -52,6 +65,118 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      classroom_members: {
+        Row: {
+          classroom_id: string
+          joined_at: string
+          nickname: string
+          user_id: string
+        }
+        Insert: {
+          classroom_id: string
+          joined_at?: string
+          nickname: string
+          user_id: string
+        }
+        Update: {
+          classroom_id?: string
+          joined_at?: string
+          nickname?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classroom_members_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: false
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classroom_updates: {
+        Row: {
+          classroom_id: string
+          updated_at: string
+        }
+        Insert: {
+          classroom_id: string
+          updated_at?: string
+        }
+        Update: {
+          classroom_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "classroom_updates_classroom_id_fkey"
+            columns: ["classroom_id"]
+            isOneToOne: true
+            referencedRelation: "classrooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      classrooms: {
+        Row: {
+          budget_m: number
+          created_at: string
+          deadline: string | null
+          id: string
+          is_active: boolean
+          join_code: string
+          mass_kg: number
+          max_attempts: number | null
+          mission_slug: string
+          name: string
+          teacher_id: string
+        }
+        Insert: {
+          budget_m: number
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          is_active?: boolean
+          join_code: string
+          mass_kg: number
+          max_attempts?: number | null
+          mission_slug: string
+          name: string
+          teacher_id: string
+        }
+        Update: {
+          budget_m?: number
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          is_active?: boolean
+          join_code?: string
+          mass_kg?: number
+          max_attempts?: number | null
+          mission_slug?: string
+          name?: string
+          teacher_id?: string
+        }
+        Relationships: []
+      }
+      join_requests: {
+        Row: {
+          count: number
+          user_id: string
+          window_start: string
+        }
+        Insert: {
+          count: number
+          user_id: string
+          window_start: string
+        }
+        Update: {
+          count?: number
+          user_id?: string
+          window_start?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -79,7 +204,71 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_read_class: { Args: { p_id: string }; Returns: boolean }
+      join_mission_classroom: {
+        Args: { p_code: string; p_nickname: string; p_user: string }
+        Returns: {
+          budget_m: number
+          created_at: string
+          deadline: string | null
+          id: string
+          is_active: boolean
+          join_code: string
+          mass_kg: number
+          max_attempts: number | null
+          mission_slug: string
+          name: string
+          teacher_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "classrooms"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      mission_ranking: {
+        Args: { p_class: string; p_engine: string; p_slug: string }
+        Returns: {
+          achieved: string
+          attempts: number
+          improvement: number
+          nickname: string
+          score: number
+          user_id: string
+        }[]
+      }
+      save_mission_attempt: {
+        Args: {
+          p_budget: number
+          p_class: string
+          p_design: Json
+          p_id: string
+          p_mass: number
+          p_result: Json
+          p_slug: string
+          p_user: string
+        }
+        Returns: {
+          classroom_id: string | null
+          constraints: Json | null
+          created_at: string
+          design: Json
+          engine_version: string
+          id: string
+          mission_slug: string
+          result: Json
+          score_breakdown: Json
+          score_total: number
+          user_id: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "attempts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never

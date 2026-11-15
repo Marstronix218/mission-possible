@@ -1,13 +1,13 @@
 # Mission: Possible — Code Blue
 
-An educational satellite-design game using Next.js App Router, TypeScript, MapLibre, and Ryohei's deterministic simulation engine. Browser-local mock classroom data is enabled by default; Supabase is optional and inactive.
+An educational satellite-design game using Next.js App Router, TypeScript, MapLibre, and Ryohei's deterministic simulation engine. The deployed application uses Supabase for anonymous sessions, saved attempts, classrooms and rankings. An explicitly selected offline demo is also available.
 
-Start with [DEMO.md](DEMO.md). Join the sample classroom with **ORBIT1**, or open Teacher to try the complete roleplay flow without email or database setup.
+Start with [SETUP.md](SETUP.md) for live setup. [DEMO.md](DEMO.md) describes the optional offline roleplay mode; its sample class **ORBIT1** exists only in that mode.
 
 - **Map:** 18 selectable city previews, category filters, local best scores and completion status, bundled Natural Earth country outlines, keyboard-accessible markers and city list.
 - **MVP game:** Los Angeles, Houston, Phoenix. Briefing → configurable satellite → resource validation → simulation playback → real computed score, feedback, redesign, saved history, comparisons.
 - **NASA comparison:** archived Terra MODIS true-color observations beside modeled observation cells, with dates and exact source metadata. The observed imagery does not supply scoring hazard labels.
-- **Classrooms:** email magic-link teacher sign-in, anonymous student joining, custom constraints, deadlines and attempt limits, ranking updates, student design/history inspection, CSV export, member removal, code rotation, and archiving. Works with clearly labeled mock data by default. Live mode requires configured Supabase.
+- **Classrooms:** email magic-link teacher sign-in, anonymous student joining, custom constraints, deadlines and attempt limits, ranking updates, student design/history inspection, CSV export, member removal, code rotation, and archiving. Live mode uses configured Supabase; the optional offline demo uses labeled browser-local records.
 - **Rankings:** server-recalculated submissions, separated by mission/engine version and classroom vs standard solo conditions.
 
 Run `pnpm install --frozen-lockfile` and `pnpm dev`, then visit http://localhost:3000/map. See [SETUP.md](SETUP.md) for cloud setup, sources, verification limits, and GitHub delivery status.
@@ -28,4 +28,4 @@ Nori’s foundation migration `20261114000000_profiles_and_attempts.sql` is pres
 
 The home page redirects to the mission map. Feature PRs land on `develop`; publish the verified game through a `develop` → `main` release PR. Vercel Production follows `main`, so an unreleased feature on `develop` will not appear on the production URL.
 
-Use Node.js 22 and the pinned pnpm version. Run `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` before delivery. Live mode requires all three schema migrations, configured auth, and `NEXT_PUBLIC_DATA_MODE=supabase`; the default demo remains local and explicitly labeled.
+Use Node.js 22 and the pinned pnpm version. Run `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` before delivery. Live mode requires all three schema migrations, configured auth, and `NEXT_PUBLIC_DATA_MODE=supabase`; explicit mock mode remains local and labeled.
