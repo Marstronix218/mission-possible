@@ -4,9 +4,9 @@ An educational satellite-design game using Next.js App Router, TypeScript, MapLi
 
 Start with [SETUP.md](SETUP.md) for live setup. [DEMO.md](DEMO.md) describes the optional offline roleplay mode; its sample class **ORBIT1** exists only in that mode.
 
-- **Map:** 18 selectable city previews, category filters, local best scores and completion status, bundled Natural Earth country outlines, keyboard-accessible markers and city list.
+- **Map:** emergency-first landing with the featured Los Angeles wildfire, a five-step mission overview, and all 18 city missions across 8 hazard types, grouped and filterable by hazard, local best scores and completion status, bundled Natural Earth country outlines, keyboard-accessible markers and city list.
 - **MVP game:** Los Angeles, Houston, Phoenix. Briefing → configurable satellite → resource validation → simulation playback → real computed score, feedback, redesign, saved history, comparisons.
-- **NASA comparison:** archived Terra MODIS true-color observations beside modeled observation cells, with dates and exact source metadata. The observed imagery does not supply scoring hazard labels.
+- **NASA data:** Los Angeles fire cells come from NASA VIIRS 375 m fire detections (7–13 Jan 2025) and Phoenix heat cells from MODIS land-surface temperature (11–18 Jul 2024); Houston's flood grid remains an educational model. Cloud/smoke and detectability are modelled everywhere. Each mission's `sources[].provenance` says which. See [SETUP.md](SETUP.md#nasa-sources).
 - **Classrooms:** email magic-link teacher sign-in, anonymous student joining, custom constraints, deadlines and attempt limits, ranking updates, student design/history inspection, CSV export, member removal, code rotation, and archiving. Live mode uses configured Supabase; the optional offline demo uses labeled browser-local records.
 - **Rankings:** server-recalculated submissions, separated by mission/engine version and classroom vs standard solo conditions.
 

@@ -1,0 +1,6447 @@
+{
+  "slug": "los-angeles",
+  "usable": true,
+  "kind": "wildfire",
+  "dataset": "VIIRS 375 m Thermal Anomalies and Fires (Suomi NPP and NOAA-20), via NASA GIBS WMS",
+  "layers": [
+    "VIIRS_SNPP_Thermal_Anomalies_375m_All",
+    "VIIRS_NOAA20_Thermal_Anomalies_375m_All"
+  ],
+  "eventDays": [
+    "2025-01-07",
+    "2025-01-08",
+    "2025-01-09",
+    "2025-01-10",
+    "2025-01-11",
+    "2025-01-12",
+    "2025-01-13"
+  ],
+  "missionStart": "2025-01-08",
+  "baselineDays": [
+    "2024-11-18",
+    "2024-11-19",
+    "2024-11-20",
+    "2024-11-21",
+    "2024-11-22",
+    "2024-11-23",
+    "2024-11-24",
+    "2024-11-25",
+    "2024-11-26",
+    "2024-11-27"
+  ],
+  "bbox": [
+    -118.95,
+    33.65,
+    -117.55,
+    34.45
+  ],
+  "imageSize": [
+    700,
+    400
+  ],
+  "method": "Each day's PNG (UTC date) is rasterised to the 20x20 grid by counting opaque detection pixels per cell (max of the two satellites). A cell is a fire cell on a day if it has >= 20 pixels and >= 3x its maximum over the pre-event baseline days, which masks persistent industrial heat sources. eventDay is the first such day counted from the mission start, 0 = 2025-01-08; cells first detected on 2025-01-07 are also day 0.",
+  "accessedOn": "2026-11-14",
+  "exampleUrl": "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=VIIRS_SNPP_Thermal_Anomalies_375m_All&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=TRUE&WIDTH=700&HEIGHT=400&SRS=EPSG%3A4326&BBOX=-118.95%2C33.65%2C-117.55%2C34.45&TIME=2025-01-07",
+  "cells": [
+    {
+      "row": 0,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 17,
+      "dailyFirePixels": [
+        15,
+        12,
+        12,
+        12,
+        12,
+        12,
+        13
+      ],
+      "baselineFirePixels": 14,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 8,
+      "dailyFirePixels": [
+        12,
+        12,
+        0,
+        0,
+        0,
+        11,
+        0
+      ],
+      "baselineFirePixels": 12,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 11,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 10,
+      "dailyFirePixels": [
+        10,
+        10,
+        12,
+        13,
+        0,
+        15,
+        11
+      ],
+      "baselineFirePixels": 13,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        1
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        3,
+        2,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 10,
+      "dailyFirePixels": [
+        24,
+        20,
+        28,
+        32,
+        21,
+        12,
+        27
+      ],
+      "baselineFirePixels": 24,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        16,
+        21,
+        15,
+        15,
+        17,
+        17
+      ],
+      "baselineFirePixels": 13,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        13,
+        0,
+        10,
+        10,
+        12,
+        12
+      ],
+      "baselineFirePixels": 22,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 10,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 10,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        14,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        24,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        337,
+        73,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 5,
+      "dailyFirePixels": [
+        118,
+        270,
+        104,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 6,
+      "dailyFirePixels": [
+        3,
+        159,
+        55,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 12,
+      "dailyFirePixels": [
+        12,
+        17,
+        13,
+        0,
+        0,
+        0,
+        12
+      ],
+      "baselineFirePixels": 13,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        13,
+        13,
+        0,
+        0,
+        12,
+        14
+      ],
+      "baselineFirePixels": 18,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        3,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        36,
+        71,
+        82,
+        13,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        527,
+        115,
+        42,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 5,
+      "dailyFirePixels": [
+        201,
+        629,
+        290,
+        53,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 6,
+      "dailyFirePixels": [
+        31,
+        277,
+        64,
+        11,
+        67,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        11,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        3,
+        1,
+        6,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        62,
+        216,
+        215,
+        228,
+        19,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        15,
+        56,
+        114,
+        327,
+        28,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 1
+    },
+    {
+      "row": 11,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        10,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        12,
+        12,
+        0,
+        0,
+        0,
+        11
+      ],
+      "baselineFirePixels": 12,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        11,
+        11,
+        12,
+        10,
+        0,
+        11
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        70,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 3
+    },
+    {
+      "row": 12,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        42,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 3
+    },
+    {
+      "row": 12,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 10,
+      "dailyFirePixels": [
+        13,
+        23,
+        12,
+        12,
+        17,
+        20,
+        14
+      ],
+      "baselineFirePixels": 27,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        85,
+        3,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        28,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 2
+    },
+    {
+      "row": 13,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        16,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        413,
+        276,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        627,
+        136,
+        51,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        62,
+        39,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 8,
+      "dailyFirePixels": [
+        13,
+        0,
+        0,
+        0,
+        0,
+        0,
+        12
+      ],
+      "baselineFirePixels": 12,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        135,
+        118,
+        70,
+        0,
+        42,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        121,
+        307,
+        247,
+        25,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 2,
+      "dailyFirePixels": [
+        2,
+        0,
+        4,
+        1,
+        4,
+        2,
+        3
+      ],
+      "baselineFirePixels": 4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 2,
+      "dailyFirePixels": [
+        12,
+        0,
+        18,
+        10,
+        14,
+        21,
+        21
+      ],
+      "baselineFirePixels": 17,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 6,
+      "dailyFirePixels": [
+        12,
+        46,
+        0,
+        13,
+        13,
+        12,
+        13
+      ],
+      "baselineFirePixels": 22,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 6,
+      "dailyFirePixels": [
+        12,
+        96,
+        13,
+        20,
+        18,
+        11,
+        17
+      ],
+      "baselineFirePixels": 20,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 4,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 0,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 1,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 2,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 3,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 4,
+      "dailyFirePixels": [
+        18,
+        18,
+        13,
+        13,
+        13,
+        11,
+        12
+      ],
+      "baselineFirePixels": 22,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 5,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 6,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 7,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 8,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 9,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 10,
+      "dailyFirePixels": [
+        0,
+        13,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 11,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 12,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 13,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 14,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 15,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 16,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 17,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 18,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 19,
+      "dailyFirePixels": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "baselineFirePixels": 0,
+      "truth": 0,
+      "eventDay": 0
+    }
+  ]
+}

@@ -1,4 +1,3 @@
-import { isMockMode } from "@/lib/data-mode";
 import UpstreamDesign from "@/components/designer/designer-page";
 import { notFound } from "next/navigation";
 import { getMission } from "@/components/results/missions";
@@ -14,7 +13,8 @@ export default async function Page({
   const query = await searchParams;
   const mission = getMission(slug);
   if (!mission) notFound();
-  if (!isMockMode && !query.classroom)
+  // Solo players (mock and live) get the story-driven screens; classrooms keep the shared experience.
+  if (!query.classroom)
     return (
       <main id="main-content" tabIndex={-1}>
         <UpstreamDesign params={Promise.resolve({ slug })} />

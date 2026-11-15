@@ -1,13 +1,22 @@
 {
-  "source": "NASA GIBS / Terra MODIS corrected reflectance, true color",
-  "observedOn": "2024-07-01",
+  "source": "NASA GIBS / Suomi NPP VIIRS corrected reflectance, true color, with VIIRS 375 m active fire detections (Suomi NPP and NOAA-20)",
+  "layers": [
+    "VIIRS_SNPP_CorrectedReflectance_TrueColor",
+    "VIIRS_SNPP_Thermal_Anomalies_375m_All",
+    "VIIRS_NOAA20_Thermal_Anomalies_375m_All"
+  ],
+  "observedOn": "2025-01-08",
   "accessedOn": "2026-11-14",
   "bbox": [
-    -119.03999999999999,
-    33.55,
-    -117.44,
-    34.55
+    -118.95,
+    33.65,
+    -117.55,
+    34.45
   ],
-  "url": "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=MODIS_Terra_CorrectedReflectance_TrueColor&FORMAT=image%2Fjpeg&WIDTH=512&HEIGHT=512&SRS=EPSG%3A4326&BBOX=-119.03999999999999%2C33.55%2C-117.44%2C34.55&TIME=2024-07-01",
-  "usage": "Observed true-color imagery for geographical context. Not a hazard label or scoring ground truth."
+  "url": "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=VIIRS_SNPP_CorrectedReflectance_TrueColor&STYLES=&FORMAT=image%2Fjpeg&WIDTH=512&HEIGHT=512&SRS=EPSG%3A4326&BBOX=-118.95%2C33.65%2C-117.55%2C34.45&TIME=2025-01-08",
+  "overlayUrls": [
+    "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=VIIRS_SNPP_Thermal_Anomalies_375m_All&STYLES=&FORMAT=image%2Fpng&WIDTH=512&HEIGHT=512&SRS=EPSG%3A4326&BBOX=-118.95%2C33.65%2C-117.55%2C34.45&TIME=2025-01-08&TRANSPARENT=TRUE",
+    "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=VIIRS_NOAA20_Thermal_Anomalies_375m_All&STYLES=&FORMAT=image%2Fpng&WIDTH=512&HEIGHT=512&SRS=EPSG%3A4326&BBOX=-118.95%2C33.65%2C-117.55%2C34.45&TIME=2025-01-08&TRANSPARENT=TRUE"
+  ],
+  "usage": "Observed true-color imagery of the Palisades and Eaton fires and their smoke on 8 Jan 2025 (UTC), with that day's VIIRS fire detections drawn in red. The mission's fire cells are derived from the same VIIRS detection layers for 7-13 Jan 2025 (scripts/data/fetch-nasa-hazards.py)."
 }

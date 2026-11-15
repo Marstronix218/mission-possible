@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState, useRef, useMemo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import type {
   Mission,
@@ -28,6 +27,14 @@ import { classroomBlocker, attemptsRemaining } from "./classroom-policy";
 import { loadClassroomState } from "./classroom-state";
 import { useReducedMotion } from "./use-reduced-motion";
 import { comparableAttempts, previousComparableAttempt } from "./history-model";
+import { MissionSteps } from "@/components/story/MissionSteps";
+import { buildMissionStory, diagnoseMission } from "@/lib/story/events";
+import { LaunchSequence } from "./LaunchSequence";
+import { MissionTimeline } from "./MissionTimeline";
+import { OutcomeStory } from "./OutcomeStory";
+import { AttemptComparison } from "./AttemptComparison";
+import { HazardGrid } from "./HazardGrid";
+import { NasaVsSimulated, hazardProvenance } from "./DataProvenance";
 const metrics = [
   "Observation accuracy",
   "Response time",
@@ -52,6 +59,7 @@ export default function MissionExperience({
     mission.defaultConstraints,
   );
   const [progress, setProgress] = useState(0);
+  const [launchDone, setLaunchDone] = useState(false);
   const [paused, setPaused] = useState(false);
   const reducedMotion = useReducedMotion();
   const [manualPlayback, setManualPlayback] = useState(false);
@@ -72,6 +80,10 @@ export default function MissionExperience({
   const requestId = useRef<string | null>(null);
   const base = "/mission/" + mission.slug;
   const suffix = classroomId ? "?classroom=" + classroomId : "";
+  // The debrief replaces a long playback page; start at its headline once loaded.
+  useEffect(() => {
+    if (stage === "result" && loaded) window.scrollTo({ top: 0 });
+  }, [stage, loaded]);
   useEffect(() => {
     let active = true;
     async function load() {
@@ -195,6 +207,7 @@ export default function MissionExperience({
   useEffect(() => {
     if (
       stage !== "run" ||
+      !launchDone ||
       paused ||
       !loaded ||
       error ||
@@ -216,8 +229,11 @@ export default function MissionExperience({
       );
       clearInterval(timer);
     };
-  }, [stage, paused, loaded, error, motionReduced, manualPlayback]);
-  const resources = summarizeResources(design, constraints);
+  }, [stage, launchDone, paused, loaded, error, motionReduced, manualPlayback]);
+  const resources = useMemo(
+    () => summarizeResources(design, constraints),
+    [design, constraints],
+  );
   const result = attempt?.result;
   const previous = attempt
     ? previousComparableAttempt(history, attempt)
@@ -339,58 +355,32 @@ export default function MissionExperience({
     () => runSimulation(mission, design, constraints),
     [mission, design, constraints],
   );
-  const cells = stage === "result" ? result?.cells : simulated.cells;
-  const track = simulated.timeline.slice(
-    0,
-    Math.max(1, Math.ceil(progress * simulated.timeline.length)),
+  const runEvents = useMemo(
+    () => buildMissionStory(mission, design, resources, simulated),
+    [mission, design, resources, simulated],
   );
-  const point = (p: { lon: number; lat: number }) => [
-    ((p.lon - mission.bbox[0]) / (mission.bbox[2] - mission.bbox[0])) * 100,
-    ((mission.bbox[3] - p.lat) / (mission.bbox[3] - mission.bbox[1])) * 100,
-  ];
-  const cellGrid = (complete: boolean) => (
-    <div
-      className="observation-grid"
-      role="img"
-      aria-label="Simulated observation cells: solid green observed, outlined orange detected hazards, striped blocked or missed, dark pending"
-    >
-      {cells?.map((c, i) => (
-        <span
-          key={c.id}
-          className={
-            !complete && i >= Math.floor(progress * cells.length)
-              ? "pending"
-              : c.detected
-                ? "detected"
-                : c.observed
-                  ? "observed"
-                  : "cloud"
-          }
-        />
-      ))}
-      {!complete && (
-        <svg
-          className="track-overlay"
-          viewBox="0 0 100 100"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <polyline
-            points={track.map((p) => point(p).join(",")).join(" ")}
-            fill="none"
-            stroke="#f8cd76"
-            strokeWidth="0.5"
-          />
-          <circle
-            cx={point(track[track.length - 1])[0]}
-            cy={point(track[track.length - 1])[1]}
-            r="1.5"
-            fill="#fff0a5"
-          />
-        </svg>
-      )}
-    </div>
+  const resultResources = useMemo(
+    () => (attempt ? summarizeResources(attempt.design, attempt.constraints) : null),
+    [attempt],
   );
+  const resultEvents = useMemo(
+    () =>
+      attempt && resultResources
+        ? buildMissionStory(mission, attempt.design, resultResources, attempt.result)
+        : [],
+    [mission, attempt, resultResources],
+  );
+  const resultDiagnosis = useMemo(
+    () =>
+      attempt && resultResources
+        ? diagnoseMission(mission, attempt.design, resultResources, attempt.result)
+        : null,
+    [mission, attempt, resultResources],
+  );
+  function redesign(from: SatelliteDesign, slot?: string) {
+    update(from);
+    router.push(base + "/design" + suffix + (slot ? "#slot-" + slot : ""));
+  }
   return (
     <main id="main-content" tabIndex={-1}>
       <Link className="back" href="/map">
@@ -406,19 +396,29 @@ export default function MissionExperience({
           : stage === "design"
             ? "Design for "
             : stage === "run"
-              ? "Observing "
+              ? launchDone
+                ? "Observing "
+                : "Launching for "
               : "Mission debrief: "}
         <em>{mission.city}</em>
       </h1>
       <p className="notice">
-        Educational simulation · Hazard grids are modeled, not NASA
-        observations.{" "}
+        Educational simulation · {hazardProvenance(mission)}{" "}
         {isMockMode
           ? "Mock classroom data stays in this browser. Scores are computed by the real simulation engine."
           : backendAvailable
             ? "Cloud submissions are recalculated on the server."
             : "Solo attempts are saved in this browser. Live classrooms and rankings require cloud configuration."}
       </p>
+      {(stage === "run" || stage === "result") && (
+        <MissionSteps
+          slug={mission.slug}
+          current={
+            stage === "result" ? "debrief" : launchDone ? "observe" : "launch"
+          }
+          query={suffix}
+        />
+      )}
       {!loaded && <p role="status">Loading mission…</p>}
       {error && (
         <p className="error" role="alert">
@@ -634,54 +634,60 @@ export default function MissionExperience({
               Reduce motion{reducedMotion ? " (system preference)" : ""}
             </span>
           </label>
-          {motionReduced && !manualPlayback && (
-            <p role="status" className="notice">
-              Reduced motion is on. Choose Play animation to start, or skip
-              directly to your results.
-            </p>
-          )}
           {busy && (
             <p role="status">Saving your attempt. Your design is preserved.</p>
           )}
-          <div className="section-heading">
-            <h2>Observation playback</h2>
-            <span>
-              Day{" "}
-              {Math.min(
-                mission.durationDays,
-                Math.floor(progress * mission.durationDays) + 1,
-              )}{" "}
-              / {mission.durationDays}
-            </span>
-          </div>
-          <progress value={progress} max="1" aria-label="Mission playback" />
-          {cellGrid(false)}
-          <div className="legend">
-            <span>■ Observed</span>
-            <span>◇ Detected hazard</span>
-            <span>▧ Blocked / missed</span>
-            <span>▪ Pending</span>
-          </div>
-          <p>
-            Simulated cells; reveal order illustrates the completed engine
-            result, rather than per-pass observation timing.
-          </p>
-          <div className="actions">
-            <button
-              onClick={() => {
-                if (motionReduced && !manualPlayback) {
-                  setManualPlayback(true);
-                  setPaused(false);
-                } else setPaused((p) => !p);
+          {loaded && !launchDone && (
+            <LaunchSequence
+              events={runEvents.filter((e) => e.launchStage)}
+              design={design}
+              reducedMotion={motionReduced}
+              onComplete={() => {
+                setLaunchDone(true);
+                requestAnimationFrame(() =>
+                  document.getElementById("observe-heading")?.focus(),
+                );
               }}
-              disabled={progress >= 1 || busy}
-            >
-              {motionReduced && !manualPlayback
-                ? "Play animation"
-                : playbackPaused
-                  ? "Resume"
-                  : "Pause"}
-            </button>
+            />
+          )}
+          {loaded && launchDone && (
+            <>
+              <h2 id="observe-heading" tabIndex={-1}>
+                Observe: race the deadline
+              </h2>
+              {motionReduced && !manualPlayback && (
+                <p role="status" className="notice">
+                  Reduced motion is on. Choose Play animation to start, or skip
+                  directly to your results.
+                </p>
+              )}
+              <MissionTimeline
+                mission={mission}
+                design={design}
+                result={simulated}
+                events={runEvents}
+                progress={progress}
+              />
+            </>
+          )}
+          <div className="actions">
+            {launchDone && (
+              <button
+                onClick={() => {
+                  if (motionReduced && !manualPlayback) {
+                    setManualPlayback(true);
+                    setPaused(false);
+                  } else setPaused((p) => !p);
+                }}
+                disabled={progress >= 1 || busy}
+              >
+                {motionReduced && !manualPlayback
+                  ? "Play animation"
+                  : playbackPaused
+                    ? "Resume"
+                    : "Pause"}
+              </button>
+            )}
             <button
               className="primary"
               disabled={
@@ -704,172 +710,101 @@ export default function MissionExperience({
       )}
       {stage === "result" &&
         loaded &&
-        (result && attempt ? (
+        (result && attempt && resultDiagnosis ? (
           <>
-            <div className="two-column">
-              <section className="panel">
-                <div className="eyebrow">
-                  MISSION SCORE · ENGINE {result.engineVersion}
-                </div>
-                <div className="score">
-                  {result.score.total.toFixed(1)}
-                  <small>/100</small>
-                </div>
-                <span className="success">
-                  {result.success
-                    ? "✓ Mission successful"
-                    : "△ Keep experimenting"}
-                </span>
-                <p>
-                  Coverage {result.score.coverage.toFixed(1)}% ·{" "}
-                  {isMockMode
-                    ? "Local demo attempt"
-                    : attempt.verified
-                      ? "Submitted to cloud"
-                      : "Local attempt"}
-                </p>
-                <Radar values={values} />
-                <dl>
-                  {metrics.map((m, i) => (
-                    <div key={m}>
-                      <dt>{m}</dt>
-                      <dd>{values[i].toFixed(1)} / 100</dd>
-                    </div>
-                  ))}
-                </dl>
-              </section>
-              <section className="panel">
-                <h2>What your observations tell us</h2>
-                {result.feedback.map((f, i) => (
-                  <article className="feedback" key={f.key + ":" + i}>
-                    <span className="eyebrow">{f.type.toUpperCase()}</span>
-                    <p>{f.message}</p>
-                  </article>
-                ))}
-                <div className="actions">
-                  <button
-                    className="primary"
-                    onClick={() => {
-                      update(attempt.design);
-                      router.push(base + "/design" + suffix);
-                    }}
-                  >
-                    Redesign this satellite ↗
-                  </button>
-                  <Link
-                    href={
-                      "/leaderboard?mission=" +
-                      mission.slug +
-                      (classroomId ? "&classroom=" + classroomId : "")
-                    }
-                  >
-                    View ranking
-                  </Link>
-                </div>
-              </section>
-            </div>
-            <section className="two-column">
-              <div className="panel">
-                <h2>NASA observed imagery</h2>
-                <Image
-                  width={512}
-                  height={512}
-                  className="nasa-image"
-                  src={"/nasa/" + mission.slug + ".jpg"}
-                  alt={
-                    "NASA Terra MODIS true-color view of " +
-                    mission.city +
-                    " on July 1, 2024"
-                  }
-                />
-                <p>
-                  NASA GIBS · Terra MODIS true color · July 1, 2024.
-                  Geographical context only; this image is not the source of
-                  modeled hazard labels.
-                </p>
-                <a href={"/nasa/" + mission.slug + ".json"}>
-                  Source, date, and bounding box ↗
-                </a>
-              </div>
-              <div className="panel">
-                <h2>Simulated observations</h2>
-                {cellGrid(true)}
-                <p>
-                  Educational-model grid ·{" "}
-                  {result.cells.filter((c) => c.observed).length} observed /{" "}
-                  {result.cells.length} cells.
-                </p>
-                <p>◇ Detected hazards · ■ Observed · ▧ Blocked or missed</p>
-              </div>
-            </section>
-            <section className="panel history">
-              <h2>Compare attempts</h2>
-              <label className="field">
-                Compare with
-                <select
-                  value={compare}
-                  onChange={(e) => setCompare(e.target.value)}
-                >
-                  <option value="">Previous comparable attempt</option>
-                  {history
-                    .filter((a) => comparableAttempts(attempt, a))
-                    .map((a) => (
-                      <option key={a.id} value={a.id}>
-                        {new Date(a.at).toLocaleString("en-US")} ·{" "}
-                        {a.result.score.total.toFixed(1)}
-                      </option>
-                    ))}
-                </select>
-              </label>
-              {comparison ? (
-                <>
+            <OutcomeStory
+              mission={mission}
+              design={attempt.design}
+              result={result}
+              events={resultEvents}
+              diagnosis={resultDiagnosis}
+              onRedesign={(slot) => redesign(attempt.design, slot)}
+            />
+            <NasaVsSimulated mission={mission}>
+              <HazardGrid
+                mission={mission}
+                cells={result.cells}
+                label={`Simulated observations of ${mission.city}`}
+              />
+              <p className="text-sm">
+                {result.cells.filter((c) => c.observed).length} of{" "}
+                {result.cells.length} map cells observed during the{" "}
+                {mission.durationDays}-day simulated mission.
+              </p>
+            </NasaVsSimulated>
+            <AttemptComparison
+              attempt={attempt}
+              comparison={comparison}
+              history={history}
+              compare={compare}
+              onCompareChange={setCompare}
+              resultHref={(id) =>
+                base +
+                "/result?attempt=" +
+                id +
+                (classroomId ? "&classroom=" + classroomId : "")
+              }
+            />
+            <details className="panel">
+              <summary>
+                Score details · {result.score.total.toFixed(1)} / 100 ·{" "}
+                {result.success ? "✓ Mission successful" : "△ Keep experimenting"}
+              </summary>
+              <div className="two-column">
+                <div>
+                  <div className="eyebrow">
+                    MISSION SCORE · ENGINE {result.engineVersion}
+                  </div>
+                  <div className="score">
+                    {result.score.total.toFixed(1)}
+                    <small>/100</small>
+                  </div>
                   <p>
-                    Score change:{" "}
-                    {(
-                      result.score.total - comparison.result.score.total
-                    ).toFixed(1)}{" "}
-                    points
+                    Coverage {result.score.coverage.toFixed(1)}% ·{" "}
+                    {isMockMode
+                      ? "Local demo attempt"
+                      : attempt.verified
+                        ? "Submitted to cloud"
+                        : "Local attempt"}
                   </p>
-                  <ul>
-                    {(Object.keys(attempt.design) as (keyof SatelliteDesign)[])
-                      .filter(
-                        (k) =>
-                          JSON.stringify(attempt.design[k]) !==
-                          JSON.stringify(comparison.design[k]),
-                      )
-                      .map((k) => (
-                        <li key={k}>
-                          {k}: {String(comparison.design[k])} →{" "}
-                          {String(attempt.design[k])}
-                        </li>
-                      ))}
-                  </ul>
-                </>
-              ) : (
-                <p>
-                  Complete another attempt with the same mission, engine
-                  version, and constraints to compare designs and scores.
-                </p>
-              )}
-              <ol>
-                {history.map((a) => (
-                  <li key={a.id}>
-                    <Link
-                      href={
-                        base +
-                        "/result?attempt=" +
-                        a.id +
-                        (classroomId ? "&classroom=" + classroomId : "")
-                      }
-                    >
-                      {new Date(a.at).toLocaleString("en-US")} ·{" "}
-                      {a.result.score.total.toFixed(1)}/100 ·{" "}
-                      {a.design.instruments.join(", ")}
-                    </Link>
-                  </li>
-                ))}
-              </ol>
-            </section>
+                  <Radar values={values} />
+                  <dl>
+                    {metrics.map((m, i) => (
+                      <div key={m}>
+                        <dt>{m}</dt>
+                        <dd>{values[i].toFixed(1)} / 100</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </div>
+                <div>
+                  <h2>Engine feedback</h2>
+                  {result.feedback.map((f, i) => (
+                    <article className="feedback" key={f.key + ":" + i}>
+                      <span className="eyebrow">{f.type.toUpperCase()}</span>
+                      <p>{f.message}</p>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </details>
+            <div className="actions">
+              <button
+                className="primary"
+                onClick={() => redesign(attempt.design)}
+              >
+                Redesign this satellite ↗
+              </button>
+              <Link
+                href={
+                  "/leaderboard?mission=" +
+                  mission.slug +
+                  (classroomId ? "&classroom=" + classroomId : "")
+                }
+              >
+                View ranking
+              </Link>
+            </div>
           </>
         ) : (
           <section className="panel">

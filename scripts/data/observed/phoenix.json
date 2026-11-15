@@ -1,0 +1,3227 @@
+{
+  "slug": "phoenix",
+  "usable": true,
+  "kind": "heat",
+  "dataset": "MODIS Aqua 8-day daytime land-surface temperature and SEDAC GPWv4 2020 population density, via NASA GIBS WMS",
+  "layers": [
+    "MODIS_Aqua_L3_Land_Surface_Temp_8Day_Day",
+    "GPW_Population_Density_2020"
+  ],
+  "observedOn": "2024-07-11/2024-07-18",
+  "bbox": [
+    -112.55,
+    33.15,
+    -111.55,
+    33.85
+  ],
+  "imageSize": [
+    500,
+    350
+  ],
+  "method": "PNG pixels are converted back to data values with the exact GIBS colormaps and averaged per grid cell. Cells with >= 500 people/km2 are populated; the hottest 40% of populated cells by daytime land-surface temperature (>= 54.1 C) are heat cells. eventDay is 0 for all cells.",
+  "accessedOn": "2026-11-14",
+  "exampleUrl": "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=MODIS_Aqua_L3_Land_Surface_Temp_8Day_Day&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=TRUE&WIDTH=500&HEIGHT=350&SRS=EPSG%3A4326&BBOX=-112.55%2C33.15%2C-111.55%2C33.85&TIME=2024-07-11",
+  "populationUrl": "https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=GPW_Population_Density_2020&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=TRUE&WIDTH=500&HEIGHT=350&SRS=EPSG%3A4326&BBOX=-112.55%2C33.15%2C-111.55%2C33.85",
+  "cells": [
+    {
+      "row": 0,
+      "column": 0,
+      "lstC": 55.07,
+      "populationPerKm2": 1.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 1,
+      "lstC": 55.56,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 2,
+      "lstC": 56.73,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 3,
+      "lstC": 59.55,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 4,
+      "lstC": 59.41,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 5,
+      "lstC": 58.37,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 6,
+      "lstC": 54.19,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 7,
+      "lstC": 51.36,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 8,
+      "lstC": 54.49,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 9,
+      "lstC": 58.63,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 10,
+      "lstC": 59.78,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 11,
+      "lstC": 58.68,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 12,
+      "lstC": 59.44,
+      "populationPerKm2": 6.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 13,
+      "lstC": 59.44,
+      "populationPerKm2": 12.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 14,
+      "lstC": 57.45,
+      "populationPerKm2": 65.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 15,
+      "lstC": 57.35,
+      "populationPerKm2": 54.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 16,
+      "lstC": 54.91,
+      "populationPerKm2": 2.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 17,
+      "lstC": 54.23,
+      "populationPerKm2": 4.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 18,
+      "lstC": 54.65,
+      "populationPerKm2": 103.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 0,
+      "column": 19,
+      "lstC": 53.71,
+      "populationPerKm2": 779.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 0,
+      "lstC": 59.12,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 1,
+      "lstC": 57.43,
+      "populationPerKm2": 4.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 2,
+      "lstC": 55.26,
+      "populationPerKm2": 2.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 3,
+      "lstC": 57.92,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 4,
+      "lstC": 59.02,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 5,
+      "lstC": 57.23,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 6,
+      "lstC": 50.43,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 7,
+      "lstC": 51.05,
+      "populationPerKm2": 1.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 8,
+      "lstC": 54.4,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 9,
+      "lstC": 56.41,
+      "populationPerKm2": 1.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 10,
+      "lstC": 57.87,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 11,
+      "lstC": 58.65,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 12,
+      "lstC": 58.08,
+      "populationPerKm2": 6.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 13,
+      "lstC": 52.29,
+      "populationPerKm2": 609.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 14,
+      "lstC": 54.14,
+      "populationPerKm2": 506.7,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 15,
+      "lstC": 54.52,
+      "populationPerKm2": 573.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 16,
+      "lstC": 55.11,
+      "populationPerKm2": 192.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 17,
+      "lstC": 54.16,
+      "populationPerKm2": 345.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 18,
+      "lstC": 52.94,
+      "populationPerKm2": 263.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 1,
+      "column": 19,
+      "lstC": 52.66,
+      "populationPerKm2": 528.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 0,
+      "lstC": 55.35,
+      "populationPerKm2": 4.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 1,
+      "lstC": 57.79,
+      "populationPerKm2": 4.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 2,
+      "lstC": 54.52,
+      "populationPerKm2": 1.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 3,
+      "lstC": 59.52,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 4,
+      "lstC": 58.51,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 5,
+      "lstC": 51.25,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 6,
+      "lstC": 47.96,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 7,
+      "lstC": 50.81,
+      "populationPerKm2": 7.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 8,
+      "lstC": 52.82,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 9,
+      "lstC": 52.99,
+      "populationPerKm2": 8.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 10,
+      "lstC": 51.98,
+      "populationPerKm2": 3.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 11,
+      "lstC": 56.01,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 12,
+      "lstC": 55.8,
+      "populationPerKm2": 3.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 13,
+      "lstC": 51.44,
+      "populationPerKm2": 695.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 14,
+      "lstC": 53.17,
+      "populationPerKm2": 729.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 15,
+      "lstC": 52.82,
+      "populationPerKm2": 556.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 16,
+      "lstC": 52.62,
+      "populationPerKm2": 679.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 17,
+      "lstC": 51.74,
+      "populationPerKm2": 487.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 18,
+      "lstC": 52.74,
+      "populationPerKm2": 494.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 2,
+      "column": 19,
+      "lstC": 53.23,
+      "populationPerKm2": 481.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 0,
+      "lstC": 56.44,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 1,
+      "lstC": 54.42,
+      "populationPerKm2": 13.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 2,
+      "lstC": 56.12,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 3,
+      "lstC": 58.29,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 4,
+      "lstC": 52.42,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 5,
+      "lstC": 48.33,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 6,
+      "lstC": 51.64,
+      "populationPerKm2": 1.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 7,
+      "lstC": 50.29,
+      "populationPerKm2": 64.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 8,
+      "lstC": 53.54,
+      "populationPerKm2": 6.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 9,
+      "lstC": 53.94,
+      "populationPerKm2": 9.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 10,
+      "lstC": 53.93,
+      "populationPerKm2": 19.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 11,
+      "lstC": 54.76,
+      "populationPerKm2": 1.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 12,
+      "lstC": 53.85,
+      "populationPerKm2": 3.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 13,
+      "lstC": 53.38,
+      "populationPerKm2": 767.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 14,
+      "lstC": 53.97,
+      "populationPerKm2": 527.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 15,
+      "lstC": 53.07,
+      "populationPerKm2": 488.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 16,
+      "lstC": 52.95,
+      "populationPerKm2": 623.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 17,
+      "lstC": 53.24,
+      "populationPerKm2": 720.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 18,
+      "lstC": 53.95,
+      "populationPerKm2": 178.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 3,
+      "column": 19,
+      "lstC": 55.36,
+      "populationPerKm2": 287.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 0,
+      "lstC": 56.32,
+      "populationPerKm2": 11.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 1,
+      "lstC": 56.68,
+      "populationPerKm2": 45.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 2,
+      "lstC": 56.78,
+      "populationPerKm2": 35.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 3,
+      "lstC": 56.5,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 4,
+      "lstC": 50.54,
+      "populationPerKm2": 1.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 5,
+      "lstC": 53.52,
+      "populationPerKm2": 1.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 6,
+      "lstC": 52.08,
+      "populationPerKm2": 2.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 7,
+      "lstC": 54.75,
+      "populationPerKm2": 112.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 8,
+      "lstC": 55.92,
+      "populationPerKm2": 135.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 9,
+      "lstC": 54.79,
+      "populationPerKm2": 715.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 10,
+      "lstC": 53.42,
+      "populationPerKm2": 868.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 11,
+      "lstC": 54.24,
+      "populationPerKm2": 671.4,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 12,
+      "lstC": 53.89,
+      "populationPerKm2": 882.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 13,
+      "lstC": 54.03,
+      "populationPerKm2": 886.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 14,
+      "lstC": 53.48,
+      "populationPerKm2": 996.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 15,
+      "lstC": 52.67,
+      "populationPerKm2": 931.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 16,
+      "lstC": 53.07,
+      "populationPerKm2": 900.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 17,
+      "lstC": 54.75,
+      "populationPerKm2": 242.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 18,
+      "lstC": 55.38,
+      "populationPerKm2": 13.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 4,
+      "column": 19,
+      "lstC": 56.93,
+      "populationPerKm2": 46.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 0,
+      "lstC": 52.71,
+      "populationPerKm2": 69.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 1,
+      "lstC": 55.47,
+      "populationPerKm2": 180.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 2,
+      "lstC": 55.54,
+      "populationPerKm2": 387.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 3,
+      "lstC": 55.69,
+      "populationPerKm2": 1.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 4,
+      "lstC": 54.5,
+      "populationPerKm2": 2.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 5,
+      "lstC": 52.84,
+      "populationPerKm2": 2.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 6,
+      "lstC": 53.79,
+      "populationPerKm2": 12.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 7,
+      "lstC": 54.26,
+      "populationPerKm2": 233.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 8,
+      "lstC": 54.13,
+      "populationPerKm2": 153.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 9,
+      "lstC": 53.44,
+      "populationPerKm2": 245.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 10,
+      "lstC": 52.34,
+      "populationPerKm2": 218.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 11,
+      "lstC": 54.13,
+      "populationPerKm2": 822.9,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 12,
+      "lstC": 53.54,
+      "populationPerKm2": 942.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 13,
+      "lstC": 54.02,
+      "populationPerKm2": 965.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 14,
+      "lstC": 53.49,
+      "populationPerKm2": 935.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 15,
+      "lstC": 52.9,
+      "populationPerKm2": 1000.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 16,
+      "lstC": 52.15,
+      "populationPerKm2": 870.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 17,
+      "lstC": 54.95,
+      "populationPerKm2": 304.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 18,
+      "lstC": 54.46,
+      "populationPerKm2": 271.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 5,
+      "column": 19,
+      "lstC": 55.36,
+      "populationPerKm2": 227.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 0,
+      "lstC": 48.15,
+      "populationPerKm2": 47.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 1,
+      "lstC": 49.91,
+      "populationPerKm2": 31.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 2,
+      "lstC": 54.74,
+      "populationPerKm2": 62.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 3,
+      "lstC": 54.23,
+      "populationPerKm2": 12.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 4,
+      "lstC": 51.72,
+      "populationPerKm2": 50.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 5,
+      "lstC": 50.49,
+      "populationPerKm2": 49.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 6,
+      "lstC": 52.68,
+      "populationPerKm2": 415.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 7,
+      "lstC": 53.3,
+      "populationPerKm2": 755.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 8,
+      "lstC": 53.41,
+      "populationPerKm2": 766.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 9,
+      "lstC": 54.48,
+      "populationPerKm2": 959.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 10,
+      "lstC": 53.78,
+      "populationPerKm2": 685.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 11,
+      "lstC": 54.75,
+      "populationPerKm2": 825.5,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 12,
+      "lstC": 54.53,
+      "populationPerKm2": 992.9,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 13,
+      "lstC": 54.09,
+      "populationPerKm2": 996.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 14,
+      "lstC": 54.91,
+      "populationPerKm2": 786.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 15,
+      "lstC": 54.33,
+      "populationPerKm2": 992.9,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 16,
+      "lstC": 53.63,
+      "populationPerKm2": 960.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 17,
+      "lstC": 53.4,
+      "populationPerKm2": 877.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 18,
+      "lstC": 54.06,
+      "populationPerKm2": 882.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 6,
+      "column": 19,
+      "lstC": 54.71,
+      "populationPerKm2": 444.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 0,
+      "lstC": 50.82,
+      "populationPerKm2": 185.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 1,
+      "lstC": 49.42,
+      "populationPerKm2": 77.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 2,
+      "lstC": 53.7,
+      "populationPerKm2": 295.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 3,
+      "lstC": 54.52,
+      "populationPerKm2": 144.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 4,
+      "lstC": 54.12,
+      "populationPerKm2": 431.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 5,
+      "lstC": 54.38,
+      "populationPerKm2": 685.7,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 6,
+      "lstC": 54.16,
+      "populationPerKm2": 556.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 7,
+      "lstC": 53.97,
+      "populationPerKm2": 292.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 8,
+      "lstC": 54.52,
+      "populationPerKm2": 416.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 9,
+      "lstC": 54.84,
+      "populationPerKm2": 709.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 10,
+      "lstC": 55.32,
+      "populationPerKm2": 468.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 11,
+      "lstC": 54.71,
+      "populationPerKm2": 451.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 12,
+      "lstC": 53.43,
+      "populationPerKm2": 883.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 13,
+      "lstC": 54.67,
+      "populationPerKm2": 932.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 14,
+      "lstC": 54.68,
+      "populationPerKm2": 1000.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 15,
+      "lstC": 54.77,
+      "populationPerKm2": 1000.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 16,
+      "lstC": 54.39,
+      "populationPerKm2": 998.7,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 17,
+      "lstC": 54.36,
+      "populationPerKm2": 945.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 18,
+      "lstC": 53.98,
+      "populationPerKm2": 990.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 7,
+      "column": 19,
+      "lstC": 54.62,
+      "populationPerKm2": 997.5,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 0,
+      "lstC": 54.99,
+      "populationPerKm2": 480.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 1,
+      "lstC": 53.06,
+      "populationPerKm2": 147.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 2,
+      "lstC": 53.49,
+      "populationPerKm2": 654.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 3,
+      "lstC": 54.61,
+      "populationPerKm2": 418.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 4,
+      "lstC": 53.92,
+      "populationPerKm2": 804.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 5,
+      "lstC": 54.71,
+      "populationPerKm2": 520.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 6,
+      "lstC": 54.34,
+      "populationPerKm2": 439.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 7,
+      "lstC": 54.68,
+      "populationPerKm2": 334.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 8,
+      "lstC": 55.04,
+      "populationPerKm2": 800.8,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 9,
+      "lstC": 54.83,
+      "populationPerKm2": 905.4,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 10,
+      "lstC": 55.49,
+      "populationPerKm2": 485.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 11,
+      "lstC": 54.27,
+      "populationPerKm2": 403.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 12,
+      "lstC": 53.69,
+      "populationPerKm2": 539.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 13,
+      "lstC": 54.59,
+      "populationPerKm2": 260.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 14,
+      "lstC": 53.99,
+      "populationPerKm2": 900.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 15,
+      "lstC": 52.99,
+      "populationPerKm2": 922.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 16,
+      "lstC": 53.39,
+      "populationPerKm2": 795.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 17,
+      "lstC": 54.25,
+      "populationPerKm2": 775.9,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 18,
+      "lstC": 54.03,
+      "populationPerKm2": 528.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 8,
+      "column": 19,
+      "lstC": 54.28,
+      "populationPerKm2": 421.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 0,
+      "lstC": 53.69,
+      "populationPerKm2": 170.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 1,
+      "lstC": 53.41,
+      "populationPerKm2": 296.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 2,
+      "lstC": 52.51,
+      "populationPerKm2": 415.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 3,
+      "lstC": 52.62,
+      "populationPerKm2": 836.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 4,
+      "lstC": 53.58,
+      "populationPerKm2": 920.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 5,
+      "lstC": 53.92,
+      "populationPerKm2": 780.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 6,
+      "lstC": 55.72,
+      "populationPerKm2": 983.3,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 7,
+      "lstC": 56.08,
+      "populationPerKm2": 984.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 8,
+      "lstC": 55.8,
+      "populationPerKm2": 835.5,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 9,
+      "lstC": 53.91,
+      "populationPerKm2": 988.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 10,
+      "lstC": 54.19,
+      "populationPerKm2": 1000.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 11,
+      "lstC": 53.21,
+      "populationPerKm2": 908.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 12,
+      "lstC": 54.22,
+      "populationPerKm2": 921.8,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 13,
+      "lstC": 53.22,
+      "populationPerKm2": 236.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 14,
+      "lstC": 53.34,
+      "populationPerKm2": 145.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 15,
+      "lstC": 55.68,
+      "populationPerKm2": 172.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 16,
+      "lstC": 55.52,
+      "populationPerKm2": 115.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 17,
+      "lstC": 52.95,
+      "populationPerKm2": 839.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 18,
+      "lstC": 52.1,
+      "populationPerKm2": 126.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 9,
+      "column": 19,
+      "lstC": 50.62,
+      "populationPerKm2": 44.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 0,
+      "lstC": 51.71,
+      "populationPerKm2": 66.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 1,
+      "lstC": 54.21,
+      "populationPerKm2": 112.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 2,
+      "lstC": 53.6,
+      "populationPerKm2": 158.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 3,
+      "lstC": 53.77,
+      "populationPerKm2": 443.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 4,
+      "lstC": 53.71,
+      "populationPerKm2": 506.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 5,
+      "lstC": 53.35,
+      "populationPerKm2": 494.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 6,
+      "lstC": 54.86,
+      "populationPerKm2": 977.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 7,
+      "lstC": 55.34,
+      "populationPerKm2": 869.8,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 8,
+      "lstC": 55.48,
+      "populationPerKm2": 972.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 9,
+      "lstC": 53.73,
+      "populationPerKm2": 1000.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 10,
+      "lstC": 52.77,
+      "populationPerKm2": 781.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 11,
+      "lstC": 51.84,
+      "populationPerKm2": 600.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 12,
+      "lstC": 52.22,
+      "populationPerKm2": 784.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 13,
+      "lstC": 53.17,
+      "populationPerKm2": 169.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 14,
+      "lstC": 54.72,
+      "populationPerKm2": 80.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 15,
+      "lstC": 57.29,
+      "populationPerKm2": 2.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 16,
+      "lstC": 56.76,
+      "populationPerKm2": 4.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 17,
+      "lstC": 53.05,
+      "populationPerKm2": 49.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 18,
+      "lstC": 53.09,
+      "populationPerKm2": 2.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 10,
+      "column": 19,
+      "lstC": 52.6,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 0,
+      "lstC": 49.94,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 1,
+      "lstC": 55.21,
+      "populationPerKm2": 121.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 2,
+      "lstC": 53.56,
+      "populationPerKm2": 251.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 3,
+      "lstC": 53.41,
+      "populationPerKm2": 81.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 4,
+      "lstC": 53.98,
+      "populationPerKm2": 164.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 5,
+      "lstC": 53.96,
+      "populationPerKm2": 694.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 6,
+      "lstC": 53.54,
+      "populationPerKm2": 758.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 7,
+      "lstC": 54.72,
+      "populationPerKm2": 986.7,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 8,
+      "lstC": 54.65,
+      "populationPerKm2": 996.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 9,
+      "lstC": 54.03,
+      "populationPerKm2": 995.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 10,
+      "lstC": 54.07,
+      "populationPerKm2": 352.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 11,
+      "lstC": 51.88,
+      "populationPerKm2": 334.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 12,
+      "lstC": 50.78,
+      "populationPerKm2": 700.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 13,
+      "lstC": 54.1,
+      "populationPerKm2": 216.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 14,
+      "lstC": 56.74,
+      "populationPerKm2": 95.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 15,
+      "lstC": 56.34,
+      "populationPerKm2": 39.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 16,
+      "lstC": 53.74,
+      "populationPerKm2": 33.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 17,
+      "lstC": 52.54,
+      "populationPerKm2": 1.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 18,
+      "lstC": 53.81,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 11,
+      "column": 19,
+      "lstC": 53.06,
+      "populationPerKm2": 1.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 0,
+      "lstC": 50.84,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 1,
+      "lstC": 56.01,
+      "populationPerKm2": 64.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 2,
+      "lstC": 54.21,
+      "populationPerKm2": 348.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 3,
+      "lstC": 54.16,
+      "populationPerKm2": 477.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 4,
+      "lstC": 54.52,
+      "populationPerKm2": 640.2,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 5,
+      "lstC": 53.94,
+      "populationPerKm2": 988.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 6,
+      "lstC": 54.61,
+      "populationPerKm2": 980.9,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 7,
+      "lstC": 54.62,
+      "populationPerKm2": 1000.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 8,
+      "lstC": 55.13,
+      "populationPerKm2": 883.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 9,
+      "lstC": 54.92,
+      "populationPerKm2": 676.9,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 10,
+      "lstC": 54.36,
+      "populationPerKm2": 907.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 11,
+      "lstC": 52.48,
+      "populationPerKm2": 896.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 12,
+      "lstC": 52.65,
+      "populationPerKm2": 877.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 13,
+      "lstC": 52.8,
+      "populationPerKm2": 870.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 14,
+      "lstC": 52.52,
+      "populationPerKm2": 778.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 15,
+      "lstC": 51.74,
+      "populationPerKm2": 447.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 16,
+      "lstC": 51.45,
+      "populationPerKm2": 507.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 17,
+      "lstC": 52.56,
+      "populationPerKm2": 20.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 18,
+      "lstC": 56.44,
+      "populationPerKm2": 5.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 12,
+      "column": 19,
+      "lstC": 54.82,
+      "populationPerKm2": 2.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 0,
+      "lstC": 50.64,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 1,
+      "lstC": 55.51,
+      "populationPerKm2": 103.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 2,
+      "lstC": 53.59,
+      "populationPerKm2": 800.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 3,
+      "lstC": 54.33,
+      "populationPerKm2": 794.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 4,
+      "lstC": 55.0,
+      "populationPerKm2": 904.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 5,
+      "lstC": 53.8,
+      "populationPerKm2": 982.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 6,
+      "lstC": 53.81,
+      "populationPerKm2": 927.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 7,
+      "lstC": 54.85,
+      "populationPerKm2": 964.7,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 8,
+      "lstC": 54.95,
+      "populationPerKm2": 973.7,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 9,
+      "lstC": 53.85,
+      "populationPerKm2": 929.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 10,
+      "lstC": 53.92,
+      "populationPerKm2": 965.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 11,
+      "lstC": 53.29,
+      "populationPerKm2": 1000.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 12,
+      "lstC": 52.21,
+      "populationPerKm2": 557.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 13,
+      "lstC": 52.8,
+      "populationPerKm2": 853.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 14,
+      "lstC": 52.33,
+      "populationPerKm2": 308.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 15,
+      "lstC": 51.33,
+      "populationPerKm2": 205.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 16,
+      "lstC": 53.34,
+      "populationPerKm2": 608.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 17,
+      "lstC": 53.4,
+      "populationPerKm2": 46.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 18,
+      "lstC": 55.85,
+      "populationPerKm2": 4.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 13,
+      "column": 19,
+      "lstC": 55.49,
+      "populationPerKm2": 3.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 0,
+      "lstC": 55.52,
+      "populationPerKm2": 1.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 1,
+      "lstC": 56.74,
+      "populationPerKm2": 89.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 2,
+      "lstC": 53.94,
+      "populationPerKm2": 815.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 3,
+      "lstC": 53.68,
+      "populationPerKm2": 918.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 4,
+      "lstC": 55.36,
+      "populationPerKm2": 784.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 5,
+      "lstC": 53.97,
+      "populationPerKm2": 961.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 6,
+      "lstC": 53.61,
+      "populationPerKm2": 966.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 7,
+      "lstC": 54.47,
+      "populationPerKm2": 933.7,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 8,
+      "lstC": 55.05,
+      "populationPerKm2": 959.7,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 9,
+      "lstC": 54.83,
+      "populationPerKm2": 930.1,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 10,
+      "lstC": 52.88,
+      "populationPerKm2": 936.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 11,
+      "lstC": 53.07,
+      "populationPerKm2": 757.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 12,
+      "lstC": 53.29,
+      "populationPerKm2": 503.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 13,
+      "lstC": 52.04,
+      "populationPerKm2": 459.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 14,
+      "lstC": 50.51,
+      "populationPerKm2": 42.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 15,
+      "lstC": 51.91,
+      "populationPerKm2": 29.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 16,
+      "lstC": 54.34,
+      "populationPerKm2": 24.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 17,
+      "lstC": 52.48,
+      "populationPerKm2": 9.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 18,
+      "lstC": 55.76,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 14,
+      "column": 19,
+      "lstC": 55.98,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 0,
+      "lstC": 57.81,
+      "populationPerKm2": 11.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 1,
+      "lstC": 56.86,
+      "populationPerKm2": 26.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 2,
+      "lstC": 56.18,
+      "populationPerKm2": 120.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 3,
+      "lstC": 55.67,
+      "populationPerKm2": 493.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 4,
+      "lstC": 56.34,
+      "populationPerKm2": 437.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 5,
+      "lstC": 55.9,
+      "populationPerKm2": 487.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 6,
+      "lstC": 54.52,
+      "populationPerKm2": 784.7,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 7,
+      "lstC": 53.78,
+      "populationPerKm2": 529.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 8,
+      "lstC": 54.96,
+      "populationPerKm2": 670.2,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 9,
+      "lstC": 54.94,
+      "populationPerKm2": 110.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 10,
+      "lstC": 53.15,
+      "populationPerKm2": 482.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 11,
+      "lstC": 53.24,
+      "populationPerKm2": 516.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 12,
+      "lstC": 52.64,
+      "populationPerKm2": 422.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 13,
+      "lstC": 50.76,
+      "populationPerKm2": 302.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 14,
+      "lstC": 50.64,
+      "populationPerKm2": 91.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 15,
+      "lstC": 52.46,
+      "populationPerKm2": 3.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 16,
+      "lstC": 54.64,
+      "populationPerKm2": 1.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 17,
+      "lstC": 53.64,
+      "populationPerKm2": 17.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 18,
+      "lstC": 54.9,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 15,
+      "column": 19,
+      "lstC": 53.46,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 0,
+      "lstC": 57.11,
+      "populationPerKm2": 117.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 1,
+      "lstC": 57.36,
+      "populationPerKm2": 24.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 2,
+      "lstC": 57.03,
+      "populationPerKm2": 159.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 3,
+      "lstC": 57.36,
+      "populationPerKm2": 64.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 4,
+      "lstC": 56.16,
+      "populationPerKm2": 219.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 5,
+      "lstC": 55.52,
+      "populationPerKm2": 339.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 6,
+      "lstC": 55.46,
+      "populationPerKm2": 546.3,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 7,
+      "lstC": 54.68,
+      "populationPerKm2": 655.0,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 8,
+      "lstC": 55.33,
+      "populationPerKm2": 488.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 9,
+      "lstC": 54.77,
+      "populationPerKm2": 120.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 10,
+      "lstC": 54.25,
+      "populationPerKm2": 40.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 11,
+      "lstC": 52.91,
+      "populationPerKm2": 453.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 12,
+      "lstC": 51.82,
+      "populationPerKm2": 266.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 13,
+      "lstC": 50.22,
+      "populationPerKm2": 186.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 14,
+      "lstC": 50.97,
+      "populationPerKm2": 225.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 15,
+      "lstC": 52.94,
+      "populationPerKm2": 48.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 16,
+      "lstC": 53.18,
+      "populationPerKm2": 37.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 17,
+      "lstC": 52.58,
+      "populationPerKm2": 139.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 18,
+      "lstC": 53.74,
+      "populationPerKm2": 1.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 16,
+      "column": 19,
+      "lstC": 51.65,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 0,
+      "lstC": 57.02,
+      "populationPerKm2": 129.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 1,
+      "lstC": 57.33,
+      "populationPerKm2": 10.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 2,
+      "lstC": 57.08,
+      "populationPerKm2": 56.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 3,
+      "lstC": 56.93,
+      "populationPerKm2": 53.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 4,
+      "lstC": 55.26,
+      "populationPerKm2": 332.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 5,
+      "lstC": 56.1,
+      "populationPerKm2": 21.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 6,
+      "lstC": 57.18,
+      "populationPerKm2": 142.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 7,
+      "lstC": 56.73,
+      "populationPerKm2": 9.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 8,
+      "lstC": 56.48,
+      "populationPerKm2": 168.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 9,
+      "lstC": 55.02,
+      "populationPerKm2": 101.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 10,
+      "lstC": 54.56,
+      "populationPerKm2": 1.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 11,
+      "lstC": 51.91,
+      "populationPerKm2": 671.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 12,
+      "lstC": 51.13,
+      "populationPerKm2": 321.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 13,
+      "lstC": 51.37,
+      "populationPerKm2": 96.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 14,
+      "lstC": 51.15,
+      "populationPerKm2": 55.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 15,
+      "lstC": 51.77,
+      "populationPerKm2": 91.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 16,
+      "lstC": 53.19,
+      "populationPerKm2": 63.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 17,
+      "lstC": 53.17,
+      "populationPerKm2": 1.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 18,
+      "lstC": 52.23,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 17,
+      "column": 19,
+      "lstC": 50.0,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 0,
+      "lstC": 56.75,
+      "populationPerKm2": 55.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 1,
+      "lstC": 57.05,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 2,
+      "lstC": 57.21,
+      "populationPerKm2": 4.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 3,
+      "lstC": 55.39,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 4,
+      "lstC": 55.01,
+      "populationPerKm2": 1.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 5,
+      "lstC": 56.43,
+      "populationPerKm2": 3.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 6,
+      "lstC": 57.27,
+      "populationPerKm2": 1.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 7,
+      "lstC": 56.9,
+      "populationPerKm2": 1.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 8,
+      "lstC": 54.84,
+      "populationPerKm2": 439.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 9,
+      "lstC": 53.29,
+      "populationPerKm2": 178.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 10,
+      "lstC": 54.02,
+      "populationPerKm2": 23.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 11,
+      "lstC": 51.4,
+      "populationPerKm2": 443.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 12,
+      "lstC": 49.99,
+      "populationPerKm2": 339.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 13,
+      "lstC": 51.72,
+      "populationPerKm2": 117.8,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 14,
+      "lstC": 51.94,
+      "populationPerKm2": 3.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 15,
+      "lstC": 51.25,
+      "populationPerKm2": 23.6,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 16,
+      "lstC": 52.16,
+      "populationPerKm2": 3.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 17,
+      "lstC": 52.75,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 18,
+      "lstC": 49.84,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 18,
+      "column": 19,
+      "lstC": 48.86,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 0,
+      "lstC": 56.79,
+      "populationPerKm2": 3.2,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 1,
+      "lstC": 55.95,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 2,
+      "lstC": 55.76,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 3,
+      "lstC": 54.59,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 4,
+      "lstC": 54.71,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 5,
+      "lstC": 53.17,
+      "populationPerKm2": 2.4,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 6,
+      "lstC": 55.35,
+      "populationPerKm2": 1.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 7,
+      "lstC": 55.61,
+      "populationPerKm2": 66.9,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 8,
+      "lstC": 54.24,
+      "populationPerKm2": 500.8,
+      "truth": 1,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 9,
+      "lstC": 53.84,
+      "populationPerKm2": 309.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 10,
+      "lstC": 53.09,
+      "populationPerKm2": 105.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 11,
+      "lstC": 50.81,
+      "populationPerKm2": 82.3,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 12,
+      "lstC": 50.72,
+      "populationPerKm2": 166.7,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 13,
+      "lstC": 50.33,
+      "populationPerKm2": 138.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 14,
+      "lstC": 51.62,
+      "populationPerKm2": 59.5,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 15,
+      "lstC": 53.33,
+      "populationPerKm2": 2.1,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 16,
+      "lstC": 52.68,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 17,
+      "lstC": 50.45,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 18,
+      "lstC": 47.21,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    },
+    {
+      "row": 19,
+      "column": 19,
+      "lstC": 49.8,
+      "populationPerKm2": 1.0,
+      "truth": 0,
+      "eventDay": 0
+    }
+  ]
+}
