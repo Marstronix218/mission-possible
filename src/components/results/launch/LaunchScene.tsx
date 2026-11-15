@@ -13,7 +13,11 @@ import styles from "./launch.module.css";
 const PAD_Y = 392;
 /** Where the satellite sits inside the fairing, relative to the rocket base. */
 const BAY_Y = -236;
+/** Free-flight poses in scene coordinates, on the dashed orbit arc once in orbit. */
+const SEP_LIFT = 26;
+const PANELS_POS = { x: 200, y: 92, scale: 0.55 };
 const ORBIT_POS = { x: 200, y: 122, scale: 0.7 };
+const TARGET_POS = { x: 228, y: 125, scale: 0.7 };
 const EARTH_CENTRE = "200px 830px";
 
 const stars = Array.from({ length: 34 }, (_, i) => ({
@@ -54,11 +58,26 @@ export function LaunchScene({
 }) {
   const fit = Math.min(0.42, 46 / stowedWidth(design), 66 / SATELLITE_HEIGHT);
   const rocketY = PAD_Y + scene.rocketY;
-  const sat = scene.satelliteFree
-    ? ORBIT_POS
-    : scene.satelliteLoaded
-      ? { x: 200, y: rocketY + BAY_Y, scale: fit }
-      : { x: 200, y: 58, scale: 0.6 };
+  // Satellite pose in the stack's local coordinates (x = 0 is the rocket axis).
+  const local = (p: { x: number; y: number; scale: number }) => ({
+    x: p.x - 200,
+    y: p.y - rocketY,
+    scale: p.scale,
+  });
+  const sat = scene.onTarget
+    ? local(TARGET_POS)
+    : scene.inOrbit
+      ? local(ORBIT_POS)
+      : scene.panelsOpen
+        ? local(PANELS_POS)
+        : scene.satelliteFree
+          ? { x: 0, y: BAY_Y - SEP_LIFT, scale: fit }
+          : scene.satelliteLoaded
+            ? { x: 0, y: BAY_Y, scale: fit }
+            : local({ x: 200, y: 58, scale: 0.6 });
+  const inBay =
+    scene.satellite === "enclosing" || scene.satellite === "inside-reveal";
+  const beamX = scene.onTarget ? TARGET_POS.x : ORBIT_POS.x;
   const fairingState = scene.satelliteFree
     ? "gone"
     : scene.fairingSeparated
@@ -95,6 +114,10 @@ export function LaunchScene({
           <stop offset="0.7" stopColor="#ff8a3d" />
           <stop offset="1" stopColor="#ff5c8a" stopOpacity="0" />
         </linearGradient>
+        {/* Inside of the closed fairing, in the stack's coordinates */}
+        <clipPath id="launch-bay" clipPathUnits="userSpaceOnUse">
+          <rect x="-26" y="-900" width="52" height="696" />
+        </clipPath>
         <radialGradient id="launch-limb" cx="50%" cy="50%" r="50%">
           <stop offset="0.9" stopColor="#8ed5dc" stopOpacity="0" />
           <stop offset="0.97" stopColor="#8ed5dc" stopOpacity="0.55" />
@@ -202,43 +225,49 @@ export function LaunchScene({
         </g>
       </g>
 
-      {/* Rocket body: first stage, interstage and upper stage */}
-      <g
-        className={styles.rocket}
-        style={t(`translate(200px, ${scene.satelliteFree ? rocketY + 200 : rocketY}px)`)}
-        data-gone={scene.satelliteFree}
-      >
-        <g className={styles.flame}>
-          <path d="M -12 6 C -11 34 -4 58 0 86 C 4 58 11 34 12 6 Z" fill="url(#launch-flame)" />
-          <path d="M -6 6 C -5 22 -2 34 0 46 C 2 34 5 22 6 6 Z" fill="#fffbe0" />
-        </g>
-        <path d="M -11 7 L 11 7 L 7 -4 L -7 -4 Z" fill="#5d6aa8" stroke={INK} strokeWidth="2.5" />
-        <path d="M -16 -44 L -32 -2 L -16 -10 Z M 16 -44 L 32 -2 L 16 -10 Z" fill="#ff5c8a" stroke={INK} strokeWidth="2.5" strokeLinejoin="round" />
-        <rect x="-16" y="-152" width="32" height="148" rx="4" fill="url(#launch-body)" stroke={INK} strokeWidth="3" />
-        <rect x="-16" y="-120" width="32" height="9" fill="#ffd23f" />
-        <text x="0" y="-60" fontSize="9" fontWeight="800" fill={INK} textAnchor="middle" transform="rotate(-90 0 -60)" letterSpacing="1.5">
-          CODE BLUE
-        </text>
-        <rect x="-16" y="-164" width="32" height="12" fill="#5d6aa8" stroke={INK} strokeWidth="2.5" />
-        <rect x="-16" y="-202" width="32" height="38" rx="2" fill="url(#launch-body)" stroke={INK} strokeWidth="3" />
-      </g>
-
-      {/* The player's satellite */}
-      <g
-        className={styles.satellite}
-        style={t(`translate(${sat.x}px, ${sat.y}px) scale(${sat.scale})`)}
-      >
-        <g className={scene.inOrbit ? styles.drift : undefined}>
-          <LaunchSatellite
-            design={design}
-            panelsOpen={scene.panelsOpen}
-            cable={!scene.fairingClosed && !scene.fairingSeparated && !scene.satelliteFree}
-          />
-        </g>
-      </g>
-
-      {/* Payload fairing: opens on the pad, closes for launch, splits in space */}
+      {/*
+        One stack, one transform: the rocket body, the satellite and the fairing
+        share this group, so the payload can never lag or lead the rocket.
+      */}
       <g className={styles.rocket} style={t(`translate(200px, ${rocketY}px)`)}>
+        <g className={styles.body} data-stage={scene.stage}>
+          <g className={styles.flame}>
+            <path d="M -12 6 C -11 34 -4 58 0 86 C 4 58 11 34 12 6 Z" fill="url(#launch-flame)" />
+            <path d="M -6 6 C -5 22 -2 34 0 46 C 2 34 5 22 6 6 Z" fill="#fffbe0" />
+          </g>
+          <path d="M -11 7 L 11 7 L 7 -4 L -7 -4 Z" fill="#5d6aa8" stroke={INK} strokeWidth="2.5" />
+          <path d="M -16 -44 L -32 -2 L -16 -10 Z M 16 -44 L 32 -2 L 16 -10 Z" fill="#ff5c8a" stroke={INK} strokeWidth="2.5" strokeLinejoin="round" />
+          <rect x="-16" y="-152" width="32" height="148" rx="4" fill="url(#launch-body)" stroke={INK} strokeWidth="3" />
+          <rect x="-16" y="-120" width="32" height="9" fill="#ffd23f" />
+          <text x="0" y="-60" fontSize="9" fontWeight="800" fill={INK} textAnchor="middle" transform="rotate(-90 0 -60)" letterSpacing="1.5">
+            CODE BLUE
+          </text>
+          <rect x="-16" y="-164" width="32" height="12" fill="#5d6aa8" stroke={INK} strokeWidth="2.5" />
+          <rect x="-16" y="-202" width="32" height="38" rx="2" fill="url(#launch-body)" stroke={INK} strokeWidth="3" />
+          {/* Payload adapter the satellite is bolted to until separation */}
+          <path d="M -12 -202 L -8 -208 L 8 -208 L 12 -202 Z" fill="#5d6aa8" stroke={INK} strokeWidth="2" />
+        </g>
+
+        {/* The player's satellite. Not drawn at all while sealed in the fairing. */}
+        {scene.satellite !== "hidden" && (
+          <g clipPath={inBay ? "url(#launch-bay)" : undefined}>
+            <g
+              className={styles.satellite}
+              data-vis={scene.satellite}
+              style={t(`translate(${sat.x}px, ${sat.y}px) scale(${sat.scale})`)}
+            >
+              <g className={scene.inOrbit ? styles.drift : undefined}>
+                <LaunchSatellite
+                  design={design}
+                  panelsOpen={scene.panelsOpen}
+                  cable={scene.satellite === "crane" || scene.satellite === "integrating"}
+                />
+              </g>
+            </g>
+          </g>
+        )}
+
+        {/* Payload fairing: opens on the pad, closes for launch, splits in space */}
         <path
           className={styles.fairingL}
           data-state={fairingState}
@@ -261,7 +290,7 @@ export function LaunchScene({
 
       {/* Downlook beam toward the target region */}
       <polygon
-        points="190,170 210,170 236,354 164,354"
+        points={`${beamX - 10},170 ${beamX + 10},170 236,354 164,354`}
         fill="#ffd23f"
         className={`${styles.fade} ${styles.beam}`}
         style={{ opacity: scene.onTarget ? 0.28 : 0 }}
