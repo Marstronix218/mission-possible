@@ -40,6 +40,12 @@ body {
   outline-offset: 4px;
 }
 
+/* Keep map sizing above MapLibre's unlayered position: relative rule. */
+.map-panel > .map-canvas {
+  position: absolute;
+  inset: 0;
+}
+
 /* Wako screens; utility classes remain available to the shared designer. */
 @layer components {
   :root {
@@ -224,10 +230,6 @@ body {
     background: #102432;
     border: 1px solid var(--line);
     border-radius: 8px;
-  }
-  .map-canvas {
-    position: absolute;
-    inset: 0;
   }
   .map-caption,
   .map-key,

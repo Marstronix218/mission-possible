@@ -1,6 +1,6 @@
 # Run and connect the application
 
-**Default mode: browser-local demo.** Use `DEMO.md` for the working local classroom flow, or explicitly enable live mode after provisioning the backend below. Existing keys are preserved; demo mode does not make Supabase requests.
+**Deployed mode: live Supabase.** Set `NEXT_PUBLIC_DATA_MODE=supabase` with the configured project URL and keys. Use `NEXT_PUBLIC_DATA_MODE=mock` only for the offline classroom roleplay in `DEMO.md`.
 
 ## Local solo play
 
@@ -17,8 +17,8 @@ Open http://localhost:3000/map. The three MVP missions run the actual determinis
 
 1. Create a development Supabase project (or use the team's existing project).
 2. Apply all three SQL files in `supabase/migrations/` in filename order with Supabase migrations or its SQL editor. This migration includes RLS, service-only mutation functions, transactional submission limits, and a Realtime timestamp table.
-3. In Authentication, enable Anonymous Sign-Ins and email Magic Links. Set the site URL and allow `/teacher` and `/auth/confirm` as a redirect URL for both localhost and the intended deployment. Configure email delivery for the intended class size. Supabase's default email delivery limits are suitable only for testing.
-4. Copy `.env.example` to `.env.local`, then set the project URL, anonymous public key, and service-role key. The service-role key is server-only: never add a `NEXT_PUBLIC_` prefix or commit it.
+3. In Authentication, enable Anonymous Sign-Ins and email Magic Links. Set the site URL and allow `/auth/confirm` as a redirect URL for localhost and the intended deployment. Configure email delivery for the intended class size. Supabase's default email delivery limits are suitable only for testing.
+4. Copy `.env.example` to `.env.local`, then set the project URL, anonymous/publishable public key, service-role/secret key, and `NEXT_PUBLIC_DATA_MODE=supabase`. The service-role key is server-only: never add a `NEXT_PUBLIC_` prefix or commit it.
 5. Restart/build the app. The browser obtains an anonymous session for students and solo players. Teachers request a magic link and sign in. A project administrator must then approve their `profiles.role` as `teacher` using trusted Supabase administration; a verified email alone does not grant this role. Then click **Load my classes**.
 6. Create a classroom, share its six-character code, and join as a student in a separate browser profile. Student sign-in requires no email.
 7. Submit two designs, confirm the class ranking updates, inspect history as the teacher, and check that a second unrelated account cannot read the class. These live Auth/email/Realtime checks require the real project and have not been executed in this environment.
@@ -94,3 +94,11 @@ The third migration locks scoring settings once a class has attempts, backfills 
 The home route redirects to `/map`; the placeholder landing page is retired. Designer launch hands the persisted draft to `/run`; playback completion submits exactly once through the existing attempt service and opens `/result`. Live classroom brief/design routes preserve the classroom query and server constraints. Demo data stays browser-local and labeled; it is not verified cloud persistence.
 
 Use the pinned pnpm version from package.json. Feature PRs target `develop`; the reviewed release PR targets `main` because Vercel production follows `main`. Merging feature PRs into `develop` alone does not update production.
+
+## Live provisioning verified — 2026-11-14
+
+All three migrations were applied to the configured hosted project through the authenticated Supabase CLI. Anonymous sign-in, server-scored solo save, idempotent retry, history, unauthorized-request rejection, teacher class creation, student joining, classroom submission/ranking and the email-token callback were verified against the real backend. Temporary test teacher/class records were removed. The map container is sized outside CSS layers so MapLibre cannot collapse its height.
+
+Production and Preview explicitly select `NEXT_PUBLIC_DATA_MODE=supabase`; changing a public variable requires rebuilding the deployment. Existing local demo records are not imported into verified cloud history or rankings.
+
+The stored direct PostgreSQL password was rejected, but the authenticated CLI can initialize its supported temporary login role. For future migrations, use `supabase link --project-ref <project-ref>` and `supabase db push --linked` from the reviewed branch instead of supplying an invalid `SUPABASE_DB_PASSWORD`. Do not reset the database or replace credentials to fix an application mode flag.

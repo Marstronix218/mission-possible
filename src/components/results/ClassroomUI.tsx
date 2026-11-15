@@ -515,7 +515,7 @@ export function TeacherDashboard({ authError }: { authError?: string }) {
     try {
       const { error } = await cloud().auth.signInWithOtp({
         email,
-        options: { emailRedirectTo: window.location.origin + "/teacher" },
+        options: { emailRedirectTo: window.location.origin + "/auth/confirm" },
       });
       if (error) throw error;
       setMessage(
