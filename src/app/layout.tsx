@@ -3,20 +3,6 @@ import Link from "next/link";
 import DemoBanner from "@/components/results/DemoBanner";
 import ClassroomMenu from "./_components/ClassroomMenu";
 import "./globals.css";
-import { Fredoka, Nunito } from "next/font/google";
-
-const display = Fredoka({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-display-face",
-  display: "swap",
-});
-const body = Nunito({
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-  variable: "--font-body",
-  display: "swap",
-});
 export const metadata: Metadata = {
   title: "Mission: Possible — Code Blue",
   description: "Earth is in danger. Build a satellite. Save the mission.",
@@ -76,7 +62,7 @@ function LogoMark() {
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html lang="en">
       <body>
         <a className="skip-link" href="#main-content">
           Skip to content
