@@ -15,6 +15,7 @@ import {
 import { comparableAttempts } from "@/components/results/history-model";
 import type { PartSlot } from "@/lib/story/parts";
 import { summarizeResources } from "@/lib/sim";
+import { MissionScoreRadar } from "@/components/planning/MissionScoreRadar";
 import styles from "./gameplay.module.css";
 
 export function BeginnerDebrief({
@@ -69,6 +70,12 @@ export function BeginnerDebrief({
       <p className={styles.outcomeText}>
         {payoff.headline} {payoff.sub}
       </p>
+      <MissionScoreRadar
+        mission={mission}
+        design={design}
+        result={result}
+        constraints={attempt.constraints}
+      />
       <section
         className={styles.observation}
         aria-labelledby="observation-heading"

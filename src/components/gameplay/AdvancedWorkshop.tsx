@@ -20,17 +20,17 @@ export default function AdvancedWorkshop({
   return (
     <>
       <div className={styles.row}>
-        <p>Advanced Mode · Full engineering workshop</p>
+        <p>Mission workshop · Plan the whole spacecraft</p>
         <Link
           className={styles.secondary}
-          href={`/mission/${mission.slug}/design`}
+          href={`/mission/${mission.slug}/design?mode=quick`}
           onClick={() => {
             try {
               localStorage.setItem(modeKey(mission.slug), "beginner");
             } catch {}
           }}
         >
-          Explorer Mode
+          Quick experiment
         </Link>
       </div>
       <SatelliteDesigner mission={mission} fix={fix} />

@@ -13,9 +13,9 @@ export default async function DesignPage({
 }) {
   const mission = findMission((await params).slug);
   if (!mission) notFound();
-  return mode === "advanced" ? (
+  return mode !== "quick" ? (
     <AdvancedWorkshop mission={mission} fix={fix} />
   ) : (
-    <BeginnerWorkshop mission={mission} />
+    <BeginnerWorkshop mission={mission} quick />
   );
 }

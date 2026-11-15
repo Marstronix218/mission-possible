@@ -491,3 +491,106 @@
     padding: 8px;
   }
 }
+.controls > label {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+.controls button {
+  min-height: 36px;
+  border: 1px solid #91b5bf;
+  background: #132f3f;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+.rod {
+  position: absolute;
+  left: 52px;
+  top: -70px;
+  width: 5px;
+  height: 72px;
+  background: #c8d6df;
+  border: 1px solid #7b939d;
+  transform: rotateZ(-18deg);
+}
+.internalBattery {
+  position: absolute;
+  left: 10px;
+  top: 13px;
+  height: 70px;
+  border-radius: 9px;
+  border: 2px solid #bed4a5;
+  background: repeating-linear-gradient(
+    90deg,
+    #4f746a 0 12px,
+    #88aa80 13px 16px
+  );
+  transform: translateZ(70px);
+  box-shadow: 0 5px 10px #0008;
+  color: white;
+  font-size: 9px;
+}
+.internalStorage {
+  position: absolute;
+  left: 60px;
+  top: 35px;
+  width: 42px;
+  height: 55px;
+  border: 3px solid #8cc1c2;
+  background: #173d4d;
+  transform: translateZ(80px);
+  color: white;
+  font-size: 8px;
+}
+.internalBattery span,
+.internalStorage span {
+  background: #122b35;
+  color: white;
+  padding: 2px;
+}
+.satellite button {
+  min-height: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.satellite button:focus-visible {
+  outline: 4px solid white;
+  outline-offset: 3px;
+}
+.workbench:has(.attachment) {
+  outline: 3px dashed #bcf78a;
+  outline-offset: -8px;
+}
+
+.mobileMount {
+  position: fixed;
+  z-index: 900;
+  bottom: 20px;
+  right: 16px;
+  width: 190px;
+  padding: 28px 16px;
+  text-align: center;
+  border: 3px dashed #c9f48a;
+  border-radius: 15px;
+  background: #123744ed;
+  color: #ecfff6;
+  box-shadow: 0 10px 50px #0008;
+  pointer-events: none;
+  font:
+    1rem/1.7 Arial,
+    sans-serif;
+}
+@media (min-width: 1024px) {
+  .mobileMount {
+    display: none;
+  }
+}
+@media (min-width: 1024px) {
+  .mobileMount {
+    display: block;
+  }
+}

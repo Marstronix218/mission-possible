@@ -1,0 +1,567 @@
+.radar {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  margin: auto;
+  overflow: visible;
+}
+.axisLabel {
+  fill: #e3eff7;
+  font:
+    600 12px Arial,
+    sans-serif;
+}
+.axisValue {
+  fill: #aff1ee;
+  font:
+    700 12px Arial,
+    sans-serif;
+}
+.scale {
+  fill: #9cb3c2;
+  font:
+    10px Arial,
+    sans-serif;
+}
+.radar circle[role="button"] {
+  cursor: pointer;
+  outline: none;
+}
+.radar circle[role="button"]:focus {
+  stroke: white;
+  stroke-width: 5;
+}
+.grow {
+  transform-origin: 180px 150px;
+  animation: expand 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes expand {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+.dashboard,
+.comparison {
+  background: #102533;
+  border: 1px solid #466575;
+  border-radius: 18px;
+  padding: clamp(16px, 3vw, 32px);
+  margin: 24px 0;
+  font-family: Arial, sans-serif;
+}
+.dashboard h2 {
+  font:
+    800 clamp(1.6rem, 4vw, 2.5rem) Arial,
+    sans-serif;
+  margin: 0 0 10px;
+}
+.dashboard .total {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #d5f985;
+}
+.dashboard .total small {
+  font-size: 1rem;
+  color: #b7cbd7;
+}
+.scoreGrid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  align-items: center;
+  gap: 24px;
+}
+.explanation {
+  background: #1c3645;
+  padding: 22px;
+  border-radius: 12px;
+  line-height: 1.6;
+}
+.explanation h3 {
+  font-size: 1.5rem;
+  margin: 0 0 16px;
+}
+.explanation h4 {
+  margin: 18px 0 4px;
+}
+.explanation p {
+  margin: 8px 0;
+}
+.help {
+  font-size: 0.85rem;
+  color: #bdd0dc;
+  line-height: 1.5;
+}
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.tabs button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #6c8796;
+  background: #172e3c;
+  color: #e9f4fa;
+  min-height: 44px;
+  font:
+    600 0.9rem Arial,
+    sans-serif;
+}
+.tabs button[aria-pressed="true"] {
+  color: #10242d;
+  background: #b2eeed;
+}
+.selects {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.selects label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+}
+.selects select {
+  width: 100%;
+  max-width: 100%;
+  min-height: 44px;
+  background: #112330;
+  color: white;
+  border: 1px solid #648291;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: 0.9rem;
+}
+.comparison > summary {
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tableWrap {
+  overflow: auto;
+}
+.comparison table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.comparison td,
+.comparison th {
+  padding: 10px;
+  border-bottom: 1px solid #3f5b6c;
+  text-align: left;
+}
+.comparison th small {
+  display: block;
+  font-weight: 400;
+  color: #b5cbd7;
+  min-width: 130px;
+  max-width: 250px;
+}
+.comparison caption {
+  font-size: 0.8rem;
+  color: #bad0dc;
+  margin: 8px;
+  text-align: left;
+}
+.welcomeButton {
+  display: inline-flex;
+  min-height: 44px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid #7699a9;
+  background: #102b3a;
+  color: #eff8fd;
+  align-items: center;
+  cursor: pointer;
+}
+.modal {
+  border: 0;
+  padding: 0;
+  border-radius: 20px;
+  background: transparent;
+  color: #edf6fa;
+  width: min(720px, calc(100vw - 24px));
+  max-height: 94dvh;
+  overflow: auto;
+}
+.modal::backdrop {
+  background: #020c17ce;
+  backdrop-filter: blur(7px);
+}
+.letterScene {
+  position: relative;
+  padding: clamp(20px, 4vw, 44px);
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 15%, #284b5c, #091b27 80%);
+  border: 1px solid #577b8d;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.incoming {
+  font:
+    700 0.8rem Arial,
+    sans-serif;
+  letter-spacing: 0.23em;
+  color: #b8e7ea;
+  text-transform: uppercase;
+  margin: 0 0 26px;
+}
+.incoming::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #cdf57e;
+  border-radius: 50%;
+  margin-right: 12px;
+  animation: signal 1.4s ease-in-out infinite;
+}
+@keyframes signal {
+  50% {
+    opacity: 0.4;
+  }
+}
+.envelope {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  width: min(100%, 450px);
+  aspect-ratio: 1.7;
+  margin: 36px auto 24px;
+  border: 1px solid #a89876;
+  border-radius: 6px;
+  background: #e2d6b6;
+  box-shadow: 0 30px 55px #0007;
+  cursor: pointer;
+  color: #1a343c;
+  animation: arrive 0.65s ease-out both;
+  perspective: 800px;
+}
+.envelope::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(32deg, #c9b98e 49.5%, transparent 50%) left/50% 100%
+      no-repeat,
+    linear-gradient(-32deg, #d8c9a2 49.5%, transparent 50%) right/50% 100%
+      no-repeat;
+  z-index: 1;
+}
+.flap {
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(0 0, 100% 0, 50% 66%);
+  background: #efe6ce;
+  transform-origin: top;
+  box-shadow: 0 4px 5px #0005;
+  transition: transform 0.6s;
+  z-index: 2;
+}
+.envelopeOpened .flap {
+  transform: rotateX(180deg);
+}
+.seal {
+  display: grid;
+  place-items: center;
+  position: absolute;
+  z-index: 3;
+  top: 38%;
+  left: calc(50% - 28px);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #25576a;
+  color: #eaf6f2;
+  border: 3px double #92b2b3;
+  font:
+    800 15px Arial,
+    sans-serif;
+  box-shadow: 0 4px 8px #0004;
+}
+.envelopeText {
+  position: absolute;
+  z-index: 4;
+  bottom: 12%;
+  left: 0;
+  right: 0;
+  font:
+    700 0.95rem Arial,
+    sans-serif;
+}
+.paper {
+  position: relative;
+  padding: clamp(22px, 4vw, 42px);
+  text-align: left;
+  background: repeating-linear-gradient(
+    0deg,
+    #f3eddc 0px,
+    #f3eddc 30px,
+    #e3dac5 31px
+  );
+  border-radius: 3px;
+  color: #203c45;
+  box-shadow: 0 18px 55px #0008;
+  transform-origin: top;
+  animation: unfold 0.65s ease-out both;
+  margin: 0 auto;
+  max-width: 580px;
+}
+.paper::before {
+  content: "CODE BLUE / MISSION OPERATIONS";
+  display: block;
+  font:
+    700 0.65rem Arial,
+    sans-serif;
+  letter-spacing: 0.16em;
+  border-bottom: 1px solid #b4b9a9;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+.paper h1,
+.paper h2 {
+  font:
+    800 clamp(1.5rem, 4vw, 2.1rem) Arial,
+    sans-serif;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  margin: 8px 0 22px;
+  color: #19343e;
+}
+.paper p {
+  font:
+    1.05rem/1.65 Georgia,
+    serif;
+  margin: 12px 0;
+}
+.paper small {
+  font:
+    0.8rem Arial,
+    sans-serif;
+}
+.paper a,
+.paper button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  padding: 14px 22px;
+  margin-top: 18px;
+  background: #1b5365;
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  font:
+    700 0.9rem Arial,
+    sans-serif;
+  cursor: pointer;
+  text-decoration: none;
+}
+.signature {
+  font-style: italic !important;
+}
+.close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid #52798a;
+  border-radius: 50%;
+  background: #112b3c;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+  z-index: 5;
+}
+@keyframes arrive {
+  from {
+    transform: translateY(-65px) rotate(-7deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) rotate(0);
+    opacity: 1;
+  }
+}
+@keyframes unfold {
+  from {
+    transform: perspective(800px) rotateX(-30deg) scaleY(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: perspective(800px) rotateX(0) scaleY(1);
+    opacity: 1;
+  }
+}
+.dragHandle {
+  min-height: 44px;
+  border: 1px dashed #99c3cc;
+  border-radius: 8px;
+  padding: 8px 14px;
+  margin: 0 12px 12px;
+  background: #1a3947;
+  color: #e6f9fa;
+  font-size: 0.85rem;
+  font-weight: 700;
+  touch-action: none;
+  cursor: grab;
+}
+.dragGhost {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  padding: 12px 18px;
+  background: #d1f57e;
+  color: #16313b;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px #0008;
+  font:
+    700 1rem Arial,
+    sans-serif;
+}
+.delta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+.delta span {
+  padding: 7px;
+  border: 1px solid #536c78;
+  border-radius: 6px;
+}
+.up {
+  color: #b6ed9f;
+}
+.demand {
+  color: #ffd096;
+}
+.plan {
+  border: 1px solid #536d7e;
+  background: #132c3a;
+  padding: 18px;
+  border-radius: 12px;
+  margin: 16px 0;
+}
+.plan summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+.plan dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+.plan dd {
+  margin: 0;
+  color: #c9dee6;
+}
+.mapLead {
+  max-width: 1200px;
+  margin: auto;
+}
+.mapLead h1 {
+  font:
+    800 clamp(2rem, 4vw, 3.5rem) Arial,
+    sans-serif;
+  letter-spacing: -0.035em;
+  margin: 10px 0;
+}
+.mapLead p {
+  color: #bed4df;
+  max-width: 650px;
+}
+.mapHead {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+@media (max-width: 700px) {
+  .scoreGrid {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .dashboard {
+    padding: 16px;
+  }
+  .selects {
+    grid-template-columns: 1fr;
+  }
+  .axisLabel,
+  .axisValue {
+    font-size: 11px;
+  }
+  .comparison {
+    padding: 12px;
+  }
+  .letterScene {
+    padding: 20px 12px;
+  }
+  .paper p {
+    font-size: 1rem;
+  }
+  .incoming {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grow,
+  .paper,
+  .envelope,
+  .incoming::before {
+    animation: none !important;
+  }
+  .flap {
+    transition: none;
+  }
+}
+
+.envelopeOpened {
+  position: absolute;
+  bottom: -90px;
+  left: 50%;
+  margin: 0;
+  transform: translateX(-50%);
+  opacity: 0.6;
+  pointer-events: none;
+  animation: none;
+}
+.paper {
+  z-index: 4;
+}
+.paper[hidden] {
+  display: none;
+}
+
+.modal {
+  margin: auto;
+}
+.paper p,
+.paper small {
+  color: #28444d;
+}
+.paper a {
+  color: white;
+}
+.paper h2:focus {
+  outline: 2px solid #326175;
+  outline-offset: 6px;
+}
+@media (max-width: 700px) {
+  .axisLabel {
+    font-size: 14px;
+  }
+  .axisValue {
+    font-size: 13px;
+  }
+}

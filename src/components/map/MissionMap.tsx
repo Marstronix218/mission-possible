@@ -8,7 +8,8 @@ import { api, backendAvailable } from "../results/cloud";
 import { ENGINE_VERSION } from "@/lib/sim";
 import type { Category, SimResult } from "@/types/game";
 import { categoryLabel } from "@/lib/story/missions";
-import EmergencyHero from "./EmergencyHero";
+import { WelcomeLetter } from "@/components/planning/EnvelopeLetter";
+import planning from "@/components/planning/planning.module.css";
 import HazardIcon from "./HazardIcon";
 import Stars from "./Stars";
 import { useInView } from "./useInView";
@@ -181,7 +182,7 @@ function MissionTile({ m, record }: { m: MapMission; record?: BestRecord }) {
 }
 
 export default function MissionMap({ missions }: { missions: MapMission[] }) {
-  const { featuredMission, featuredMissions, moreMissions, categories } =
+  const { featuredMissions, moreMissions, categories } =
     selectMissions(missions);
   const moreCategories = categories.filter((c) =>
     moreMissions.some((m) => m.category === c),
@@ -200,40 +201,23 @@ export default function MissionMap({ missions }: { missions: MapMission[] }) {
 
   return (
     <main id="main-content" tabIndex={-1} className={styles.page}>
-      {featuredMission && <EmergencyHero mission={featuredMission} />}
-
-      <section
-        aria-labelledby="featured-heading"
-        className="mt-16 sm:mt-24"
-        id="missions"
-      >
-        <div className={styles.sectionHead}>
-          <h2 id="featured-heading">Explore another mission</h2>
-          {completed > 0 && (
-            <span
-              className="chip"
-              style={{ "--hz": "var(--pop-yellow)" } as React.CSSProperties}
-            >
-              <span aria-hidden="true">★</span> {completed}/{missions.length}{" "}
-              completed
-            </span>
-          )}
+      <section className={planning.mapLead} aria-labelledby="world-heading">
+        <div className={planning.mapHead}>
+          <div>
+            <p className="eyebrow">CODE BLUE / Earth observation</p>
+            <h1 id="world-heading">Your mission starts on Earth.</h1>
+            <p>
+              Hover or focus a pin to preview its challenge. Select a place to
+              receive its mission letter.
+            </p>
+          </div>
+          <WelcomeLetter />
         </div>
-        {progressError && (
-          <p role="status" className="notice">
-            {progressError}
-          </p>
-        )}
-        <ul className={styles.featuredGrid}>
-          {featuredMissions.map((m, i) => (
-            <FeaturedCard key={m.slug} m={m} record={best[m.slug]} index={i} />
-          ))}
-        </ul>
       </section>
 
-      <section aria-labelledby="map-heading" className="mt-16 sm:mt-24">
+      <section aria-labelledby="map-heading" className="mt-6">
         <div className={styles.sectionHead}>
-          <h2 id="map-heading">Disaster map</h2>
+          <h2 id="map-heading">Explore the world</h2>
           <span
             className="chip"
             style={{ "--hz": "var(--pop-cyan)" } as React.CSSProperties}
@@ -267,6 +251,35 @@ export default function MissionMap({ missions }: { missions: MapMission[] }) {
           </a>
           . Mission alerts are training scenarios.
         </p>
+      </section>
+
+      <section
+        aria-labelledby="featured-heading"
+        className="mt-16 sm:mt-24"
+        id="missions"
+      >
+        <div className={styles.sectionHead}>
+          <h2 id="featured-heading">Explore another mission</h2>
+          {completed > 0 && (
+            <span
+              className="chip"
+              style={{ "--hz": "var(--pop-yellow)" } as React.CSSProperties}
+            >
+              <span aria-hidden="true">★</span> {completed}/{missions.length}{" "}
+              completed
+            </span>
+          )}
+        </div>
+        {progressError && (
+          <p role="status" className="notice">
+            {progressError}
+          </p>
+        )}
+        <ul className={styles.featuredGrid}>
+          {featuredMissions.map((m, i) => (
+            <FeaturedCard key={m.slug} m={m} record={best[m.slug]} index={i} />
+          ))}
+        </ul>
       </section>
 
       <section aria-labelledby="more-heading" className="mt-14 sm:mt-20">
