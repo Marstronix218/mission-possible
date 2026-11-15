@@ -13,11 +13,11 @@ export function MissionLetter({ mission }: { mission: Mission }) {
           {mission.city} · {mission.targetResponseHours} h response target
         </span>
       </div>
-      <h1 className="sr-only">Incoming mission from {mission.city}</h1>
-      <EnvelopeLetter mission={mission} />
+      <MissionFlightBrief mission={mission} />
+
       <details className="mt-6">
-        <summary>Flight briefing, mission parameters & NASA sources</summary>
-        <MissionFlightBrief mission={mission} />
+        <summary>Read the mission letter</summary>
+        <EnvelopeLetter mission={mission} />
       </details>
     </article>
   );

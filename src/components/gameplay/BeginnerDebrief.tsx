@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { PredictionComparison } from "@/components/gameplay/Prediction";
 import type { Mission } from "@/types/game";
 import type { SavedAttempt } from "@/components/results/session";
 import { MissionMap, finalCounts } from "@/components/results/MissionMap";
@@ -118,6 +119,7 @@ export function BeginnerDebrief({
           </div>
         </div>
       </section>
+      <PredictionComparison id={attempt.id} mission={mission} result={result} />
       <section aria-label="Your next experiment">
         <h2>
           {mainCause

@@ -78,35 +78,15 @@ export function EnvelopeLetter({
     </section>
   );
 }
-let seenInSession = false;
-export const welcomeKey = "codeblue:welcome-letter:v1";
 export function WelcomeLetter() {
   const [open, setOpen] = useState(false);
   const [letterKey, setLetterKey] = useState(0);
-  // Loading browser-only entry state belongs after hydration.
   const dialogRef = useRef<HTMLDialogElement>(null);
-  useEffect(() => {
-    let active = true;
-    void Promise.resolve().then(() => {
-      let seen = seenInSession;
-      try {
-        seen = seen || localStorage.getItem(welcomeKey) === "seen";
-      } catch {}
-      if (active && !seen) setOpen(true);
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
   useEffect(() => {
     if (open && !dialogRef.current?.open) dialogRef.current?.showModal();
     if (!open && dialogRef.current?.open) dialogRef.current.close();
   }, [open]);
   function dismiss() {
-    seenInSession = true;
-    try {
-      localStorage.setItem(welcomeKey, "seen");
-    } catch {}
     setOpen(false);
   }
   return (

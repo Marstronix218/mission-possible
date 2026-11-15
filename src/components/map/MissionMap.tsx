@@ -182,7 +182,7 @@ function MissionTile({ m, record }: { m: MapMission; record?: BestRecord }) {
 }
 
 export default function MissionMap({ missions }: { missions: MapMission[] }) {
-  const { featuredMissions, moreMissions, categories } =
+  const { featuredMission, featuredMissions, moreMissions, categories } =
     selectMissions(missions);
   const moreCategories = categories.filter((c) =>
     moreMissions.some((m) => m.category === c),
@@ -207,17 +207,24 @@ export default function MissionMap({ missions }: { missions: MapMission[] }) {
             <p className="eyebrow">CODE BLUE / Earth observation</p>
             <h1 id="world-heading">Your mission starts on Earth.</h1>
             <p>
-              Hover or focus a pin to preview its challenge. Select a place to
-              receive its mission letter.
+              Design and operate a satellite to help a community understand a hazard on Earth.
             </p>
           </div>
-          <WelcomeLetter />
+          {featuredMission && (
+            <div>
+              <p>{featuredMission.city} · {categoryLabel[featuredMission.category]}</p>
+              <Link className="btn-pop" href={briefHref(featuredMission.slug)}>
+                Start your first mission
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
       <section aria-labelledby="map-heading" className="mt-6">
         <div className={styles.sectionHead}>
           <h2 id="map-heading">Explore the world</h2>
+          <WelcomeLetter />
           <span
             className="chip"
             style={{ "--hz": "var(--pop-cyan)" } as React.CSSProperties}

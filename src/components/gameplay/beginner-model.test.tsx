@@ -92,7 +92,7 @@ describe("first mission screens", () => {
       createElement(MissionLetter, { mission: la }),
     );
     expect(html).toContain("Mission parameters");
-    expect(html).toContain("First data due");
+    expect(html).toContain("First delivery target");
     expect(html).toContain(`${la.targetResponseHours} hours`);
     expect(html).toContain("ACCEPT MISSION");
     expect(html).toContain("Why space?");

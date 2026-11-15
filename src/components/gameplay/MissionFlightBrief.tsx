@@ -70,7 +70,7 @@ export function MissionFlightBrief({ mission }: { mission: Mission }) {
               <dd>{mission.category}</dd>
             </div>
             <div className={styles.deadlineFact}>
-              <dt>First data due</dt>
+              <dt>First delivery target</dt>
               <dd>{mission.targetResponseHours} hours</dd>
             </div>
             <div>
@@ -90,7 +90,7 @@ export function MissionFlightBrief({ mission }: { mission: Mission }) {
             <span aria-hidden="true">◎</span>
             <p>
               <strong>Success criteria</strong>
-              Earn 60+ points and observe at least 50% of the mission area.
+              Earn 60+ points and observe at least 50% of the mission area. Delivery timing contributes to your score.
             </p>
           </div>
           <p className={styles.briefingNote}>
