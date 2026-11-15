@@ -197,8 +197,8 @@ export default function BeginnerWorkshop({
       e.clientX <= box.right &&
       e.clientY >= box.top &&
       e.clientY <= box.bottom;
-    if (!drag.moved || inside) attach(drag.id);
-    else
+    if (drag.moved && inside) attach(drag.id);
+    else if (drag.moved)
       setStatus(
         "Release over the satellite to attach, or select a sensor with a click.",
       );
@@ -263,9 +263,7 @@ export default function BeginnerWorkshop({
             onPointerMove={move}
             onPointerUp={release}
             onPointerCancel={() => setDrag(null)}
-            onClick={(e) => {
-              if (e.detail === 0) attach(id);
-            }}
+            onClick={() => attach(id)}
           >
             <SensorArt id={id} />
             <h3>{sensorNames[id][0]}</h3>
@@ -357,7 +355,7 @@ export default function BeginnerWorkshop({
             </p>
           )}
           <div className={styles.row}>
-            <p>Launch it. Then see what happens.</p>
+            <p>Launch the satellite and see what it observes.</p>
             <button
               className={styles.primary}
               onClick={launch}

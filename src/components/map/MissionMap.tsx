@@ -36,7 +36,7 @@ function MapLoading() {
   return (
     <div className={styles.mapLoading} role="status">
       <span className={styles.mapLoadingGlobe} aria-hidden="true" />
-      Loading Earth…
+      Loading the U.S. mission map…
     </div>
   );
 }
@@ -237,8 +237,13 @@ export default function MissionMap({ missions }: { missions: MapMission[] }) {
 
       <section aria-labelledby="map-heading" className="mt-6">
         <div className={styles.sectionHead}>
-          <h2 id="map-heading">Explore the world</h2>
-          <WelcomeLetter />
+          <h2 id="map-heading">Choose a U.S. mission</h2>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link className="btn-pop btn-pop--sm" href="/leaderboard">
+              🏆 View rankings
+            </Link>
+            <WelcomeLetter />
+          </div>
           <span
             className="chip"
             style={{ "--hz": "var(--pop-cyan)" } as React.CSSProperties}

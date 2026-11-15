@@ -22,8 +22,6 @@ const suggestions: Record<string, string> = {
     "Compare orbit swath and revisit factors; check where observation opportunities were missed.",
   responseTime:
     "Compare radio rate and ground-contact time. A faster link helps after detection occurs.",
-  costEfficiency:
-    "Try a lighter-cost part while preserving the observations the mission needs.",
   reliability:
     "Check solar power, shadow continuity and whether your data fits the available storage and downlink.",
 };
@@ -62,7 +60,7 @@ export function MissionScoreRadar({
         <div>
           <RadarChart
             axes={axes}
-            label="Five-axis mission performance"
+            label="Four-part mission evaluation"
             active={active}
             onSelect={setActive}
             animate
@@ -123,6 +121,7 @@ export function MissionScoreRadar({
         </article>
       </div>
       <p className={styles.help}>
+        Budget is checked as a launch limit and does not add evaluation points.
         First data:{" "}
         {result.firstDeliveryHours === null
           ? "not delivered"

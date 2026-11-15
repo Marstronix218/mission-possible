@@ -1,6 +1,7 @@
 "use client";
 import {
   useEffect,
+  useId,
   useRef,
   useState,
   type CSSProperties,
@@ -283,18 +284,19 @@ export function SatelliteWorkbench({
   );
 }
 export function SensorArt({ id }: { id: string }) {
+  const gradientId = `metal-${id}-${useId().replaceAll(":", "")}`;
   return (
     <span className={styles.sensorArt} aria-hidden="true">
       <svg viewBox="0 0 100 80">
         <defs>
-          <linearGradient id={`metal-${id}`} x2="1" y2="1">
+          <linearGradient id={gradientId} x2="1" y2="1">
             <stop stopColor="#d4e2e8" />
             <stop offset="1" stopColor="#3c5365" />
           </linearGradient>
         </defs>
         <path d="M20 20L65 10L83 24L40 36Z" fill="#b5c7d2" />
         <path d="M20 20L40 36V70L20 54Z" fill="#526c7a" />
-        <path d="M40 36L83 24V58L40 70Z" fill={`url(#metal-${id})`} />
+        <path d="M40 36L83 24V58L40 70Z" fill={`url(#${gradientId})`} />
         {id === "sar" || id === "pr" ? (
           <path
             d="M43 40L78 30V54L43 63Z"

@@ -56,13 +56,12 @@ describe("honest five-axis comparisons", () => {
 describe("mission performance explanation", () => {
   const m = allMissions.find((m) => m.slug === "los-angeles")!;
   const result = runSimulation(m, defaultDesign, m.defaultConstraints);
-  it("reads all five axes directly from the saved engine result", () => {
+  it("reads all four evaluation axes directly from the saved engine result", () => {
     const axes = scoreAxes(result);
     expect(axes.map((a) => a.value)).toEqual([
       result.score.accuracy,
       result.score.coverage,
       result.score.responseTime,
-      result.score.costEfficiency,
       result.score.reliability,
     ]);
     expect(axes.map((a) => a.id)).not.toContain("transmission");
@@ -77,8 +76,8 @@ describe("mission performance explanation", () => {
         onSelect: () => {},
       }),
     );
-    expect(html.match(/role="button"/g) || []).toHaveLength(5);
-    expect(html.match(/tabindex="0"/g) || []).toHaveLength(5);
+    expect(html.match(/role="button"/g) || []).toHaveLength(4);
+    expect(html.match(/tabindex="0"/g) || []).toHaveLength(4);
     expect(html).toContain('stroke-dasharray="6 4"');
   });
   it("explains the engine's real weighting, metric and overall score", () => {
@@ -144,7 +143,7 @@ describe("physical mission entry and assembly", () => {
       createElement(EnvelopeLetter, { onExplore: () => {} }),
     );
     expect(html).toContain("Open welcome envelope");
-    expect(html).toContain("EXPLORE THE WORLD");
+    expect(html).toContain("EXPLORE THE U.S.");
   });
   it("does not draw missing array or antenna modules and exposes installed removals accessibly", () => {
     const full = renderToStaticMarkup(

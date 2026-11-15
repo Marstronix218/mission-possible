@@ -256,7 +256,8 @@ export function ObserveDeck({
           >
             Day {day} · {time}
             <small>
-              h {Math.floor(hour)}/{span}
+              Hour {Math.floor(hour)} of {span} · {mission.durationDays}-day
+              mission
             </small>
           </p>
           <span className={`${styles.badge} ${deadlineBadge.cls}`}>

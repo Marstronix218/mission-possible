@@ -4,7 +4,11 @@
 import type { MissionDecisions, SimResult } from "@/types/game";
 import { DECISION_EFFECTS } from "@/lib/sim";
 import type { DecisionOption } from "./DecisionPrompt";
-import { quadrantName, type CheckpointId, type RetaskOffer } from "./mission-playback";
+import {
+  quadrantName,
+  type CheckpointId,
+  type RetaskOffer,
+} from "./mission-playback";
 
 const pct = (n: number) => `${Math.round(n * 100)}%`;
 const E = DECISION_EFFECTS;
@@ -16,21 +20,47 @@ export interface DecisionCopy {
   options: DecisionOption[];
 }
 
-export function decisionCopy(id: CheckpointId, hazard: string, offer: RetaskOffer | null): DecisionCopy {
+export function decisionCopy(
+  id: CheckpointId,
+  hazard: string,
+  offer: RetaskOffer | null,
+): DecisionCopy {
   if (id === "focus")
     return {
-      title: "Orbit reached! Where do we point?",
+      title: "Choose how the satellite scans the area",
+      subtitle:
+        "This changes where the satellite spends its limited observation time.",
       options: [
-        { id: "wide", icon: "🌐", title: "Wide scan", text: "Even looks across the whole map" },
-        { id: "hazard", icon: "🎯", title: "Hazard focus", text: `More looks at likely ${hazard}, fewer elsewhere` },
+        {
+          id: "wide",
+          icon: "🌐",
+          title: "Scan the whole area",
+          text: "Spread observation time evenly. Better overall coverage, but fewer repeat checks of likely targets.",
+        },
+        {
+          id: "hazard",
+          icon: "🎯",
+          title: `Focus on likely ${hazard}`,
+          text: `Recheck likely ${hazard} locations more often. This can find more targets, but reduces coverage elsewhere.`,
+        },
       ],
     };
   if (id === "downlink")
     return {
       title: "How do we send data home?",
       options: [
-        { id: "fast", icon: "🚀", title: "Fast", text: "Send at every contact — uses more power" },
-        { id: "save-power", icon: "🔋", title: "Save power", text: "Batch data — slower, saves battery" },
+        {
+          id: "fast",
+          icon: "🚀",
+          title: "Send as soon as possible",
+          text: "Transmit at every ground contact. Data arrives sooner, but the radio uses more power.",
+        },
+        {
+          id: "save-power",
+          icon: "🔋",
+          title: "Save battery",
+          text: "Wait and send data in batches. Uses less power, but the alert may arrive later.",
+        },
       ],
     };
   const q = offer ? quadrantName[offer.quadrant] : "";
@@ -40,10 +70,20 @@ export function decisionCopy(id: CheckpointId, hazard: string, offer: RetaskOffe
       offer?.reason === "new-hazard"
         ? `New ${hazard} reported in the ${q}!`
         : `${offer?.cells ?? 0} danger zones in the ${q} still unconfirmed!`,
-    subtitle: "Retask the satellite to that corner from today?",
+    subtitle: "Choose whether to change the remaining observation plan.",
     options: [
-      { id: "retask", icon: "↗️", title: `Retask to ${q}`, text: "More looks there, fewer everywhere else" },
-      { id: "stay", icon: "➡️", title: "Stay the course", text: "Keep looking across the map" },
+      {
+        id: "retask",
+        icon: "↗️",
+        title: `Prioritize the ${q}`,
+        text: `Spend more of the remaining passes checking the ${q}. Other parts of the map will get fewer looks.`,
+      },
+      {
+        id: "stay",
+        icon: "➡️",
+        title: "Keep the current plan",
+        text: "Do not redirect the satellite. Continue spreading observations across the whole map.",
+      },
     ],
   };
 }
@@ -55,9 +95,18 @@ export function applyDecision(
   choice: string,
   offer: RetaskOffer | null,
 ): MissionDecisions {
-  if (id === "focus") return { ...decisions, focus: choice === "hazard" ? "hazard" : "wide" };
-  if (id === "downlink") return { ...decisions, downlink: choice === "fast" ? "fast" : "save-power" };
-  if (choice === "retask" && offer) return { ...decisions, retask: { day: offer.day, quadrant: offer.quadrant } };
+  if (id === "focus")
+    return { ...decisions, focus: choice === "hazard" ? "hazard" : "wide" };
+  if (id === "downlink")
+    return {
+      ...decisions,
+      downlink: choice === "fast" ? "fast" : "save-power",
+    };
+  if (choice === "retask" && offer)
+    return {
+      ...decisions,
+      retask: { day: offer.day, quadrant: offer.quadrant },
+    };
   const { retask: _drop, ...rest } = decisions;
   void _drop;
   return rest;
@@ -78,11 +127,19 @@ export function describeChange(
   if (id === "downlink") {
     const b = before.diagnostics;
     const a = after.diagnostics;
-    if (!b || !a) return choice === "fast" ? "Data is sent at every contact." : "Data is batched to save power.";
-    const parts = [`Radio delay ${b.downlinkLatencyHours} h → ${a.downlinkLatencyHours} h`];
-    if (a.powerMargin !== b.powerMargin) parts.push(`power margin ${pct(b.powerMargin)} → ${pct(a.powerMargin)}`);
+    if (!b || !a)
+      return choice === "fast"
+        ? "Data is sent at every contact."
+        : "Data is batched to save power.";
+    const parts = [
+      `Radio delay ${b.downlinkLatencyHours} h → ${a.downlinkLatencyHours} h`,
+    ];
+    if (a.powerMargin !== b.powerMargin)
+      parts.push(`power margin ${pct(b.powerMargin)} → ${pct(a.powerMargin)}`);
     if (a.batteryContinuity !== b.batteryContinuity)
-      parts.push(`work in Earth's shadow ${pct(b.batteryContinuity)} → ${pct(a.batteryContinuity)}`);
+      parts.push(
+        `work in Earth's shadow ${pct(b.batteryContinuity)} → ${pct(a.batteryContinuity)}`,
+      );
     return parts.join(" · ") + ".";
   }
   if (choice === "retask" && offer)

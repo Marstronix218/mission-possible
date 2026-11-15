@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { randomBytes } from "node:crypto";
 import { z } from "zod";
 import { identity, HttpError, check } from "@/lib/backend";
-import { canManageClassrooms } from "@/lib/authorization";
 import {
   classSchema,
   designSchema,
@@ -74,6 +73,7 @@ const inputSchema = z.discriminatedUnion("action", [
     difficulty: z.enum(difficulties).optional(),
     constraints: rankingConditions.optional(),
   }),
+  z.object({ action: z.literal("overallRanking") }),
   z.object({
     action: z.literal("rankingConditions"),
     missionSlug: z.enum(missionSlugs),
@@ -102,20 +102,7 @@ export async function POST(request: Request) {
     if (raw.length > 20000) throw new HttpError(413, "Request too large.");
     const input = inputSchema.parse(JSON.parse(raw));
     const { db, user } = await identity(request);
-    const teacher = async () => {
-      const { data, error } = await db
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (error || !canManageClassrooms(user, data?.role))
-        throw new HttpError(
-          403,
-          "Sign in with your teacher email and ask the project administrator to approve your teacher role.",
-        );
-    };
     const owned = async (id: string) => {
-      await teacher();
       const { data, error } = await db
         .from("classrooms")
         .select("*")
@@ -155,7 +142,12 @@ export async function POST(request: Request) {
       return NextResponse.json(data);
     }
     if (input.action === "createClass") {
-      await teacher();
+      const { count } = await db
+        .from("classrooms")
+        .select("id", { count: "exact", head: true })
+        .eq("teacher_id", user.id);
+      if ((count ?? 0) >= 50)
+        throw new HttpError(400, "This device already has 50 classrooms.");
       const { data, error } = await db
         .from("classrooms")
         .insert({
@@ -169,7 +161,6 @@ export async function POST(request: Request) {
       return NextResponse.json(data);
     }
     if (input.action === "listClasses") {
-      await teacher();
       const { data, error } = await db
         .from("classrooms")
         .select("*")
@@ -326,6 +317,15 @@ export async function POST(request: Request) {
         p_user: user.id,
         p_budget: constraints.budgetM,
         p_mass: constraints.massKg,
+      });
+      check(error);
+      return NextResponse.json(
+        publicRanking((data ?? []) as RankingSource[], user.id),
+      );
+    }
+    if (input.action === "overallRanking") {
+      const { data, error } = await db.rpc("overall_ranking", {
+        p_engine: ENGINE_VERSION,
       });
       check(error);
       return NextResponse.json(

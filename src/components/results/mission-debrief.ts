@@ -615,7 +615,6 @@ export function compareAttempts(
     "accuracy",
     "responseTime",
     "coverage",
-    "costEfficiency",
     "reliability",
   ] as const) {
     if (m === "coverage") continue;
@@ -631,10 +630,9 @@ export function compareAttempts(
   return rows;
 }
 
-const METRIC_NAMES: Record<ScoreMetric, string> = {
+const METRIC_NAMES: Record<Exclude<ScoreMetric, "costEfficiency">, string> = {
   accuracy: "Accuracy",
   responseTime: "Response time",
   coverage: "Coverage",
-  costEfficiency: "Cost efficiency",
   reliability: "Reliability",
 };

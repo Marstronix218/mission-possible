@@ -283,6 +283,17 @@ export type Database = {
           user_id: string
         }[]
       }
+      overall_ranking: {
+        Args: { p_engine: string }
+        Returns: {
+          achieved: string
+          attempts: number
+          improvement: number
+          nickname: string
+          score: number
+          user_id: string
+        }[]
+      }
       save_mission_attempt: {
         Args: {
           p_budget: number

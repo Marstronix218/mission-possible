@@ -13,10 +13,10 @@ import type {
 import { categoryRules, findPart, partsCatalog } from "./catalog";
 import { generateFeedback } from "./feedback";
 import { createSeededRng, mixSeed } from "./rng";
-import { calculateScore } from "./scoring";
+import { calculateScore, evaluationWeights } from "./scoring";
 import { summarizeResources } from "./resources";
 
-export const ENGINE_VERSION = "1.2.0";
+export const ENGINE_VERSION = "1.3.0";
 
 /**
  * Magnitudes of the in-mission decisions. Every multiplier is 1 (or the term is
@@ -47,7 +47,9 @@ const round3 = (value: number): number => Math.round(value * 1000) / 1000;
 type AppliedDecisions = SimDiagnostics["decisions"];
 type Quadrant = NonNullable<MissionDecisions["retask"]>["quadrant"];
 
-function applyDecisionDefaults(decisions: MissionDecisions | undefined): AppliedDecisions {
+function applyDecisionDefaults(
+  decisions: MissionDecisions | undefined,
+): AppliedDecisions {
   return {
     focus: decisions?.focus ?? "wide",
     downlink: decisions?.downlink ?? "standard",
@@ -56,7 +58,12 @@ function applyDecisionDefaults(decisions: MissionDecisions | undefined): Applied
 }
 
 /** Row 0 is the southern edge of every mission grid and column 0 the western edge. */
-function inQuadrant(cell: MissionGridCell, quadrant: Quadrant, rows: number, columns: number): boolean {
+function inQuadrant(
+  cell: MissionGridCell,
+  quadrant: Quadrant,
+  rows: number,
+  columns: number,
+): boolean {
   const north = cell.row >= rows / 2;
   const east = cell.column >= columns / 2;
   return (quadrant[0] === "n") === north && (quadrant[1] === "e") === east;
@@ -75,7 +82,8 @@ function createTimeline(mission: Mission, orbitId: string): TimelinePoint[] {
   const stepHours = orbitId === "geo" ? 12 : 3;
 
   for (let hour = 0; hour <= mission.durationDays * 24; hour += stepHours) {
-    const phase = (hour / 24) * Math.PI * 2 / Math.max(0.35, orbit?.revisitFactor ?? 1);
+    const phase =
+      ((hour / 24) * Math.PI * 2) / Math.max(0.35, orbit?.revisitFactor ?? 1);
     const across = (Math.sin(phase) + 1) / 2;
     const latWave = (Math.sin(phase * 0.63 + mission.seed) + 1) / 2;
     points.push({
@@ -90,8 +98,20 @@ function createTimeline(mission: Mission, orbitId: string): TimelinePoint[] {
 
 function invalidResult(mission: Mission, violations: string[]): SimResult {
   return {
-    score: { accuracy: 0, responseTime: 0, coverage: 0, costEfficiency: 0, reliability: 0, total: 0 },
-    cells: mission.grid.map((cell) => ({ id: cell.id, truth: cell.truth, observed: false, detected: false })),
+    score: {
+      accuracy: 0,
+      responseTime: 0,
+      coverage: 0,
+      costEfficiency: 0,
+      reliability: 0,
+      total: 0,
+    },
+    cells: mission.grid.map((cell) => ({
+      id: cell.id,
+      truth: cell.truth,
+      observed: false,
+      detected: false,
+    })),
     timeline: createTimeline(mission, "sso_700"),
     feedback: violations.map((message, index) => ({
       type: "warning" as const,
@@ -110,7 +130,8 @@ export function runSimulation(
   constraints: Constraints,
 ): SimResult {
   const resources = summarizeResources(design, constraints);
-  if (resources.violations.length > 0) return invalidResult(mission, resources.violations);
+  if (resources.violations.length > 0)
+    return invalidResult(mission, resources.violations);
 
   const decisions = applyDecisionDefaults(design.decisions);
   const effects = DECISION_EFFECTS;
@@ -119,48 +140,84 @@ export function runSimulation(
   const battery = findPart(partsCatalog.batteries, design.battery)!;
   const comm = findPart(partsCatalog.communications, design.comm)!;
   const rules = categoryRules[mission.category];
-  const dataMargin = resources.dataGBPerDay === 0
-    ? 1
-    : clamp01((resources.downlinkGBPerDay + resources.storageGB / mission.durationDays) / resources.dataGBPerDay);
+  const dataMargin =
+    resources.dataGBPerDay === 0
+      ? 1
+      : clamp01(
+          (resources.downlinkGBPerDay +
+            resources.storageGB / mission.durationDays) /
+            resources.dataGBPerDay,
+        );
   // Downlink strategy changes how long the transmitter runs: on every contact
   // ("fast") or only for batched contacts ("save-power"). "standard" adds nothing.
-  const commPowerShare = decisions.downlink === "fast"
-    ? effects.fastCommPowerShare
-    : decisions.downlink === "save-power" ? effects.savePowerCommPowerShare : 0;
-  const powerUseW = commPowerShare === 0 ? resources.powerUseW : resources.powerUseW + comm.powerW * commPowerShare;
-  const powerMargin = clamp01(resources.powerGenW / Math.max(1, powerUseW) - 0.05);
+  const commPowerShare =
+    decisions.downlink === "fast"
+      ? effects.fastCommPowerShare
+      : decisions.downlink === "save-power"
+        ? effects.savePowerCommPowerShare
+        : 0;
+  const powerUseW =
+    commPowerShare === 0
+      ? resources.powerUseW
+      : resources.powerUseW + comm.powerW * commPowerShare;
+  const powerMargin = clamp01(
+    resources.powerGenW / Math.max(1, powerUseW) - 0.05,
+  );
   // The battery carries the transmitter through eclipse contacts, so the same
   // draw shrinks (or frees) the share of the orbit the payload can keep working.
-  const batteryContinuity = commPowerShare === 0
-    ? battery.eclipseContinuity
-    : clamp01(battery.eclipseContinuity * (1 - commPowerShare * comm.powerW / Math.max(1, resources.powerGenW)));
-  const operationFactor = clamp01((0.62 + powerMargin * 0.38) * batteryContinuity * (0.7 + dataMargin * 0.3));
+  const batteryContinuity =
+    commPowerShare === 0
+      ? battery.eclipseContinuity
+      : clamp01(
+          battery.eclipseContinuity *
+            (1 -
+              (commPowerShare * comm.powerW) /
+                Math.max(1, resources.powerGenW)),
+        );
+  const operationFactor = clamp01(
+    (0.62 + powerMargin * 0.38) * batteryContinuity * (0.7 + dataMargin * 0.3),
+  );
   const coverageChance = clamp01(
-    0.17 * orbit.swathFactor / Math.max(0.35, orbit.revisitFactor) * operationFactor,
+    ((0.17 * orbit.swathFactor) / Math.max(0.35, orbit.revisitFactor)) *
+      operationFactor,
   );
   const baseLatencyHours = Math.max(
     0.25,
-    resources.dataGBPerDay / Math.max(0.1, resources.downlinkGBPerDay) * 24,
+    (resources.dataGBPerDay / Math.max(0.1, resources.downlinkGBPerDay)) * 24,
   );
-  const downlinkLatencyHours = decisions.downlink === "fast"
-    ? Math.max(0.25, baseLatencyHours * effects.fastLatencyFactor)
-    : decisions.downlink === "save-power"
-      ? baseLatencyHours + effects.savePowerBatchHours / design.groundStations
-      : baseLatencyHours;
+  const downlinkLatencyHours =
+    decisions.downlink === "fast"
+      ? Math.max(0.25, baseLatencyHours * effects.fastLatencyFactor)
+      : decisions.downlink === "save-power"
+        ? baseLatencyHours + effects.savePowerBatchHours / design.groundStations
+        : baseLatencyHours;
   const cloudPenetrating = instruments.some(
-    (instrument) => instrument.cloudPenetrating && (instrument.categoryFit[mission.category] ?? 0) >= 0.5,
+    (instrument) =>
+      instrument.cloudPenetrating &&
+      (instrument.categoryFit[mission.category] ?? 0) >= 0.5,
   );
   const bestInstrument = instruments.reduce((best, current) => {
     const currentFit = current.categoryFit[mission.category] ?? 0.08;
     const bestFit = best.categoryFit[mission.category] ?? 0.08;
-    return currentFit * current.resolutionScore > bestFit * best.resolutionScore ? current : best;
+    return currentFit * current.resolutionScore > bestFit * best.resolutionScore
+      ? current
+      : best;
   });
   const fit = bestInstrument.categoryFit[mission.category] ?? 0.08;
-  const passSpacingHours = 12 * orbit.revisitFactor / Math.max(0.4, orbit.swathFactor);
-  const gridRows = mission.grid.reduce((max, cell) => Math.max(max, cell.row + 1), 0);
-  const gridColumns = mission.grid.reduce((max, cell) => Math.max(max, cell.column + 1), 0);
-  const focusTargetFactor = decisions.focus === "hazard" ? effects.hazardFocusTargetBoost : 1;
-  const focusBackgroundFactor = decisions.focus === "hazard" ? effects.hazardFocusBackgroundFactor : 1;
+  const passSpacingHours =
+    (12 * orbit.revisitFactor) / Math.max(0.4, orbit.swathFactor);
+  const gridRows = mission.grid.reduce(
+    (max, cell) => Math.max(max, cell.row + 1),
+    0,
+  );
+  const gridColumns = mission.grid.reduce(
+    (max, cell) => Math.max(max, cell.column + 1),
+    0,
+  );
+  const focusTargetFactor =
+    decisions.focus === "hazard" ? effects.hazardFocusTargetBoost : 1;
+  const focusBackgroundFactor =
+    decisions.focus === "hazard" ? effects.hazardFocusBackgroundFactor : 1;
 
   const cellResults: SimCellResult[] = [];
   let firstDeliveryHours: number | null = null;
@@ -189,7 +246,9 @@ export function runSimulation(
     // Missions task the spacecraft toward known risk areas; background cells remain
     // useful for measuring total regional coverage and false positives.
     const cellCoverageChance = clamp01(
-      coverageChance * (isTarget ? 1.55 : 1) * (isTarget ? focusTargetFactor : focusBackgroundFactor),
+      coverageChance *
+        (isTarget ? 1.55 : 1) *
+        (isTarget ? focusTargetFactor : focusBackgroundFactor),
     );
     const retaskInside = decisions.retask
       ? inQuadrant(cell, decisions.retask.quadrant, gridRows, gridColumns)
@@ -199,15 +258,23 @@ export function runSimulation(
       : cell.cloudProbability * rules.cloudImpact;
 
     for (let day = 0; day < mission.durationDays && !detected; day += 1) {
-      const lookChance = decisions.retask && day >= decisions.retask.day
-        ? clamp01(cellCoverageChance * (retaskInside ? effects.retaskInsideBoost : effects.retaskOutsideFactor))
-        : cellCoverageChance;
+      const lookChance =
+        decisions.retask && day >= decisions.retask.day
+          ? clamp01(
+              cellCoverageChance *
+                (retaskInside
+                  ? effects.retaskInsideBoost
+                  : effects.retaskOutsideFactor),
+            )
+          : cellCoverageChance;
       if (rng() >= lookChance) continue;
       const cloudRoll = rng();
       if (cloudRoll < cloudFailureProbability) {
         // A blocked pass still happened. cloudRoll / probability is uniform on
         // [0, 1) given the block, so it places the pass without an extra draw.
-        const blockedHour = round1(day * 24 + (cloudRoll / cloudFailureProbability) * passSpacingHours);
+        const blockedHour = round1(
+          day * 24 + (cloudRoll / cloudFailureProbability) * passSpacingHours,
+        );
         lookHours.push(blockedHour);
         blockedHours.push(blockedHour);
         continue;
@@ -218,7 +285,12 @@ export function runSimulation(
         observedCells += 1;
       }
       const detectionProbability = clamp01(
-        0.1 + 0.9 * fit * bestInstrument.resolutionScore * orbit.resolutionFactor * cell.detectability,
+        0.1 +
+          0.9 *
+            fit *
+            bestInstrument.resolutionScore *
+            orbit.resolutionFactor *
+            cell.detectability,
       );
       const observationHour = day * 24 + rng() * passSpacingHours;
       lookHours.push(round1(observationHour));
@@ -230,11 +302,15 @@ export function runSimulation(
           truePositive = true;
           truePositives += 1;
           detectedHour = round1(observationHour);
-          firstDetectionHours = firstDetectionHours === null
-            ? observationHour
-            : Math.min(firstDetectionHours, observationHour);
+          firstDetectionHours =
+            firstDetectionHours === null
+              ? observationHour
+              : Math.min(firstDetectionHours, observationHour);
           const delivery = observationHour + downlinkLatencyHours;
-          firstDeliveryHours = firstDeliveryHours === null ? delivery : Math.min(firstDeliveryHours, delivery);
+          firstDeliveryHours =
+            firstDeliveryHours === null
+              ? delivery
+              : Math.min(firstDeliveryHours, delivery);
         }
       } else {
         detected = rng() < 0.005 + (1 - fit) * 0.05;
@@ -246,7 +322,12 @@ export function runSimulation(
         if (isTarget) classifiedBeforeEvent = true;
         // A retask is a new observation request: cells in the chosen quadrant that
         // were classified earlier are reopened and looked at again from that day.
-        if (!detected && retaskInside && decisions.retask && day < decisions.retask.day) {
+        if (
+          !detected &&
+          retaskInside &&
+          decisions.retask &&
+          day < decisions.retask.day
+        ) {
           day = decisions.retask.day - 1;
           continue;
         }
@@ -284,7 +365,9 @@ export function runSimulation(
     cellResults.push(cellResult);
   });
 
-  const storageMargin = clamp01(resources.storageGB / Math.max(1, resources.dataGBPerDay));
+  const storageMargin = clamp01(
+    resources.storageGB / Math.max(1, resources.dataGBPerDay),
+  );
   const reliability = clamp01(
     orbit.reliabilityFactor *
       (0.55 + powerMargin * 0.3 + batteryContinuity * 0.15) *
@@ -298,7 +381,8 @@ export function runSimulation(
     observedCells,
     totalCells: mission.grid.length,
     firstDeliveryHours,
-    targetResponseHours: mission.targetResponseHours || rules.targetResponseHours,
+    targetResponseHours:
+      mission.targetResponseHours || rules.targetResponseHours,
     reliability,
     resources,
     constraints,
@@ -314,9 +398,11 @@ export function runSimulation(
     falseAlarms: falsePositives,
     observedCells,
     totalCells: mission.grid.length,
-    firstDetectionHours: firstDetectionHours === null ? null : round1(firstDetectionHours),
+    firstDetectionHours:
+      firstDetectionHours === null ? null : round1(firstDetectionHours),
     downlinkLatencyHours: round1(downlinkLatencyHours),
-    targetResponseHours: mission.targetResponseHours || rules.targetResponseHours,
+    targetResponseHours:
+      mission.targetResponseHours || rules.targetResponseHours,
     powerMargin: round3(powerMargin),
     dataMargin: round3(dataMargin),
     storageMargin: round3(storageMargin),
@@ -327,7 +413,7 @@ export function runSimulation(
     bestInstrumentId: bestInstrument.id,
     bestInstrumentFit: fit,
     cloudPenetrating,
-    weights: { ...rules.weights },
+    weights: evaluationWeights(mission.category),
     decisions,
   };
 
@@ -337,7 +423,8 @@ export function runSimulation(
     timeline: createTimeline(mission, design.orbit),
     feedback: generateFeedback(score, resources, success, diagnostics),
     success,
-    firstDeliveryHours: firstDeliveryHours === null ? null : round1(firstDeliveryHours),
+    firstDeliveryHours:
+      firstDeliveryHours === null ? null : round1(firstDeliveryHours),
     engineVersion: ENGINE_VERSION,
     diagnostics,
   };

@@ -8,16 +8,16 @@ export function MissionLetter({ mission }: { mission: Mission }) {
   return (
     <article className={styles.shell}>
       <div className={styles.row}>
-        <Link href="/map">← World map</Link>
+        <Link href="/map">← U.S. mission map</Link>
         <span>
           {mission.city} · {mission.targetResponseHours} h response target
         </span>
       </div>
-      <MissionFlightBrief mission={mission} />
+      <EnvelopeLetter mission={mission} />
 
       <details className="mt-6">
-        <summary>Read the mission letter</summary>
-        <EnvelopeLetter mission={mission} />
+        <summary>Open the full flight brief and science sources</summary>
+        <MissionFlightBrief mission={mission} />
       </details>
     </article>
   );

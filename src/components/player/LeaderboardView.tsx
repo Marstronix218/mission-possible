@@ -168,7 +168,7 @@ export function LeaderboardView({
         <em>Shared discoveries.</em>
       </h1>
       <p>
-        Scores are simulated by the server. Rankings only compare the same
+        Scores are simulated by the server. Mission rankings compare the same
         mission, exact budget/mass limits, difficulty and simulator version.
       </p>
       {!backendAvailable && (

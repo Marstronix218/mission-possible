@@ -83,6 +83,9 @@ export function ResultLeaderboard({
 }) {
   const name = usePlayerName();
   const [state, setState] = useState<State>({ status: "loading" });
+  const [globalRows, setGlobalRows] = useState<
+    LeaderboardSubmission["rows"] | null
+  >(null);
   const [round, setRound] = useState(0);
   // Mock attempts are never server-verified, but the demo board accepts them.
   const deviceOnly = !isMockMode && verified === false;
@@ -114,12 +117,45 @@ export function ResultLeaderboard({
     };
   }, [ready, attemptId, name, round]);
 
+  const scope = state.status === "done" ? state.data.scope : undefined;
+  const globalDifficulty = scope?.difficulty;
+  const globalBudget = scope?.constraints?.budgetM;
+  const globalMass = scope?.constraints?.massKg;
+  const posted = state.status === "done";
+  useEffect(() => {
+    if (!classroomId || !backendAvailable || !posted) return;
+    let active = true;
+    api<LeaderboardSubmission["rows"]>("ranking", {
+      missionSlug,
+      difficulty: globalDifficulty,
+      constraints:
+        globalBudget !== undefined && globalMass !== undefined
+          ? { budgetM: globalBudget, massKg: globalMass }
+          : undefined,
+    })
+      .then((rows) => {
+        if (active) setGlobalRows(rows);
+      })
+      .catch(() => {
+        if (active) setGlobalRows([]);
+      });
+    return () => {
+      active = false;
+    };
+  }, [
+    classroomId,
+    missionSlug,
+    posted,
+    globalDifficulty,
+    globalBudget,
+    globalMass,
+  ]);
+
   const retry = useCallback(() => {
     setState({ status: "loading" });
     setRound((n) => n + 1);
   }, []);
 
-  const scope = state.status === "done" ? state.data.scope : undefined;
   const fullHref = leaderboardHref(
     missionSlug,
     classroomId,
@@ -195,6 +231,19 @@ export function ResultLeaderboard({
               : "Best simulated score per pilot · ties go to the earliest")
           }
         />
+        {classroomId && globalRows && (
+          <div className="mt-6">
+            <h3 className="font-display text-lg">Global mission ranking</h3>
+            <p className="muted">
+              Compare public scores for this mission under the same engineering
+              limits. Only pilots with a public name appear here.
+            </p>
+            <LeaderboardTable
+              rows={globalRows.slice(0, visibleRows)}
+              caption="Global top pilots for this mission"
+            />
+          </div>
+        )}
       </>
     );
   }
@@ -202,7 +251,7 @@ export function ResultLeaderboard({
   return (
     <section className="panel mt-6" aria-labelledby="result-leaderboard">
       <h2 id="result-leaderboard" className="mt-0 font-display text-xl">
-        🏆 {classroomId ? "Class leaderboard" : "Leaderboard"}
+        🏆 {classroomId ? "Your score and rankings" : "Leaderboard"}
       </h2>
       <div aria-live="polite">{body}</div>
       <p className="mb-0 mt-3">
@@ -211,6 +260,21 @@ export function ResultLeaderboard({
             ? "Open the full class leaderboard ↗"
             : "Open the full leaderboards ↗"}
         </Link>
+        {classroomId && (
+          <>
+            {" · "}
+            <Link
+              href={leaderboardHref(
+                missionSlug,
+                undefined,
+                scope?.difficulty,
+                scope?.constraints ?? undefined,
+              )}
+            >
+              View global mission ranking ↗
+            </Link>
+          </>
+        )}
       </p>
     </section>
   );

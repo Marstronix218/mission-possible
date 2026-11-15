@@ -2,12 +2,26 @@
 // Pure and deterministic: every number below is either an engine output
 // (SimResult), a resource summary value, a catalog value, or simple arithmetic
 // on those. Nothing here changes the score.
-import type { Mission, ResourceSummary, SatelliteDesign, ScoreBreakdown, SimResult } from "@/types/game";
+import type {
+  Mission,
+  ResourceSummary,
+  SatelliteDesign,
+  ScoreBreakdown,
+  SimResult,
+} from "@/types/game";
 import { partsCatalog } from "@/lib/sim";
 import { getMissionStory } from "./missions";
 import { partExplainers, slotExplainers, type PartSlot } from "./parts";
 
-export type StoryEventKind = "launch" | "orbit" | "pass" | "detect" | "downlink" | "problem" | "deadline" | "outcome";
+export type StoryEventKind =
+  | "launch"
+  | "orbit"
+  | "pass"
+  | "detect"
+  | "downlink"
+  | "problem"
+  | "deadline"
+  | "outcome";
 export type StoryTone = "good" | "bad" | "neutral";
 /**
  * engine   – the hour is an engine output (e.g. firstDeliveryHours).
@@ -66,7 +80,10 @@ export const BLOCKED_CLOUD_PROBABILITY = 0.3;
 const round1 = (value: number) => Math.round(value * 10) / 10;
 const hours = (value: number) => `${round1(value)} h`;
 
-const slotParts: Record<Exclude<PartSlot, "instruments" | "groundStations">, { id: string; name: string; costM: number }[]> = {
+const slotParts: Record<
+  Exclude<PartSlot, "instruments" | "groundStations">,
+  { id: string; name: string; costM: number }[]
+> = {
   orbit: partsCatalog.orbits,
   solar: partsCatalog.solar,
   battery: partsCatalog.batteries,
@@ -86,9 +103,12 @@ export const slotNoun: Record<PartSlot, string> = {
 
 /** Human name of the part the player picked for a slot, e.g. "UHF radio". */
 export function partLabel(slot: PartSlot, design: SatelliteDesign): string {
-  if (slot === "groundStations") return `${design.groundStations} ground station${design.groundStations === 1 ? "" : "s"}`;
+  if (slot === "groundStations")
+    return `${design.groundStations} ground station${design.groundStations === 1 ? "" : "s"}`;
   if (slot === "instruments") {
-    const names = design.instruments.map((id) => partsCatalog.instruments.find((p) => p.id === id)?.name ?? id);
+    const names = design.instruments.map(
+      (id) => partsCatalog.instruments.find((p) => p.id === id)?.name ?? id,
+    );
     return names.join(" + ") || "no sensor";
   }
   const part = slotParts[slot].find((p) => p.id === design[slot]);
@@ -96,7 +116,10 @@ export function partLabel(slot: PartSlot, design: SatelliteDesign): string {
   return slot === "comm" ? `${name} radio` : name;
 }
 
-function causePartId(slot: PartSlot, design: SatelliteDesign): string | undefined {
+function causePartId(
+  slot: PartSlot,
+  design: SatelliteDesign,
+): string | undefined {
   if (slot === "groundStations") return String(design.groundStations);
   if (slot === "instruments") return design.instruments[0];
   return design[slot];
@@ -117,14 +140,18 @@ function regionOf(mission: Mission, lat: number, lon: number): string {
 }
 
 function listRegions(regions: string[]): string {
-  const named = regions.map((r) => (r === "center" ? "the center" : `the ${r}`));
+  const named = regions.map((r) =>
+    r === "center" ? "the center" : `the ${r}`,
+  );
   if (named.length <= 1) return named[0] ?? "";
   return named.slice(0, -1).join(", ") + " and " + named[named.length - 1];
 }
 
 /** The radio/ground-station slot to blame for slow downlink. */
 function downlinkSlot(design: SatelliteDesign): PartSlot {
-  const rate = partsCatalog.communications.find((c) => c.id === design.comm)?.rateGbps ?? 0;
+  const rate =
+    partsCatalog.communications.find((c) => c.id === design.comm)?.rateGbps ??
+    0;
   return design.groundStations === 1 && rate >= 2 ? "groundStations" : "comm";
 }
 
@@ -139,12 +166,26 @@ export function diagnoseMission(
   const instruments = design.instruments
     .map((id) => partsCatalog.instruments.find((p) => p.id === id))
     .filter((p) => p !== undefined);
-  const bestFit = instruments.reduce((best, p) => Math.max(best, p.categoryFit[mission.category] ?? 0), 0);
-  const cloudPenetrating = instruments.some((p) => p.cloudPenetrating && (p.categoryFit[mission.category] ?? 0) >= 0.5);
+  const bestFit = instruments.reduce(
+    (best, p) => Math.max(best, p.categoryFit[mission.category] ?? 0),
+    0,
+  );
+  const cloudPenetrating = instruments.some(
+    (p) => p.cloudPenetrating && (p.categoryFit[mission.category] ?? 0) >= 0.5,
+  );
   const radioDelayHours =
-    resources.dataGBPerDay === 0 ? 0.25 : Math.max(0.25, (resources.dataGBPerDay / Math.max(0.1, resources.downlinkGBPerDay)) * 24);
+    resources.dataGBPerDay === 0
+      ? 0.25
+      : Math.max(
+          0.25,
+          (resources.dataGBPerDay / Math.max(0.1, resources.downlinkGBPerDay)) *
+            24,
+        );
   const deliveredHours = result.firstDeliveryHours;
-  const detectHour = deliveredHours === null ? null : Math.max(0, round1(deliveredHours - radioDelayHours));
+  const detectHour =
+    deliveredHours === null
+      ? null
+      : Math.max(0, round1(deliveredHours - radioDelayHours));
   const met = deliveredHours !== null && deliveredHours <= deadlineHours;
 
   let hazardCells = 0;
@@ -167,7 +208,8 @@ export function diagnoseMission(
           regions.set(region, (regions.get(region) ?? 0) + 1);
         }
       } else if (cell.observed) unclearHazards += 1;
-      else if ((source?.cloudProbability ?? 0) >= BLOCKED_CLOUD_PROBABILITY) blockedHazards += 1;
+      else if ((source?.cloudProbability ?? 0) >= BLOCKED_CLOUD_PROBABILITY)
+        blockedHazards += 1;
       else unseenHazards += 1;
     } else if (cell.detected) falseAlarms += 1;
   }
@@ -177,8 +219,13 @@ export function diagnoseMission(
   if (!met) {
     if (deliveredHours === null || detectHour === null) {
       lateCause =
-        bestFit < 0.5 || (blockedHazards > unseenHazards && !cloudPenetrating) ? "instruments" : "orbit";
-    } else if (radioDelayHours >= detectHour || radioDelayHours > deadlineHours) {
+        bestFit < 0.5 || (blockedHazards > unseenHazards && !cloudPenetrating)
+          ? "instruments"
+          : "orbit";
+    } else if (
+      radioDelayHours >= detectHour ||
+      radioDelayHours > deadlineHours
+    ) {
       lateCause = downlinkSlot(design);
     } else {
       lateCause = detectionCause;
@@ -204,8 +251,16 @@ export function diagnoseMission(
     bestFit,
     cloudPenetrating,
     powerMarginPct:
-      resources.powerGenW > 0 ? Math.round(((resources.powerGenW - resources.powerUseW) / resources.powerGenW) * 100) : null,
-    hazardRegions: [...regions].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([region]) => region),
+      resources.powerGenW > 0
+        ? Math.round(
+            ((resources.powerGenW - resources.powerUseW) /
+              resources.powerGenW) *
+              100,
+          )
+        : null,
+    hazardRegions: [...regions]
+      .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+      .map(([region]) => region),
   };
 }
 
@@ -237,7 +292,10 @@ export function buildMissionStory(
   const endHour = mission.durationDays * 24;
   const deadline = d.deadlineHours;
   const events: StoryEvent[] = [];
-  const blame = (slot: PartSlot) => ({ causeSlot: slot, causePartId: causePartId(slot, design) });
+  const blame = (slot: PartSlot) => ({
+    causeSlot: slot,
+    causePartId: causePartId(slot, design),
+  });
   const orbit = partsCatalog.orbits.find((o) => o.id === design.orbit);
   const battery = partsCatalog.batteries.find((b) => b.id === design.battery);
 
@@ -261,7 +319,11 @@ export function buildMissionStory(
       timing: "derived",
       launchStage: "orbit",
       title: `Orbit reached: ${orbit.name}`,
-      detail: [partExplainers[orbit.id]?.does, partExplainers[orbit.id] && `Upside: ${partExplainers[orbit.id].good}`, partExplainers[orbit.id] && `Downside: ${partExplainers[orbit.id].bad}`]
+      detail: [
+        partExplainers[orbit.id]?.does,
+        partExplainers[orbit.id] && `Upside: ${partExplainers[orbit.id].good}`,
+        partExplainers[orbit.id] && `Downside: ${partExplainers[orbit.id].bad}`,
+      ]
         .filter(Boolean)
         .join(" "),
     });
@@ -292,7 +354,9 @@ export function buildMissionStory(
     });
   }
 
-  const tightPower = resources.powerGenW > 0 && resources.powerUseW / resources.powerGenW >= 0.85;
+  const tightPower =
+    resources.powerGenW > 0 &&
+    resources.powerUseW / resources.powerGenW >= 0.85;
   if (tightPower) {
     events.push({
       id: "power-margin",
@@ -331,7 +395,9 @@ export function buildMissionStory(
     });
   }
 
-  const downlinkTight = resources.downlinkGBPerDay > 0 && resources.dataGBPerDay / resources.downlinkGBPerDay >= 0.8;
+  const downlinkTight =
+    resources.downlinkGBPerDay > 0 &&
+    resources.dataGBPerDay / resources.downlinkGBPerDay >= 0.8;
   const linkSlot = downlinkSlot(design);
   if (downlinkTight) {
     events.push({
@@ -426,7 +492,11 @@ export function buildMissionStory(
         : d.deliveredHours === null
           ? `${dependents} must decide without your map. ${slotExplainers[d.lateCause ?? "orbit"].ifWeak}`
           : `Your satellite has not found the ${hazard} yet. ${slotExplainers[d.detectionCause].ifWeak}`,
-      ...blame(stillOnBoard || d.deliveredHours === null ? (d.lateCause ?? "orbit") : d.detectionCause),
+      ...blame(
+        stillOnBoard || d.deliveredHours === null
+          ? (d.lateCause ?? "orbit")
+          : d.detectionCause,
+      ),
     });
   } else {
     events.push({
@@ -527,7 +597,10 @@ export function buildMissionStory(
 }
 
 /** One big sentence for the debrief. */
-export function outcomeHeadline(mission: Mission, diagnosis: MissionDiagnosis): { tone: StoryTone; sentence: string } {
+export function outcomeHeadline(
+  mission: Mission,
+  diagnosis: MissionDiagnosis,
+): { tone: StoryTone; sentence: string } {
   const story = getMissionStory(mission.slug);
   const hazard = story?.hazardNoun ?? "hazard";
   const dependents = story?.dependents ?? "Emergency teams";
@@ -565,34 +638,59 @@ export interface NextStep {
   text: string;
 }
 
-function nextPart(slot: PartSlot, design: SatelliteDesign, direction: 1 | -1): { id: string; name: string } | undefined {
+function nextPart(
+  slot: PartSlot,
+  design: SatelliteDesign,
+  direction: 1 | -1,
+): { id: string; name: string } | undefined {
   if (slot === "groundStations") {
     const ladder = [1, 3, 5] as const;
     const next = ladder[ladder.indexOf(design.groundStations) + direction];
-    return next ? { id: String(next), name: `${next} ground stations` } : undefined;
+    return next
+      ? { id: String(next), name: `${next} ground stations` }
+      : undefined;
   }
   if (slot === "instruments" || slot === "orbit") return undefined;
   const list = slotParts[slot];
   const next = list[list.findIndex((p) => p.id === design[slot]) + direction];
-  return next ? { id: next.id, name: slot === "comm" ? `${next.name} radio` : next.name } : undefined;
+  return next
+    ? { id: next.id, name: slot === "comm" ? `${next.name} radio` : next.name }
+    : undefined;
 }
 
 /** A concrete "try this next" from the weakest score component and its responsible slot. */
-export function suggestNextStep(mission: Mission, design: SatelliteDesign, result: SimResult, diagnosis: MissionDiagnosis): NextStep {
+export function suggestNextStep(
+  mission: Mission,
+  design: SatelliteDesign,
+  result: SimResult,
+  diagnosis: MissionDiagnosis,
+): NextStep {
   // A cheaper part is not useful advice while the mission is still failing.
-  const metrics = (Object.keys(metricLabels) as (keyof typeof metricLabels)[]).filter(
-    (m) => result.success || m !== "costEfficiency",
+  const metrics = (
+    Object.keys(metricLabels) as (keyof typeof metricLabels)[]
+  ).filter((m) => m !== "costEfficiency");
+  const metric = metrics.reduce(
+    (low, m) => (result.score[m] < result.score[low] ? m : low),
+    metrics[0],
   );
-  const metric = metrics.reduce((low, m) => (result.score[m] < result.score[low] ? m : low), metrics[0]);
   const value = round1(result.score[metric]);
   const base = { metric, metricLabel: metricLabels[metric], value };
   const hazard = getMissionStory(mission.slug)?.hazardNoun ?? "hazard";
 
-  if (metric === "accuracy" || (metric === "coverage" && diagnosis.blockedHazards > diagnosis.unseenHazards && !diagnosis.cloudPenetrating)) {
+  if (
+    metric === "accuracy" ||
+    (metric === "coverage" &&
+      diagnosis.blockedHazards > diagnosis.unseenHazards &&
+      !diagnosis.cloudPenetrating)
+  ) {
     if (diagnosis.bestFit < 0.85 || metric === "coverage") {
       const best = [...partsCatalog.instruments]
         .filter((p) => metric !== "coverage" || p.cloudPenetrating)
-        .sort((a, b) => (b.categoryFit[mission.category] ?? 0) - (a.categoryFit[mission.category] ?? 0))[0];
+        .sort(
+          (a, b) =>
+            (b.categoryFit[mission.category] ?? 0) -
+            (a.categoryFit[mission.category] ?? 0),
+        )[0];
       return {
         ...base,
         slot: "instruments",
@@ -612,8 +710,14 @@ export function suggestNextStep(mission: Mission, design: SatelliteDesign, resul
   if (metric === "responseTime") {
     const slot = diagnosis.lateCause ?? downlinkSlot(design);
     if (slot === "comm" || slot === "groundStations") {
-      const up = nextPart(slot, design, 1) ?? nextPart(slot === "comm" ? "groundStations" : "comm", design, 1);
-      const upSlot = nextPart(slot, design, 1) ? slot : slot === "comm" ? "groundStations" : "comm";
+      const up =
+        nextPart(slot, design, 1) ??
+        nextPart(slot === "comm" ? "groundStations" : "comm", design, 1);
+      const upSlot = nextPart(slot, design, 1)
+        ? slot
+        : slot === "comm"
+          ? "groundStations"
+          : "comm";
       return {
         ...base,
         slot: upSlot,
@@ -653,8 +757,13 @@ export function suggestNextStep(mission: Mission, design: SatelliteDesign, resul
   }
   // costEfficiency: the most expensive non-sensor part that has a cheaper option.
   const candidates = (["orbit", "comm", "solar", "battery", "storage"] as const)
-    .map((slot) => ({ slot, part: slotParts[slot].find((p) => p.id === design[slot]) }))
-    .filter((c) => c.part && slotParts[c.slot].some((p) => p.costM < c.part!.costM))
+    .map((slot) => ({
+      slot,
+      part: slotParts[slot].find((p) => p.id === design[slot]),
+    }))
+    .filter(
+      (c) => c.part && slotParts[c.slot].some((p) => p.costM < c.part!.costM),
+    )
     .sort((a, b) => b.part!.costM - a.part!.costM);
   const pick = candidates[0];
   if (pick) {
@@ -666,17 +775,33 @@ export function suggestNextStep(mission: Mission, design: SatelliteDesign, resul
       text: `Your ${partLabel(pick.slot, design)} costs $${pick.part!.costM}M. ${cheaper ? `Would the ${cheaper.name} still do the job?` : "Is a cheaper option enough?"} Check the other scores do not drop.`,
     };
   }
-  return { ...base, slot: "instruments", text: "Try fewer or cheaper sensors, if the hazard is still covered." };
+  return {
+    ...base,
+    slot: "instruments",
+    text: "Try fewer or cheaper sensors, if the hazard is still covered.",
+  };
 }
 
 /** "Radio: UHF → X-band" lines for an attempt comparison. */
-export function describeDesignChanges(before: SatelliteDesign, after: SatelliteDesign): string[] {
-  const slots: PartSlot[] = ["instruments", "orbit", "solar", "battery", "comm", "groundStations", "storage"];
+export function describeDesignChanges(
+  before: SatelliteDesign,
+  after: SatelliteDesign,
+): string[] {
+  const slots: PartSlot[] = [
+    "instruments",
+    "orbit",
+    "solar",
+    "battery",
+    "comm",
+    "groundStations",
+    "storage",
+  ];
   return slots
-    .filter((slot) => JSON.stringify(before[slot]) !== JSON.stringify(after[slot]))
+    .filter(
+      (slot) => JSON.stringify(before[slot]) !== JSON.stringify(after[slot]),
+    )
     .map((slot) => {
       const title = slotExplainers[slot].title.replace(/\s*\(.*\)$/, "");
       return `${title}: ${partLabel(slot, before)} → ${partLabel(slot, after)}`;
     });
 }
-

@@ -30,7 +30,108 @@ export function myRankLine(rows: Ranking[]) {
  * GLOBAL leaderboard: one mission × one difficulty tier × the current
  * simulator version at a time, so different conditions are never mixed.
  */
-export function LeaderboardGlobal({
+export function LeaderboardGlobal(
+  props: Parameters<typeof MissionGlobalRanking>[0],
+) {
+  const [scope, setScope] = useState<"mission" | "overall">("mission");
+  return (
+    <>
+      <div className="filter" role="group" aria-label="Global ranking scope">
+        <button
+          type="button"
+          aria-pressed={scope === "mission"}
+          onClick={() => setScope("mission")}
+        >
+          By mission
+        </button>
+        <button
+          type="button"
+          aria-pressed={scope === "overall"}
+          onClick={() => setScope("overall")}
+        >
+          Overall
+        </button>
+      </div>
+      {scope === "mission" ? (
+        <MissionGlobalRanking {...props} />
+      ) : (
+        <OverallGlobalRanking canLoad={props.canLoad} />
+      )}
+    </>
+  );
+}
+
+function OverallGlobalRanking({ canLoad }: { canLoad: boolean }) {
+  const [requested, setRequested] = useState(false);
+  const [round, setRound] = useState(0);
+  const [state, setState] = useState<{ rows?: Ranking[]; error?: string }>({});
+  const ready = canLoad || requested;
+  const refresh = useCallback(() => setRound((n) => n + 1), []);
+  useEffect(() => {
+    if (!ready) return;
+    let active = true;
+    void api<Ranking[]>("overallRanking").then(
+      (rows) => {
+        if (active) setState({ rows });
+      },
+      (error: unknown) => {
+        if (active)
+          setState({
+            error:
+              error instanceof Error
+                ? error.message
+                : "Could not load overall ranking.",
+          });
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, [ready, round]);
+  useEffect(() => {
+    if (!isMockMode) return;
+    window.addEventListener(demoUpdateEvent, refresh);
+    return () => window.removeEventListener(demoUpdateEvent, refresh);
+  }, [refresh]);
+  return (
+    <>
+      <h2>Overall global ranking</h2>
+      <p className="muted">
+        Add up your best solo score in each mission. All solo missions use their
+        standard limits.
+      </p>
+      {!ready && (
+        <button
+          type="button"
+          className="primary"
+          onClick={() => setRequested(true)}
+        >
+          Load overall ranking
+        </button>
+      )}
+      {state.rows && (
+        <LeaderboardTable
+          rows={state.rows}
+          scoreLabel="Overall points"
+          caption="Sum of each pilot’s best solo score per mission"
+        />
+      )}
+      {state.error && (
+        <p className="error" role="alert">
+          {state.error}{" "}
+          <button type="button" onClick={refresh}>
+            Try again
+          </button>
+        </p>
+      )}
+      {ready && !state.rows && !state.error && (
+        <p aria-live="polite">Loading ranking…</p>
+      )}
+    </>
+  );
+}
+
+function MissionGlobalRanking({
   mission,
   difficulty,
   conditions,

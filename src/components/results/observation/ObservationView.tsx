@@ -321,7 +321,14 @@ function Marker({
       {v.mark === "found" && (
         <g>
           <title>Hazard confirmed by your satellite</title>
-          <circle cx={cx} cy={cy} r={r} fill="#ffd23f" stroke="#07121b" strokeWidth={r * 0.28} />
+          <circle
+            cx={cx}
+            cy={cy}
+            r={r}
+            fill="#ffd23f"
+            stroke="#07121b"
+            strokeWidth={r * 0.28}
+          />
           <circle cx={cx} cy={cy} r={r * 0.32} fill="#07121b" />
         </g>
       )}
@@ -346,7 +353,12 @@ function Marker({
       {v.mark === "missed" && v.missReason && (
         <g transform={`translate(${cx} ${cy})`}>
           <title>{`Hazard zone ${MISS_LABEL[v.missReason]}`}</title>
-          <circle r={r * 0.85} fill="#07121b" stroke="#fff" strokeWidth={r * 0.12} />
+          <circle
+            r={r * 0.85}
+            fill="#07121b"
+            stroke="#fff"
+            strokeWidth={r * 0.12}
+          />
           {v.missReason === "cloud-blocked" && (
             <path
               d={`M${-r * 0.5} ${r * 0.2} a${r * 0.25} ${r * 0.25} 0 0 1 ${r * 0.2} ${-r * 0.45} a${r * 0.32} ${r * 0.32} 0 0 1 ${r * 0.6} 0 a${r * 0.22} ${r * 0.22} 0 0 1 ${r * 0.2} ${r * 0.45} z`}
@@ -412,13 +424,43 @@ function Swatch({ kind }: { kind: string }) {
   return (
     <svg className={styles.swatch} viewBox="0 0 22 16" aria-hidden="true">
       <defs>
-        <pattern id={`hatch-${kind}`} width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
-          <line x1="0" y1="0" x2="0" y2="5" stroke="rgba(255,255,255,0.45)" strokeWidth="1.4" />
+        <pattern
+          id={`hatch-${kind}`}
+          width="5"
+          height="5"
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(-45)"
+        >
+          <line
+            x1="0"
+            y1="0"
+            x2="0"
+            y2="5"
+            stroke="rgba(255,255,255,0.45)"
+            strokeWidth="1.4"
+          />
         </pattern>
       </defs>
-      {kind === "downlinked" && <rect width="22" height="16" fill="#9cc29a" stroke="#fff" strokeWidth="1" />}
+      {kind === "downlinked" && (
+        <rect
+          width="22"
+          height="16"
+          fill="#9cc29a"
+          stroke="#fff"
+          strokeWidth="1"
+        />
+      )}
       {kind === "onboard" && (
-        <rect x="1.5" y="1.5" width="19" height="13" fill="rgba(255,210,63,0.25)" stroke="#ffd23f" strokeWidth="2" strokeDasharray="3 2" />
+        <rect
+          x="1.5"
+          y="1.5"
+          width="19"
+          height="13"
+          fill="rgba(255,210,63,0.25)"
+          stroke="#ffd23f"
+          strokeWidth="2"
+          strokeDasharray="3 2"
+        />
       )}
       {kind === "blocked" && (
         <g>
@@ -434,18 +476,45 @@ function Swatch({ kind }: { kind: string }) {
           <rect width="22" height="16" fill={`url(#hatch-${kind})`} />
         </g>
       )}
-      {kind === "look" && <rect x="1.5" y="1.5" width="19" height="13" fill="none" stroke="#8ed5dc" strokeWidth="2.5" />}
+      {kind === "look" && (
+        <rect
+          x="1.5"
+          y="1.5"
+          width="19"
+          height="13"
+          fill="none"
+          stroke="#8ed5dc"
+          strokeWidth="2.5"
+        />
+      )}
       {kind === "band" && (
-        <rect x="1" y="3" width="20" height="10" fill="rgba(142,213,220,0.25)" stroke="#8ed5dc" strokeDasharray="3 2" />
+        <rect
+          x="1"
+          y="3"
+          width="20"
+          height="10"
+          fill="rgba(142,213,220,0.25)"
+          stroke="#8ed5dc"
+          strokeDasharray="3 2"
+        />
       )}
     </svg>
   );
 }
 
 function MarkerSwatch({ v, colour }: { v: Partial<CellView>; colour: string }) {
-  const view = { mark: "none", falseAlarm: false, missReason: null, ...v } as CellView;
+  const view = {
+    mark: "none",
+    falseAlarm: false,
+    missReason: null,
+    ...v,
+  } as CellView;
   return (
-    <svg className={`${styles.swatch} ${styles.markerSwatch}`} viewBox="0 0 20 16" aria-hidden="true">
+    <svg
+      className={`${styles.swatch} ${styles.markerSwatch}`}
+      viewBox="0 0 20 16"
+      aria-hidden="true"
+    >
       <rect width="20" height="16" rx="3" fill="#2a3a4a" />
       <Marker v={view} x={2} y={0} cw={16} ch={16} hazardColour={colour} />
     </svg>
@@ -514,8 +583,18 @@ export function ObservationView({
   const phase =
     mode === "final"
       ? "complete"
-      : phaseAt({ hour: at, span, windowOpen: win.open, onboardCells: onboard });
-  const caption = captionFor(phase, mission.city, profile.kind, result.score.coverage);
+      : phaseAt({
+          hour: at,
+          span,
+          windowOpen: win.open,
+          onboardCells: onboard,
+        });
+  const caption = captionFor(
+    phase,
+    mission.city,
+    profile.kind,
+    result.score.coverage,
+  );
   const band = mode === "live" ? footprintBand(design, at, windowHours) : null;
 
   // Compare is the default in the live run and on the final map alike.
@@ -534,7 +613,9 @@ export function ObservationView({
   const viewport = useRef<HTMLDivElement>(null);
   const realCanvas = useRef<HTMLCanvasElement>(null);
   const simCanvas = useRef<HTMLCanvasElement>(null);
-  const baseCache = useRef<{ key: string; canvas: HTMLCanvasElement } | null>(null);
+  const baseCache = useRef<{ key: string; canvas: HTMLCanvasElement } | null>(
+    null,
+  );
   const pointers = useRef(new Map<number, { x: number; y: number }>());
   const gesture = useRef<{
     x: number;
@@ -546,8 +627,12 @@ export function ObservationView({
 
   const hasLst = lst !== null;
   const showLstReal = hasLst && realLayer === "lst";
-  const trueColourSrc = lst ? lst.trueColourSrc : refs ? refs.context.src : null;
-  const trueColourBbox = lst ? lst.bbox : refs?.context.bbox ?? mission.bbox;
+  const trueColourSrc = lst
+    ? lst.trueColourSrc
+    : refs
+      ? refs.context.src
+      : null;
+  const trueColourBbox = lst ? lst.bbox : (refs?.context.bbox ?? mission.bbox);
   const trueColourImg = useImage(trueColourSrc);
   const lstImg = useImage(lst ? lst.src : null);
 
@@ -590,10 +675,25 @@ export function ObservationView({
     ctx.fillStyle = "#0b1220";
     ctx.fillRect(0, 0, pxW, pxH);
     if (trueColourImg)
-      drawLayer(ctx, mission.bbox, { img: trueColourImg, bbox: trueColourBbox }, pxW, pxH);
+      drawLayer(
+        ctx,
+        mission.bbox,
+        { img: trueColourImg, bbox: trueColourBbox },
+        pxW,
+        pxH,
+      );
     if (showLstReal && lstImg && lst)
       drawLayer(ctx, mission.bbox, { img: lstImg, bbox: lst.bbox }, pxW, pxH);
-  }, [width, aspect, trueColourImg, trueColourBbox, lstImg, lst, showLstReal, mission.bbox]);
+  }, [
+    width,
+    aspect,
+    trueColourImg,
+    trueColourBbox,
+    lstImg,
+    lst,
+    showLstReal,
+    mission.bbox,
+  ]);
 
   // SIMULATED canvas: sensor picture at its detail level + engine cell states.
   useEffect(() => {
@@ -608,21 +708,52 @@ export function ObservationView({
     ctx.fillRect(0, 0, pxW, pxH);
     const layers: Layer[] = [];
     if (trueColourImg)
-      layers.push({ img: trueColourImg, bbox: trueColourBbox, dim: profile.layer === "lst" });
-    if (profile.layer === "lst" && lstImg && lst) layers.push({ img: lstImg, bbox: lst.bbox });
+      layers.push({
+        img: trueColourImg,
+        bbox: trueColourBbox,
+        dim: profile.layer === "lst",
+      });
+    if (profile.layer === "lst" && lstImg && lst)
+      layers.push({ img: lstImg, bbox: lst.bbox });
     const ready = trueColourImg && (profile.layer !== "lst" || lstImg);
     if (ready) {
-      const key = [mission.slug, profile.layer, profile.pixelsPerCell, layers.length].join("|");
+      const key = [
+        mission.slug,
+        profile.layer,
+        profile.pixelsPerCell,
+        layers.length,
+      ].join("|");
       if (baseCache.current?.key !== key)
         baseCache.current = {
           key,
-          canvas: buildSimBase(mission.bbox, layers, columns, rows, profile, aspect),
+          canvas: buildSimBase(
+            mission.bbox,
+            layers,
+            columns,
+            rows,
+            profile,
+            aspect,
+          ),
         };
       ctx.imageSmoothingEnabled = false;
       ctx.drawImage(baseCache.current.canvas, 0, 0, pxW, pxH);
     }
     drawStates(ctx, views, rows, columns, pxW, pxH, mode === "live");
-  }, [width, trueColourImg, trueColourBbox, lstImg, lst, profile, views, rows, columns, mission.slug, mission.bbox, aspect, mode]);
+  }, [
+    width,
+    trueColourImg,
+    trueColourBbox,
+    lstImg,
+    lst,
+    profile,
+    views,
+    rows,
+    columns,
+    mission.slug,
+    mission.bbox,
+    aspect,
+    mode,
+  ]);
 
   // ── Interaction ────────────────────────────────────────────────────
   const zoomed = t.scale > 1.001;
@@ -650,7 +781,10 @@ export function ObservationView({
       y: e.clientY,
       moved: pts.length > 1,
       start: t,
-      dist: pts.length === 2 ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) : undefined,
+      dist:
+        pts.length === 2
+          ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y)
+          : undefined,
     };
   }
   function onPointerMove(e: PointerEvent<HTMLDivElement>) {
@@ -661,7 +795,10 @@ export function ObservationView({
     const p = relPoint(e);
     if (pts.length === 2 && g.dist) {
       const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-      const mid = relPoint({ clientX: (pts[0].x + pts[1].x) / 2, clientY: (pts[0].y + pts[1].y) / 2 });
+      const mid = relPoint({
+        clientX: (pts[0].x + pts[1].x) / 2,
+        clientY: (pts[0].y + pts[1].y) / 2,
+      });
       setT(zoomAt(g.start, dist / g.dist, mid.x, mid.y));
       return;
     }
@@ -669,7 +806,13 @@ export function ObservationView({
     const dy = e.clientY - g.y;
     if (Math.hypot(dx, dy) > 5) g.moved = true;
     if (g.moved && g.start.scale > 1)
-      setT(clampTransform({ ...g.start, x: g.start.x + dx / p.w, y: g.start.y + dy / p.h }));
+      setT(
+        clampTransform({
+          ...g.start,
+          x: g.start.x + dx / p.w,
+          y: g.start.y + dy / p.h,
+        }),
+      );
   }
   function onPointerUp(e: PointerEvent<HTMLDivElement>) {
     const g = gesture.current;
@@ -694,7 +837,13 @@ export function ObservationView({
       e.preventDefault();
       const [dr, dc] = moves[e.key];
       if (e.shiftKey) {
-        setT((prev) => clampTransform({ ...prev, x: prev.x - dc * 0.1, y: prev.y + dr * 0.1 }));
+        setT((prev) =>
+          clampTransform({
+            ...prev,
+            x: prev.x - dc * 0.1,
+            y: prev.y + dr * 0.1,
+          }),
+        );
         return;
       }
       setCursor((c) => ({
@@ -703,7 +852,9 @@ export function ObservationView({
       }));
     } else if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      const g = mission.grid.find((x) => x.row === cursor.row && x.column === cursor.column);
+      const g = mission.grid.find(
+        (x) => x.row === cursor.row && x.column === cursor.column,
+      );
       if (g) setSelected(g.id);
     } else if (e.key === "+" || e.key === "=") {
       e.preventDefault();
@@ -728,8 +879,13 @@ export function ObservationView({
   }
   function onHandlePointer(e: PointerEvent<HTMLButtonElement>) {
     e.stopPropagation();
-    if (e.type === "pointerdown") e.currentTarget.setPointerCapture(e.pointerId);
-    if (e.type === "pointermove" && !e.currentTarget.hasPointerCapture(e.pointerId)) return;
+    if (e.type === "pointerdown")
+      e.currentTarget.setPointerCapture(e.pointerId);
+    if (
+      e.type === "pointermove" &&
+      !e.currentTarget.hasPointerCapture(e.pointerId)
+    )
+      return;
     const p = relPoint(e);
     setSplit(Math.round(Math.min(100, Math.max(0, p.x * 100))));
   }
@@ -743,23 +899,35 @@ export function ObservationView({
     transform: `translate(${t.x * 100}%, ${t.y * 100}%) scale(${t.scale})`,
   };
   const marked = views.filter((v) => v.mark !== "none" || v.falseAlarm);
-  const selectedView = selected ? views.find((v) => v.id === selected) ?? null : null;
+  const selectedView = selected
+    ? (views.find((v) => v.id === selected) ?? null)
+    : null;
   const detail = selectedView
-    ? cellDetail(selectedView, result.cells.find((c) => c.id === selectedView.id), mission, at, lst)
+    ? cellDetail(
+        selectedView,
+        result.cells.find((c) => c.id === selectedView.id),
+        mission,
+        at,
+        lst,
+      )
     : null;
   const showReal = view !== "sim";
   const showSim = view !== "real";
   const simClip = view === "compare" ? `inset(0 0 0 ${split}%)` : undefined;
-  const realDate = lst ? formatDate(lst.observedOn) : formatDate(refs?.context.observedOn);
+  const realDate = lst
+    ? formatDate(lst.observedOn)
+    : formatDate(refs?.context.observedOn);
   const realSourceShort = lst
     ? showLstReal
       ? `${lst.platform === "landsat-9" ? "Landsat 9" : "Landsat 8"} land surface temperature`
       : `${lst.platform === "landsat-9" ? "Landsat 9" : "Landsat 8"} true colour`
-    : refs?.context.source.replace(/^NASA GIBS \/ /, "") ?? "NASA imagery";
+    : (refs?.context.source.replace(/^NASA GIBS \/ /, "") ?? "NASA imagery");
   const realTag = `REAL NASA OBSERVATION · reference${realDate ? ` · ${realDate}` : ""} · ${realSourceShort}`;
   const simTag = `YOUR SATELLITE'S OBSERVATION · simulated${mode === "live" ? ` · hour ${Math.floor(at)}` : ""}`;
   const counts = {
-    downlinked: views.filter((v) => v.state === "downlinked" || v.state === "observed").length,
+    downlinked: views.filter(
+      (v) => v.state === "downlinked" || v.state === "observed",
+    ).length,
     onboard,
     blocked: views.filter((v) => v.state === "blocked").length,
     unseen: views.filter((v) => v.state === "unseen").length,
@@ -797,7 +965,8 @@ export function ObservationView({
                 aria-current={p.id === phase ? "step" : undefined}
                 data-done={i < current ? "true" : undefined}
               >
-                <span aria-hidden="true">{i < current ? "✓" : i + 1}</span> {p.label}
+                <span aria-hidden="true">{i < current ? "✓" : i + 1}</span>{" "}
+                {p.label}
               </li>
             );
           })}
@@ -816,7 +985,12 @@ export function ObservationView({
               ["sim", "Your satellite"],
             ] as const
           ).map(([id, label]) => (
-            <button key={id} type="button" aria-pressed={view === id} onClick={() => setView(id)}>
+            <button
+              key={id}
+              type="button"
+              aria-pressed={view === id}
+              onClick={() => setView(id)}
+            >
               {view === id && <span aria-hidden="true">✓ </span>}
               {label}
             </button>
@@ -835,13 +1009,31 @@ export function ObservationView({
           </div>
         )}
         <div className={styles.zoomGroup} role="group" aria-label="Zoom">
-          <button type="button" className={styles.zoomBtn} aria-label="Zoom in" disabled={t.scale >= ZOOM_MAX} onClick={() => setT((p) => zoomAt(p, 1.5))}>
+          <button
+            type="button"
+            className={styles.zoomBtn}
+            aria-label="Zoom in"
+            disabled={t.scale >= ZOOM_MAX}
+            onClick={() => setT((p) => zoomAt(p, 1.5))}
+          >
             +
           </button>
-          <button type="button" className={styles.zoomBtn} aria-label="Zoom out" disabled={t.scale <= ZOOM_MIN} onClick={() => setT((p) => zoomAt(p, 1 / 1.5))}>
+          <button
+            type="button"
+            className={styles.zoomBtn}
+            aria-label="Zoom out"
+            disabled={t.scale <= ZOOM_MIN}
+            onClick={() => setT((p) => zoomAt(p, 1 / 1.5))}
+          >
             −
           </button>
-          <button type="button" className={styles.zoomBtn} aria-label="Reset zoom" disabled={!zoomed} onClick={() => setT({ scale: 1, x: 0, y: 0 })}>
+          <button
+            type="button"
+            className={styles.zoomBtn}
+            aria-label="Reset zoom"
+            disabled={!zoomed}
+            onClick={() => setT({ scale: 1, x: 0, y: 0 })}
+          >
             ⟲
           </button>
         </div>
@@ -866,13 +1058,30 @@ export function ObservationView({
       >
         <div className={styles.layer} hidden={!showReal}>
           <div className={styles.stage} style={stageStyle}>
-            <canvas ref={realCanvas} className={styles.canvas} aria-hidden="true" />
+            <canvas
+              ref={realCanvas}
+              className={styles.canvas}
+              aria-hidden="true"
+            />
           </div>
         </div>
-        <div className={styles.layer} hidden={!showSim} style={{ clipPath: simClip }}>
+        <div
+          className={styles.layer}
+          hidden={!showSim}
+          style={{ clipPath: simClip }}
+        >
           <div className={styles.stage} style={stageStyle}>
-            <canvas ref={simCanvas} className={styles.canvas} data-pixelated="true" aria-hidden="true" />
-            <svg className={styles.overlaySvg} viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
+            <canvas
+              ref={simCanvas}
+              className={styles.canvas}
+              data-pixelated="true"
+              aria-hidden="true"
+            />
+            <svg
+              className={styles.overlaySvg}
+              viewBox={`0 0 ${W} ${H}`}
+              aria-hidden="true"
+            >
               {quadRect && (
                 <rect
                   x={quadRect.x + 0.4}
@@ -898,11 +1107,45 @@ export function ObservationView({
               ))}
               {band && (
                 <g>
-                  <rect className={styles.band} x={0} y={band.top * H} width={W} height={band.height * H} vectorEffect="non-scaling-stroke" />
-                  <g transform={`translate(${W * (0.35 + 0.3 * band.progress)} ${Math.max(3, band.top * H + (band.height * H) / 2)})`}>
-                    <rect x={-5} y={-1.4} width={3.4} height={2.8} fill="#8ed5dc" stroke="#07121b" strokeWidth={0.4} />
-                    <rect x={1.6} y={-1.4} width={3.4} height={2.8} fill="#8ed5dc" stroke="#07121b" strokeWidth={0.4} />
-                    <rect x={-1.6} y={-1.8} width={3.2} height={3.6} rx={0.6} fill="#e8ecff" stroke="#07121b" strokeWidth={0.5} />
+                  <rect
+                    className={styles.band}
+                    x={0}
+                    y={band.top * H}
+                    width={W}
+                    height={band.height * H}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                  <g
+                    transform={`translate(${W * (0.35 + 0.3 * band.progress)} ${Math.max(3, band.top * H + (band.height * H) / 2)})`}
+                  >
+                    <rect
+                      x={-5}
+                      y={-1.4}
+                      width={3.4}
+                      height={2.8}
+                      fill="#8ed5dc"
+                      stroke="#07121b"
+                      strokeWidth={0.4}
+                    />
+                    <rect
+                      x={1.6}
+                      y={-1.4}
+                      width={3.4}
+                      height={2.8}
+                      fill="#8ed5dc"
+                      stroke="#07121b"
+                      strokeWidth={0.4}
+                    />
+                    <rect
+                      x={-1.6}
+                      y={-1.8}
+                      width={3.2}
+                      height={3.6}
+                      rx={0.6}
+                      fill="#e8ecff"
+                      stroke="#07121b"
+                      strokeWidth={0.5}
+                    />
                   </g>
                 </g>
               )}
@@ -922,7 +1165,12 @@ export function ObservationView({
           </div>
         </div>
         {focused && (
-          <svg className={styles.overlaySvg} style={{ zIndex: 2 }} viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
+          <svg
+            className={styles.overlaySvg}
+            style={{ zIndex: 2 }}
+            viewBox={`0 0 ${W} ${H}`}
+            aria-hidden="true"
+          >
             <g transform={`translate(${t.x * W} ${t.y * H}) scale(${t.scale})`}>
               <rect
                 x={cursor.column * cw}
@@ -961,12 +1209,18 @@ export function ObservationView({
           </>
         )}
         {showReal && (
-          <span className={`${styles.tag} ${styles.tagReal} ${view === "real" ? styles.tagFull : ""}`} aria-hidden="true">
+          <span
+            className={`${styles.tag} ${styles.tagReal} ${view === "real" ? styles.tagFull : ""}`}
+            aria-hidden="true"
+          >
             {realTag}
           </span>
         )}
         {showSim && (
-          <span className={`${styles.tag} ${styles.tagSim} ${view === "sim" ? styles.tagFull : ""}`} aria-hidden="true">
+          <span
+            className={`${styles.tag} ${styles.tagSim} ${view === "sim" ? styles.tagFull : ""}`}
+            aria-hidden="true"
+          >
             {simTag}
           </span>
         )}
@@ -983,13 +1237,19 @@ export function ObservationView({
         )}
       </div>
       <p className={styles.hint}>
-        Click or tap a cell for details (keyboard: arrows + Enter). Zoom with the buttons, pinch, or
-        Ctrl/⌘ + scroll; drag to pan when zoomed.
-        {view === "compare" ? " Drag the ⇆ divider (or use arrow keys on it) to compare." : ""}
+        Click or tap a cell for details (keyboard: arrows + Enter). Zoom with
+        the buttons, pinch, or Ctrl/⌘ + scroll; drag to pan when zoomed.
+        {view === "compare"
+          ? " Drag the ⇆ divider (or use arrow keys on it) to compare."
+          : ""}
       </p>
 
       {detail && selectedView && (
-        <section className={styles.detail} aria-live="polite" aria-label="Cell details">
+        <section
+          className={styles.detail}
+          aria-live="polite"
+          aria-label="Cell details"
+        >
           <h4>What happened in this cell</h4>
           <dl>
             {detail.map((l) => (
@@ -999,82 +1259,205 @@ export function ObservationView({
               </div>
             ))}
           </dl>
-          <button type="button" className={styles.close} aria-label="Close cell details" onClick={() => setSelected(null)}>
+          <button
+            type="button"
+            className={styles.close}
+            aria-label="Close cell details"
+            onClick={() => setSelected(null)}
+          >
             ×
           </button>
         </section>
       )}
 
       <div className={styles.legend}>
+        <div>
+          <strong>Quick map key</strong>
+          <ul className={styles.legendList} aria-label="Essential map symbols">
+            <li>
+              <MarkerSwatch v={{ mark: "found" }} colour={hazardColour} />{" "}
+              Yellow target = your satellite confirmed a {hazard} zone
+            </li>
+            {mode === "live" ? (
+              <li>
+                <MarkerSwatch v={{ mark: "zone" }} colour={hazardColour} /> Blue
+                dashed box = a known {hazard} zone not confirmed yet
+              </li>
+            ) : (
+              <li>
+                <MarkerSwatch
+                  v={{ mark: "missed", missReason: "never-in-view" }}
+                  colour={hazardColour}
+                />{" "}
+                White outlined symbol = a missed zone; the icon shows why
+              </li>
+            )}
+            <li>
+              <Swatch kind="unseen" /> Dark stripes = this cell has not been
+              observed clearly
+            </li>
+          </ul>
+        </div>
         {hasLst && lst && (showLstReal || profile.layer === "lst") && (
           <div className={styles.scale}>
             <strong>Land surface temperature (°C)</strong>
-            <div className={styles.scaleBar} style={{ background: scaleGradient(lst.scale) }} aria-hidden="true" />
+            <div
+              className={styles.scaleBar}
+              style={{ background: scaleGradient(lst.scale) }}
+              aria-hidden="true"
+            />
             <div className={styles.scaleTicks} aria-hidden="true">
               <span>≤{lst.scale.minC}</span>
               <span>{Math.round((lst.scale.minC + lst.scale.maxC) / 2)}</span>
               <span>≥{lst.scale.maxC} °C</span>
             </div>
             <span className={styles.hint}>
-              Colour = temperature of the ground and rooftops measured by Landsat, from {lst.scale.minC} °C (dark blue)
-              to {lst.scale.maxC} °C (dark red) — land surface temperature, not air temperature. Water and cloud have no
-              value{profile.layer === "lst" ? " (grey in your satellite's view)" : ""}.
+              Colour = temperature of the ground and rooftops measured by
+              Landsat, from {lst.scale.minC} °C (dark blue) to {lst.scale.maxC}{" "}
+              °C (dark red) — land surface temperature, not air temperature.
+              Water and cloud have no value
+              {profile.layer === "lst"
+                ? " (grey in your satellite's view)"
+                : ""}
+              .
             </span>
           </div>
         )}
-        <ul className={styles.legendList} aria-label="Your satellite's observation legend">
-          <li><Swatch kind="downlinked" /> Bright: observed and sent to Earth</li>
-          <li><Swatch kind="onboard" /> Dotted gold: observed, data {mode === "final" ? "never reached Earth" : "still on the satellite"}</li>
-          <li><Swatch kind="blocked" /> Cloud: every look blocked by cloud or smoke</li>
-          <li><Swatch kind="unseen" /> Dark + hatched: not observed</li>
-          {mode === "live" && <li><Swatch kind="look" /> Cyan outline: sensor looking now</li>}
-          {mode === "live" && <li><Swatch kind="band" /> Dashed band: sensor footprint (illustrative)</li>}
-        </ul>
-        <ul className={styles.legendList} aria-label="Hazard marker legend">
-          <li><MarkerSwatch v={{ mark: "found" }} colour={hazardColour} /> Target: {hazard} confirmed</li>
-          {mode === "live" && <li><MarkerSwatch v={{ mark: "zone" }} colour={hazardColour} /> Dashed: {hazard} zone (mission data), not found yet</li>}
-          <li><MarkerSwatch v={{ falseAlarm: true }} colour={hazardColour} /> Triangle: false alarm</li>
-          {mode === "final" && (
-            <>
-              <li><MarkerSwatch v={{ mark: "missed", missReason: "cloud-blocked" }} colour={hazardColour} /> Missed: hidden by cloud/smoke</li>
-              <li><MarkerSwatch v={{ mark: "missed", missReason: "never-in-view" }} colour={hazardColour} /> Missed: never in view</li>
-              <li><MarkerSwatch v={{ mark: "missed", missReason: "not-recognised" }} colour={hazardColour} /> Missed: seen, not recognised</li>
-              <li><MarkerSwatch v={{ mark: "missed", missReason: "before-event" }} colour={hazardColour} /> Missed: checked too early</li>
-            </>
-          )}
-        </ul>
+        <details>
+          <summary>Detailed map key</summary>
+          <ul
+            className={styles.legendList}
+            aria-label="Your satellite's observation legend"
+          >
+            <li>
+              <Swatch kind="downlinked" /> Bright cell: observed and sent to
+              Earth
+            </li>
+            <li>
+              <Swatch kind="onboard" /> Gold dotted cell: observed, but data{" "}
+              {mode === "final"
+                ? "never reached Earth"
+                : "is still on the satellite"}
+            </li>
+            <li>
+              <Swatch kind="blocked" /> Cloud icon: every look was blocked by
+              cloud or smoke
+            </li>
+            <li>
+              <Swatch kind="unseen" /> Dark striped cell: not observed
+            </li>
+            {mode === "live" && (
+              <li>
+                <Swatch kind="look" /> Cyan outline: the sensor is looking at
+                this cell now
+              </li>
+            )}
+            {mode === "live" && (
+              <li>
+                <Swatch kind="band" /> Cyan dashed band: current sensor viewing
+                area
+              </li>
+            )}
+          </ul>
+          <ul className={styles.legendList} aria-label="Hazard marker legend">
+            <li>
+              <MarkerSwatch v={{ mark: "found" }} colour={hazardColour} />{" "}
+              Yellow target: {hazard} confirmed
+            </li>
+            {mode === "live" && (
+              <li>
+                <MarkerSwatch v={{ mark: "zone" }} colour={hazardColour} /> Blue
+                dashed box: known {hazard} zone, not found yet
+              </li>
+            )}
+            <li>
+              <MarkerSwatch v={{ falseAlarm: true }} colour={hazardColour} />{" "}
+              Pink triangle: false alarm
+            </li>
+            {mode === "final" && (
+              <>
+                <li>
+                  <MarkerSwatch
+                    v={{ mark: "missed", missReason: "cloud-blocked" }}
+                    colour={hazardColour}
+                  />{" "}
+                  Cloud: hidden by cloud or smoke
+                </li>
+                <li>
+                  <MarkerSwatch
+                    v={{ mark: "missed", missReason: "never-in-view" }}
+                    colour={hazardColour}
+                  />{" "}
+                  Slashed circle: never in view
+                </li>
+                <li>
+                  <MarkerSwatch
+                    v={{ mark: "missed", missReason: "not-recognised" }}
+                    colour={hazardColour}
+                  />{" "}
+                  Question mark: seen but not recognised
+                </li>
+                <li>
+                  <MarkerSwatch
+                    v={{ mark: "missed", missReason: "before-event" }}
+                    colour={hazardColour}
+                  />{" "}
+                  Clock: checked before the event started
+                </li>
+              </>
+            )}
+          </ul>
+        </details>
         <p className={styles.source}>
-          <strong>Your satellite (simulated):</strong> {profile.instrument?.name ?? "No instrument"} {profile.measures}.
-          Detail: about {profile.pixelsPerCell}×{profile.pixelsPerCell} pixels per grid cell (catalog detail × orbit factor{" "}
-          {profile.detailFactor}; illustrative, not metres). Data reaches Earth {Math.round(latency * 10) / 10} h after a
-          clear look (engine radio delay).{profile.note ? ` ${profile.note}` : ""} Background pixels are the real NASA
-          reference, coarsened to your sensor&apos;s detail; only the look, cloud and hazard overlays come from the simulation.
+          <strong>Your satellite (simulated):</strong>{" "}
+          {profile.instrument?.name ?? "No instrument"} {profile.measures}.
+          Detail: about {profile.pixelsPerCell}×{profile.pixelsPerCell} pixels
+          per grid cell (catalog detail × orbit factor {profile.detailFactor};
+          illustrative, not metres). Data reaches Earth{" "}
+          {Math.round(latency * 10) / 10} h after a clear look (engine radio
+          delay).{profile.note ? ` ${profile.note}` : ""} Background pixels are
+          the real NASA reference, coarsened to your sensor&apos;s detail; only
+          the look, cloud and hazard overlays come from the simulation.
         </p>
         <p className={styles.source}>
           <strong>Real NASA reference:</strong>{" "}
           {lst ? (
             <>
-              {lst.source}, scene {lst.productId}, acquired {lst.acquired.slice(0, 16).replace("T", " ")} UTC. Processed from
-              Collection 2 Level-2 surface temperature (DN × 0.00341802 + 149 K).{" "}
-              <a href={lst.url} target="_blank" rel="noreferrer">STAC item ↗</a> ·{" "}
-              <a href={`/nasa/${mission.slug}-lst.json`}>provenance ↗</a>
+              {lst.source}, scene {lst.productId}, acquired{" "}
+              {lst.acquired.slice(0, 16).replace("T", " ")} UTC. Processed from
+              Collection 2 Level-2 surface temperature (DN × 0.00341802 + 149
+              K).{" "}
+              <a href={lst.url} target="_blank" rel="noreferrer">
+                STAC item ↗
+              </a>{" "}
+              · <a href={`/nasa/${mission.slug}-lst.json`}>provenance ↗</a>
               {lst.landingPage && (
                 <>
-                  {" "}· <a href={lst.landingPage} target="_blank" rel="noreferrer">about Landsat surface temperature ↗</a>
+                  {" "}
+                  ·{" "}
+                  <a href={lst.landingPage} target="_blank" rel="noreferrer">
+                    about Landsat surface temperature ↗
+                  </a>
                 </>
               )}
               . {lst.usage}
             </>
           ) : refs ? (
             <>
-              {refs.contextLoaded ? refs.context.source : "Image details could not be loaded"}
-              {refs.context.observedOn ? `, observed ${formatDate(refs.context.observedOn)}` : ""}.{" "}
-              <a href={`/nasa/${mission.slug}.json`}>provenance ↗</a>. {refs.context.usage}
+              {refs.contextLoaded
+                ? refs.context.source
+                : "Image details could not be loaded"}
+              {refs.context.observedOn
+                ? `, observed ${formatDate(refs.context.observedOn)}`
+                : ""}
+              . <a href={`/nasa/${mission.slug}.json`}>provenance ↗</a>.{" "}
+              {refs.context.usage}
             </>
           ) : (
             "Loading reference details…"
           )}{" "}
-          It is a real picture for comparison — it was not taken by your satellite.
+          It is a real picture for comparison — it was not taken by your
+          satellite.
         </p>
       </div>
 
@@ -1084,7 +1467,8 @@ export function ObservationView({
             <dt>COVERAGE</dt>
             <dd>{pct(summary.coveragePct)}</dd>
             <small>
-              {summary.observedCells} of {summary.totalCells} cells seen clearly (coverage score {summary.coveragePct}/100)
+              {summary.observedCells} of {summary.totalCells} cells seen clearly
+              (coverage score {summary.coveragePct}/100)
             </small>
           </div>
           <div>
@@ -1098,10 +1482,18 @@ export function ObservationView({
           </div>
           <div>
             <dt>FIRST DELIVERY</dt>
-            <dd>{summary.firstDeliveryHours === null ? "none" : `h ${summary.firstDeliveryHours}`}</dd>
+            <dd>
+              {summary.firstDeliveryHours === null
+                ? "none"
+                : `h ${summary.firstDeliveryHours}`}
+            </dd>
             <small>
               Target {summary.deadlineHours} h ·{" "}
-              {summary.deadlineMet === null ? "no confirmed data reached Earth" : summary.deadlineMet ? "✓ on time" : "✕ late"}
+              {summary.deadlineMet === null
+                ? "no confirmed data reached Earth"
+                : summary.deadlineMet
+                  ? "✓ on time"
+                  : "✕ late"}
             </small>
           </div>
           <div>
@@ -1110,7 +1502,8 @@ export function ObservationView({
               {summary.hazardFound} / {summary.hazardCells}
             </dd>
             <small>
-              confirmed · {summary.falseAlarms} false alarm{summary.falseAlarms === 1 ? "" : "s"}
+              confirmed · {summary.falseAlarms} false alarm
+              {summary.falseAlarms === 1 ? "" : "s"}
             </small>
           </div>
           {summary.dataMargin !== null && summary.dataMargin < 1 && (
@@ -1118,8 +1511,9 @@ export function ObservationView({
               <dt>DATA BOTTLENECK</dt>
               <dd>{pct(summary.dataMargin * 100)}</dd>
               <small>
-                Your radio and storage can move only this share of the data collected each day (engine data margin). The
-                engine applies this to the whole mission, not to particular cells.
+                Your radio and storage can move only this share of the data
+                collected each day (engine data margin). The engine applies this
+                to the whole mission, not to particular cells.
               </small>
             </div>
           )}
