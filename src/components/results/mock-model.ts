@@ -8,6 +8,13 @@ import { getMission, defaultDesign } from "./missions";
 import { runSimulation, summarizeResources, ENGINE_VERSION } from "@/lib/sim";
 import type { Constraints, SatelliteDesign, SimResult } from "@/types/game";
 import {
+  defaultRankingDifficulty,
+  sameConditions,
+  difficultyOf,
+  isDifficulty,
+  type Difficulty,
+} from "@/lib/leaderboard/difficulty";
+import {
   leaderboardSubmission,
   publicRanking,
   type RankingSource,
@@ -61,6 +68,7 @@ export function createDemoState(): DemoState {
     attempts: [],
     profiles: {},
   };
+  const demoClass = state.classrooms[0];
   const scenarios = [
     ["Demo Nova", "leo_400", "sso_700"],
     ["Demo River", "sso_700", "meo_tilt"],
@@ -77,21 +85,27 @@ export function createDemoState(): DemoState {
     [first, last].forEach((orbit, j) => {
       const design = { ...defaultDesign, orbit };
       const mission = getMission("los-angeles")!;
-      const result = runSimulation(mission, design, mission.defaultConstraints);
       const at = `2026-11-14T18:0${i * 2 + j}:00.000Z`;
-      for (const scope of ["class", "solo"])
+      for (const scope of ["class", "solo"]) {
+        // Class attempts run under the class limits, as the live API enforces.
+        const constraints =
+          scope === "class"
+            ? { budgetM: demoClass.budget_m, massKg: demoClass.mass_kg }
+            : mission.defaultConstraints;
+        const result = runSimulation(mission, design, constraints);
         state.attempts.push({
           id: `fixture-${i}-${j}-${scope}`,
           user_id: id,
           mission_slug: mission.slug,
           classroom_id: scope === "class" ? demoClassId : null,
           design,
-          constraints: mission.defaultConstraints,
+          constraints,
           result,
           score_total: result.score.total,
           engine_version: result.engineVersion,
           created_at: at,
         });
+      }
     });
   });
   return state;
@@ -299,22 +313,93 @@ export function performDemoAction(
       )
       .sort((a, b) => b.created_at.localeCompare(a.created_at))
       .slice(0, 50);
+  if (action === "rankingConditions") {
+    const mission = getMission(String(input.missionSlug));
+    if (!mission) throw new Error("Mission not found.");
+    if (!isDifficulty(input.difficulty)) throw new Error("Unknown difficulty.");
+    const scopes = new Map<string, Constraints>();
+    for (const a of state.attempts) {
+      const c = a.constraints ?? mission.defaultConstraints;
+      if (
+        a.mission_slug === mission.slug &&
+        a.engine_version === ENGINE_VERSION &&
+        state.profiles[a.user_id]?.nickname &&
+        difficultyOf(c, mission.defaultConstraints) === input.difficulty
+      )
+        scopes.set(`${c.budgetM}|${c.massKg}`, c);
+    }
+    return [...scopes.values()].sort(
+      (a, b) => a.budgetM - b.budgetM || a.massKg - b.massKg,
+    );
+  }
   if (action === "ranking") {
-    if (!getMission(String(input.missionSlug)))
-      throw new Error("Mission not found.");
-    if (
-      input.classroomId &&
-      member(input.classroomId).mission_slug !== input.missionSlug
-    )
+    const mission = getMission(String(input.missionSlug));
+    if (!mission) throw new Error("Mission not found.");
+    const c = input.classroomId ? member(input.classroomId) : null;
+    if (c && c.mission_slug !== input.missionSlug)
       throw new Error("Mission does not match the classroom.");
+    if (input.difficulty !== undefined && !isDifficulty(input.difficulty))
+      throw new Error("Unknown difficulty.");
     return publicRanking(
       demoRanking(
         state,
-        String(input.missionSlug),
-        (input.classroomId as string | undefined) ?? null,
+        mission.slug,
+        c?.id ?? null,
+        (input.difficulty as Difficulty | undefined) ??
+          defaultRankingDifficulty(mission.defaultConstraints, c),
+        ctx.userId,
+        c
+          ? { budgetM: Number(c.budget_m), massKg: Number(c.mass_kg) }
+          : ((input.constraints as Constraints | undefined) ??
+              mission.defaultConstraints),
       ),
       ctx.userId,
     );
+  }
+  if (action === "myAttempts")
+    return state.attempts
+      .filter((a) => a.user_id === ctx.userId)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+      .slice(0, 300)
+      .map((a) => ({
+        id: a.id,
+        mission_slug: a.mission_slug,
+        classroom_id: a.classroom_id,
+        score_total: a.score_total,
+        score_breakdown: a.result.score,
+        constraints: a.constraints,
+        engine_version: a.engine_version,
+        created_at: a.created_at,
+      }));
+  if (action === "myClasses") {
+    const pick = (c: Classroom) => ({
+      id: c.id,
+      name: c.name,
+      mission_slug: c.mission_slug,
+      budget_m: c.budget_m,
+      mass_kg: c.mass_kg,
+      max_attempts: c.max_attempts,
+      deadline: c.deadline,
+      is_active: c.is_active,
+    });
+    return [
+      ...state.classrooms
+        .filter((c) => c.teacher_id === ctx.userId)
+        .map((c) => ({
+          ...pick(c),
+          join_code: c.join_code,
+          role: "teacher",
+          nickname: null,
+        })),
+      ...state.members
+        .filter((m) => m.user_id === ctx.userId)
+        .flatMap((m) => {
+          const c = state.classrooms.find((c) => c.id === m.classroom_id);
+          return c
+            ? [{ ...pick(c), role: "student", nickname: m.nickname }]
+            : [];
+        }),
+    ];
   }
   if (action === "submitScore") {
     const attempt = state.attempts.find(
@@ -322,8 +407,10 @@ export function performDemoAction(
     );
     if (!attempt)
       throw new Error("This mission result is not saved in the demo yet.");
+    const mission = getMission(attempt.mission_slug);
+    if (!mission) throw new Error("Mission not found.");
     if (attempt.classroom_id) member(attempt.classroom_id);
-    else {
+    if (!attempt.classroom_id || input.nickname !== undefined) {
       if (input.nickname === undefined || input.nickname === null)
         throw new Error("Choose a pilot name first.");
       // Idempotent: repeating the same name on refresh changes nothing.
@@ -331,28 +418,56 @@ export function performDemoAction(
         input.nickname,
       );
     }
+    const difficulty = difficultyOf(
+      attempt.constraints,
+      mission.defaultConstraints,
+    );
     return leaderboardSubmission(
-      demoRanking(state, attempt.mission_slug, attempt.classroom_id),
+      demoRanking(
+        state,
+        attempt.mission_slug,
+        attempt.classroom_id,
+        difficulty,
+        ctx.userId,
+        attempt.constraints ?? mission.defaultConstraints,
+      ),
       ctx.userId,
       attempt,
       ENGINE_VERSION,
+      {
+        missionSlug: attempt.mission_slug,
+        difficulty,
+        engineVersion: ENGINE_VERSION,
+        constraints: attempt.constraints ?? mission.defaultConstraints,
+      },
     );
   }
   throw new Error("Unsupported demo operation.");
 }
 
-/** Best score per player, mirroring public.mission_ranking (ties: earliest). */
+/**
+ * Best score per player in one (mission, difficulty, engine) scope, mirroring
+ * public.mission_ranking_scoped (ties: earliest). Global boards hold every
+ * attempt of players with a public pilot name; class boards only that class.
+ * Returns the top 100 plus the caller's own row with its true rank.
+ */
 function demoRanking(
   state: DemoState,
   slug: string,
   classroomId: string | null,
+  difficulty: Difficulty,
+  userId: string,
+  constraints: Constraints,
 ): RankingSource[] {
+  const defaults = getMission(slug)!.defaultConstraints;
   const rows = state.attempts
     .filter(
       (a) =>
         a.mission_slug === slug &&
-        a.classroom_id === classroomId &&
-        a.engine_version === ENGINE_VERSION,
+        (classroomId === null || a.classroom_id === classroomId) &&
+        a.engine_version === ENGINE_VERSION &&
+        difficultyOf(a.constraints, defaults) === difficulty &&
+        sameConditions(a.constraints ?? defaults, constraints),
     )
     .sort((a, b) => a.created_at.localeCompare(b.created_at));
   const grouped = new Map<string, RankingSource & { first: number }>();
@@ -383,14 +498,22 @@ function demoRanking(
       existing.improvement = existing.score - existing.first;
     }
   }
-  return [...grouped.values()]
-    .sort((a, b) => b.score - a.score || a.achieved.localeCompare(b.achieved))
-    .map((r) => ({
+  const ranked = [...grouped.values()].sort(
+    (a, b) =>
+      b.score - a.score ||
+      a.achieved.localeCompare(b.achieved) ||
+      a.user_id.localeCompare(b.user_id),
+  );
+  return ranked
+    .map((r, i) => ({
       user_id: r.user_id,
       nickname: r.nickname,
       score: r.score,
       attempts: r.attempts,
       improvement: r.improvement,
       achieved: r.achieved,
-    }));
+      rank: i + 1,
+      players: ranked.length,
+    }))
+    .filter((r) => r.rank <= 100 || r.user_id === userId);
 }

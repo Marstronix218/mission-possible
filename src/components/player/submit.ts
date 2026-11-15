@@ -18,12 +18,15 @@ export function createLeaderboardSubmitter(call: Call) {
   const inflight = new Map<string, Promise<LeaderboardSubmission>>();
   return function submit(
     attemptId: string,
-    nickname: string,
+    nickname?: string,
   ): Promise<LeaderboardSubmission> {
     const key = attemptId + "\u0000" + nickname;
     const pending = inflight.get(key);
     if (pending) return pending;
-    const request = call("submitScore", { attemptId, nickname })
+    const request = call("submitScore", {
+      attemptId,
+      ...(nickname ? { nickname } : {}),
+    })
       .then((body) => leaderboardSubmissionSchema.parse(body))
       .finally(() => inflight.delete(key));
     inflight.set(key, request);

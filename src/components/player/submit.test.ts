@@ -28,6 +28,11 @@ describe("automatic leaderboard submission", () => {
     });
     expect(first).toEqual(second);
   });
+  it("never invents public consent for an unnamed class player", async () => {
+    const call = vi.fn().mockResolvedValue(body);
+    await createLeaderboardSubmitter(call)("a1");
+    expect(call).toHaveBeenCalledWith("submitScore", { attemptId: "a1" });
+  });
   it("never sends a client score", async () => {
     const call = vi.fn().mockResolvedValue(body);
     await createLeaderboardSubmitter(call)("a1", "Nova");
