@@ -1,26 +1,33 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from "react";
 import type { SatelliteDesign } from "@/types/game";
 import type { StoryEvent } from "@/lib/story/events";
 import { StoryEventCard } from "./StoryEventCard";
-import { SatelliteWorkbench } from "@/components/gameplay/SatelliteWorkbench";
-import styles from "@/components/gameplay/gameplay.module.css";
+import { LaunchScene } from "./launch/LaunchScene";
+import {
+  LAUNCH_PHASES,
+  autoAdvanceDelay,
+  buildLaunchSteps,
+  orbitLabel,
+  phaseIndexOf,
+  phaseStates,
+  sceneState,
+  totalDurationMs,
+} from "./launch/launch-timeline";
+import styles from "./launch/launch.module.css";
 
-const launchStages = [
-  {
-    title: "SYSTEMS READY",
-    detail: "Final spacecraft checks complete.",
-  },
-  { title: "3… IGNITION", detail: "Launch sequence started." },
-  { title: "2… LIFTOFF", detail: "Vehicle climbing away from Earth." },
-  { title: "1… DEPLOY", detail: "Spacecraft separating from the vehicle." },
-  {
-    title: "SATELLITE IN ORBIT",
-    detail: "Solar arrays deployed. Mission control has the spacecraft.",
-  },
-] as const;
+const phaseMark = { done: "✓", current: "▶", upcoming: "○" } as const;
+const phaseWord = {
+  done: "complete",
+  current: "in progress",
+  upcoming: "not started",
+} as const;
 
-/** A short optional cinematic; the calling screen still runs and saves the engineering simulation. */
+/**
+ * Illustrative launch cinematic: integration, launch, deployment, first look at
+ * the target. Purely presentational — skipping or replaying never touches the
+ * engineering simulation, which the calling screen runs and saves.
+ */
 export function LaunchSequence({
   events,
   design,
@@ -38,96 +45,184 @@ export function LaunchSequence({
   responseHours?: number;
   blocker?: string | null;
 }) {
-  const [started, setStarted] = useState(false);
-  const [step, setStep] = useState(0);
+  const steps = useMemo(
+    () => buildLaunchSteps({ orbit: design.orbit, city }),
+    [design.orbit, city],
+  );
+  // -1 is the "ready for launch" frame on the pad.
+  const [index, setIndex] = useState(-1);
+  const started = index >= 0;
+  const step = started ? steps[index] : null;
+  const last = index === steps.length - 1;
+  const heading = useRef<HTMLHeadingElement>(null);
+  const finish = useEffectEvent(() => onComplete());
+
   useEffect(() => {
-    if (!started || reducedMotion) return;
-    const last = launchStages.length - 1;
-    const t = setTimeout(
-      () => {
-        if (step >= last) onComplete();
-        else setStep((current) => current + 1);
-      },
-      step >= last ? 1100 : 760,
-    );
-    return () => clearTimeout(t);
-  }, [started, step, reducedMotion, onComplete]);
-  const current = launchStages[step];
+    if (!started) return;
+    const delay = autoAdvanceDelay(steps, index, reducedMotion);
+    if (delay === null) return;
+    const timer = setTimeout(() => {
+      if (index >= steps.length - 1) finish();
+      else setIndex(index + 1);
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [started, index, reducedMotion, steps]);
+
+  function begin() {
+    setIndex(0);
+    // The launch button disappears; keep keyboard users anchored on the sequence.
+    requestAnimationFrame(() => heading.current?.focus({ preventScroll: true }));
+  }
+
+  const scene = sceneState(steps, index);
+  const states = phaseStates(steps, index);
+  const phase = step ? LAUNCH_PHASES[phaseIndexOf(step.phase)] : null;
+  const orbitName = orbitLabel(design.orbit);
+  const seconds = Math.round(totalDurationMs(steps) / 1000);
+  const announcement = step
+    ? `${phase?.label}, step ${index + 1} of ${steps.length}: ${step.title}. ${step.countdown ? "" : step.caption}`
+    : blocker
+      ? "Launch blocked. Check your design."
+      : "Ready for your launch command.";
+
   return (
     <section
-      className={`${styles.shell} ${styles.launch}`}
+      className={`${styles.shell} ${reducedMotion ? styles.reduced : ""}`}
       aria-labelledby="launch-heading"
     >
-      <p className={styles.kicker}>Launch control / {city}</p>
-      <h2 id="launch-heading">
-        {started ? current.title : "READY FOR LAUNCH?"}
-      </h2>
-      {blocker ? (
-        <p role="alert" className={styles.warning}>
-          {blocker}
-        </p>
-      ) : started ? (
-        <button className={styles.secondary} onClick={onComplete}>
-          Skip to observation →
-        </button>
-      ) : (
-        <button
-          className={styles.primary}
-          onClick={() => {
-            if (reducedMotion) onComplete();
-            else setStarted(true);
-          }}
+      <header className={styles.header}>
+        <p className={styles.kicker}>Launch control / {city}</p>
+        <h2
+          id="launch-heading"
+          ref={heading}
+          tabIndex={-1}
+          className={styles.title}
         >
-          LAUNCH SATELLITE →
-        </button>
-      )}
+          {step ? step.title : "READY FOR LAUNCH?"}
+        </h2>
+      </header>
 
-      {started ? (
-        <div
-          className={styles.launchScene}
-          data-stage={step}
-          aria-hidden="true"
-        >
-          <div className={styles.launchStars} />
-          <div className={styles.earthHorizon} />
-          <div className={styles.rocket}>
-            <span className={styles.rocketNose} />
-            <span className={styles.rocketBody} />
-            <span className={styles.rocketFinLeft} />
-            <span className={styles.rocketFinRight} />
-            <span className={styles.rocketFlame} />
-          </div>
-          <div className={styles.deployedSatellite}>
-            <span />
-            <strong />
-            <span />
-          </div>
-          <div className={styles.launchTrack}>
-            {launchStages.map((stage, index) => (
-              <span
-                key={stage.title}
-                className={index <= step ? styles.trackDone : undefined}
-              />
-            ))}
-          </div>
+      <ol className={styles.progress} aria-label="Launch stages">
+        {LAUNCH_PHASES.map((p, i) => (
+          <li
+            key={p.id}
+            className={styles.phase}
+            data-state={states[i]}
+            aria-current={states[i] === "current" ? "step" : undefined}
+          >
+            <span>
+              <span className={styles.phaseMark} aria-hidden="true">
+                {phaseMark[states[i]]}
+              </span>
+              {i + 1}. {p.label}
+              <span className="sr-only"> ({phaseWord[states[i]]})</span>
+            </span>
+          </li>
+        ))}
+      </ol>
+
+      <div className={styles.layout}>
+        <figure className={styles.stage}>
+          <LaunchScene
+            design={design}
+            scene={scene}
+            city={city}
+            countdown={step?.countdown}
+          />
+        </figure>
+
+        <div className={styles.panel}>
+          <p className={styles.stepMeta}>
+            {step
+              ? `${phase?.label} · Step ${index + 1} of ${steps.length}`
+              : "Pre-launch · Satellite on the crane"}
+          </p>
+          <p className={styles.caption}>
+            {step
+              ? step.caption
+              : "Your satellite hangs above the open fairing, built exactly as you designed it. Press launch to load it and fly."}
+          </p>
+
+          {blocker ? (
+            <p role="alert" className={styles.warning}>
+              {blocker}
+            </p>
+          ) : (
+            <div className={styles.controls}>
+              {!started && (
+                <button
+                  type="button"
+                  className={`primary ${styles.launchButton}`}
+                  onClick={begin}
+                >
+                  LAUNCH SATELLITE →
+                </button>
+              )}
+              {started && reducedMotion && (
+                <>
+                  <button
+                    type="button"
+                    disabled={index === 0}
+                    onClick={() => setIndex((i) => Math.max(0, i - 1))}
+                  >
+                    ← Previous step
+                  </button>
+                  <button
+                    type="button"
+                    className="primary"
+                    onClick={() =>
+                      last ? onComplete() : setIndex((i) => i + 1)
+                    }
+                  >
+                    {last ? "Begin observation →" : "Next step →"}
+                  </button>
+                </>
+              )}
+              {started && (
+                <>
+                  <button type="button" onClick={() => setIndex(0)}>
+                    ↺ Replay launch
+                  </button>
+                  <button type="button" onClick={onComplete}>
+                    Skip animation →
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          <p className={styles.note}>
+            {reducedMotion
+              ? "Motion is reduced: step through the launch at your own pace."
+              : `About ${seconds} seconds. Skip at any time; it does not change your result.`}
+          </p>
+
+          <dl className={styles.readout} aria-label="Mission readiness">
+            <div>
+              <dt>Spacecraft</dt>
+              <dd>{blocker ? "! Check design" : "✓ Spacecraft configured"}</dd>
+            </div>
+            <div>
+              <dt>Orbit</dt>
+              <dd>{orbitName}</dd>
+            </div>
+            <div>
+              <dt>Target</dt>
+              <dd>◎ {city}</dd>
+            </div>
+            <div>
+              <dt>Response</dt>
+              <dd>◷ {responseHours ?? "—"} h response target</dd>
+            </div>
+          </dl>
         </div>
-      ) : (
-        <SatelliteWorkbench design={design} />
-      )}
-      {started && (
-        <p className={styles.launchStatus} role="status">
-          {current.detail}
-        </p>
-      )}
-      <div className={styles.launchIndicators} aria-label="Mission readiness">
-        <span>{blocker ? "! Check design" : "✓ Spacecraft configured"}</span>
-        <span>◎ Target: {city}</span>
-        <span>◷ {responseHours ?? "—"} h response target</span>
       </div>
-      <p className="sr-only" role="status">
-        {started ? current.detail : "Ready for your launch command"}
+
+      <p className="sr-only" role="status" aria-live="polite">
+        {announcement}
       </p>
-      <details className="mt-6 text-left">
+
+      <details>
         <summary>Optional engineering details</summary>
         <p>
           This launch is illustrative. Your actual observation, delivery and
