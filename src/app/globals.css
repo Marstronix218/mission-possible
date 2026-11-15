@@ -2,18 +2,43 @@
 
 :root {
   color-scheme: dark;
-  --background: #0b1422;
-  --foreground: #f2f6ff;
-  --card: #14243a;
-  --card-foreground: #f2f6ff;
-  --muted: #182a43;
-  --muted-foreground: #b2c5df;
-  --border: #617a9a;
-  --primary: #8cddff;
-  --primary-foreground: #092131;
-  --destructive: #ffaaa4;
-  --ring: #fff2a5;
-  --radius: 0.625rem;
+  /* CODE BLUE design tokens — playful "pop space" palette. */
+  --space-950: #070a24;
+  --space-900: #0d1240;
+  --space-800: #161d5c;
+  --space-700: #222b7a;
+  --pop-yellow: #ffd23f;
+  --pop-pink: #ff5c8a;
+  --pop-cyan: #2de2e6;
+  --pop-lime: #8bf05a;
+  --pop-orange: #ff8a3d;
+  --pop-violet: #a98bff;
+  --hazard-wildfire: #ff6b35;
+  --hazard-heat: #ffb703;
+  --hazard-flood: #3a86ff;
+  --hazard-snow: #bde0fe;
+  --hazard-drought: #d4a373;
+  --hazard-storm: #9d8cff;
+  --hazard-glacier: #48cae4;
+  --hazard-volcano: #ef476f;
+  --ok: #8bf05a;
+  --warn: #ffd23f;
+  --bad: #ff5c8a;
+  --background: var(--space-900);
+  --foreground: #f6f7ff;
+  --card: #1a2266;
+  --card-foreground: #f6f7ff;
+  --muted: #202a72;
+  --muted-foreground: #c3c8f5;
+  --border: #4b55a8;
+  --primary: var(--pop-cyan);
+  --primary-foreground: #06123a;
+  --destructive: var(--pop-pink);
+  --ring: var(--pop-yellow);
+  --radius: 1.25rem;
+  --radius-pill: 999px;
+  --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.35);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @theme inline {
@@ -28,7 +53,21 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
-  --font-sans: "Inter", system-ui, sans-serif;
+  --font-sans: var(--font-body), "Inter", system-ui, sans-serif;
+  --font-display: var(--font-display-face), var(--font-body), system-ui, sans-serif;
+  --color-space-950: var(--space-950);
+  --color-space-900: var(--space-900);
+  --color-space-800: var(--space-800);
+  --color-space-700: var(--space-700);
+  --color-pop-yellow: var(--pop-yellow);
+  --color-pop-pink: var(--pop-pink);
+  --color-pop-cyan: var(--pop-cyan);
+  --color-pop-lime: var(--pop-lime);
+  --color-pop-orange: var(--pop-orange);
+  --color-pop-violet: var(--pop-violet);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
 }
 
 body {

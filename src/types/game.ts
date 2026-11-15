@@ -56,6 +56,21 @@ export interface Mission {
   sources: DataSource[];
 }
 
+/**
+ * Mission-operations decisions the player makes after launch. Every field is
+ * optional; an omitted field means the default behaviour, so designs without
+ * decisions simulate exactly as before. Semantics are implemented in
+ * src/lib/sim/engine.ts and must stay deterministic.
+ */
+export interface MissionDecisions {
+  /** Sensor pointing: spread looks evenly ("wide") or concentrate on the suspected hazard area ("hazard"). */
+  focus?: "wide" | "hazard";
+  /** Downlink strategy: send as soon as a station is in view ("fast", costs power) or batch to save power ("save-power"). */
+  downlink?: "fast" | "save-power";
+  /** Mid-mission retask: from `day` onward, prioritise one quadrant of the mission grid. */
+  retask?: { day: number; quadrant: "nw" | "ne" | "sw" | "se" };
+}
+
 export interface SatelliteDesign {
   instruments: string[];
   orbit: string;
@@ -64,6 +79,7 @@ export interface SatelliteDesign {
   comm: string;
   groundStations: 1 | 3 | 5;
   storage: string;
+  decisions?: MissionDecisions;
 }
 
 export interface ResourceSummary {
@@ -93,6 +109,39 @@ export interface SimCellResult {
   truth: number;
   observed: boolean;
   detected: boolean;
+  /** Mission hours at which a pass looked at this cell (clear or blocked). */
+  lookHours?: number[];
+  /** Subset of lookHours where cloud/smoke blocked the view. */
+  blockedHours?: number[];
+  /** Mission hour of detection, if detected. */
+  detectedHour?: number | null;
+  /** Why a hazard cell was not detected, straight from the engine's branch. */
+  missReason?: "never-in-view" | "cloud-blocked" | "not-recognised" | "before-event";
+}
+
+/** Engine-computed explanation of a result. Every number comes from the run itself. */
+export interface SimDiagnostics {
+  hazardCells: number;
+  hazardDetected: number;
+  hazardNeverInView: number;
+  hazardCloudBlocked: number;
+  hazardNotRecognised: number;
+  falseAlarms: number;
+  firstDetectionHours: number | null;
+  downlinkLatencyHours: number;
+  /** 0–1 factors the engine used. */
+  powerMargin: number;
+  dataMargin: number;
+  batteryContinuity: number;
+  operationFactor: number;
+  coverageChance: number;
+  bestInstrumentId: string | null;
+  bestInstrumentFit: number;
+  cloudPenetrating: boolean;
+  /** Category weights used for the total score, as in data/categories.json (they sum to 100). */
+  weights: Omit<ScoreBreakdown, "total">;
+  /** Decisions actually applied (defaults filled in). */
+  decisions: Required<Pick<MissionDecisions, "focus" | "downlink">> & Pick<MissionDecisions, "retask">;
 }
 
 export interface TimelinePoint {
@@ -117,6 +166,7 @@ export interface SimResult {
   success: boolean;
   firstDeliveryHours: number | null;
   engineVersion: string;
+  diagnostics?: SimDiagnostics;
 }
 
 export interface InstrumentPart {
