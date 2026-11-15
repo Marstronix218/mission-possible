@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { PredictionComparison } from "@/components/gameplay/Prediction";
 import type { Mission } from "@/types/game";
 import type { SavedAttempt } from "@/components/results/session";
 import { MissionMap, finalCounts } from "@/components/results/MissionMap";
@@ -15,6 +16,7 @@ import {
 import { comparableAttempts } from "@/components/results/history-model";
 import type { PartSlot } from "@/lib/story/parts";
 import { summarizeResources } from "@/lib/sim";
+import { MissionScoreRadar } from "@/components/planning/MissionScoreRadar";
 import styles from "./gameplay.module.css";
 
 export function BeginnerDebrief({
@@ -69,6 +71,12 @@ export function BeginnerDebrief({
       <p className={styles.outcomeText}>
         {payoff.headline} {payoff.sub}
       </p>
+      <MissionScoreRadar
+        mission={mission}
+        design={design}
+        result={result}
+        constraints={attempt.constraints}
+      />
       <section
         className={styles.observation}
         aria-labelledby="observation-heading"
@@ -111,6 +119,7 @@ export function BeginnerDebrief({
           </div>
         </div>
       </section>
+      <PredictionComparison id={attempt.id} mission={mission} result={result} />
       <section aria-label="Your next experiment">
         <h2>
           {mainCause
