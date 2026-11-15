@@ -1364,8 +1364,8 @@ export function ObservationView({
             )}
             {mode === "live" && (
               <li>
-                <Swatch kind="band" /> Cyan dashed band: the sensor's current
-                viewing area
+                <Swatch kind="band" /> Cyan dashed band: current sensor viewing
+                area
               </li>
             )}
           </ul>
