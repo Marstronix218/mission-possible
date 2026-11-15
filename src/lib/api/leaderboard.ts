@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { difficulties } from "@/lib/leaderboard/difficulty";
 
 /** One row of a mission ranking as returned by the database or the demo model. */
 export type RankingSource = {
@@ -8,6 +9,10 @@ export type RankingSource = {
   attempts: number;
   improvement: number;
   achieved: string;
+  /** True rank within the scope (mission_ranking_scoped); defaults to row order. */
+  rank?: number;
+  /** Number of ranked players in the scope. */
+  players?: number;
 };
 
 export const rankingEntrySchema = z.object({
@@ -17,6 +22,7 @@ export const rankingEntrySchema = z.object({
   attempts: z.coerce.number(),
   improvement: z.coerce.number(),
   achieved: z.string(),
+  players: z.coerce.number().optional(),
   mine: z.boolean().optional(),
 });
 export type RankingEntry = z.infer<typeof rankingEntrySchema>;
@@ -28,8 +34,20 @@ export const leaderboardSubmissionSchema = z.object({
       rank: z.number().int().positive(),
       nickname: z.string(),
       score: z.coerce.number(),
+      players: z.coerce.number().optional(),
     })
     .nullable(),
+  /** Ranking scope: never mixes missions, difficulty tiers or engine versions. */
+  scope: z
+    .object({
+      missionSlug: z.string(),
+      difficulty: z.enum(difficulties),
+      engineVersion: z.string(),
+      constraints: z
+        .object({ budgetM: z.number(), massKg: z.number() })
+        .optional(),
+    })
+    .optional(),
   attempt: z.object({
     id: z.string(),
     missionSlug: z.string(),
@@ -46,12 +64,13 @@ export function publicRanking(
   userId: string,
 ): RankingEntry[] {
   return rows.map((row, i) => ({
-    entry_id: i + 1,
+    entry_id: row.rank === undefined ? i + 1 : Number(row.rank),
     nickname: row.nickname,
     score: Number(row.score),
     attempts: Number(row.attempts),
     improvement: Number(row.improvement),
     achieved: row.achieved,
+    ...(row.players === undefined ? {} : { players: Number(row.players) }),
     mine: row.user_id === userId,
   }));
 }
@@ -68,19 +87,21 @@ export function leaderboardSubmission(
     engine_version: string;
   },
   engineVersion: string,
+  scope?: LeaderboardSubmission["scope"],
 ): LeaderboardSubmission {
   const ranked = publicRanking(rows, userId);
-  const index = ranked.findIndex((r) => r.mine);
+  const mine = ranked.find((r) => r.mine);
   return {
     rows: ranked,
-    me:
-      index < 0
-        ? null
-        : {
-            rank: index + 1,
-            nickname: ranked[index].nickname,
-            score: ranked[index].score,
-          },
+    ...(scope ? { scope } : {}),
+    me: !mine
+      ? null
+      : {
+          rank: mine.entry_id,
+          nickname: mine.nickname,
+          score: mine.score,
+          ...(mine.players === undefined ? {} : { players: mine.players }),
+        },
     attempt: {
       id: attempt.id,
       missionSlug: attempt.mission_slug,

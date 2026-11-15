@@ -3,6 +3,10 @@ import { useEffect, useId, useRef } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { backendAvailable } from "@/components/results/cloud";
+import {
+  useTutorialOpen,
+  useTutorialSeen,
+} from "@/components/tutorial/tutorial-state";
 import { usePlayerName } from "./player-name";
 import { PlayerNameForm } from "./PlayerNameForm";
 
@@ -14,7 +18,11 @@ import { PlayerNameForm } from "./PlayerNameForm";
 export function UsernameGate() {
   const name = usePlayerName();
   const classroom = useSearchParams().get("classroom");
-  const open = backendAvailable && name === null && !classroom;
+  // Wait until the first-time How-to-Play tour is finished or skipped.
+  const tutorialSeen = useTutorialSeen();
+  const tutorialOpen = useTutorialOpen();
+  const tutorialDone = tutorialSeen === true && !tutorialOpen;
+  const open = backendAvailable && name === null && !classroom && tutorialDone;
   const dialog = useRef<HTMLDialogElement>(null);
   const wasOpen = useRef(false);
   const titleId = useId();

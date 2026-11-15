@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { PredictionComparison } from "@/components/gameplay/Prediction";
 import type { Mission } from "@/types/game";
 import type { SavedAttempt } from "@/components/results/session";
 import { finalCounts } from "@/components/results/MissionMap";
@@ -101,7 +100,6 @@ export function BeginnerDebrief({
           {Math.round(result.score.coverage)}% of the area observed.
         </p>
       </section>
-      <PredictionComparison id={attempt.id} mission={mission} result={result} />
       <section aria-label="Your next experiment">
         <h2>
           {mainCause

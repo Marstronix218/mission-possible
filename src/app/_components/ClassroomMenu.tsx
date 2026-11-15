@@ -3,6 +3,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { PlayerChip } from "@/components/player/PlayerChip";
+import { HowToPlayButton, TutorialHost } from "@/components/tutorial/HowToPlay";
+import { openTutorial } from "@/components/tutorial/tutorial-state";
 
 const items = [
   {
@@ -14,7 +16,7 @@ const items = [
   { href: "/teacher", label: "Teacher", icon: "🍎", tile: "var(--pop-pink)" },
   {
     href: "/leaderboard",
-    label: "Rankings",
+    label: "Leaderboards",
     icon: "🏆",
     tile: "var(--pop-yellow)",
   },
@@ -51,6 +53,10 @@ export default function ClassroomMenu() {
 
   return (
     <>
+      {/* Small screens reach How to play from the menu below. */}
+      <HowToPlayButton className="btn-pop btn-pop--ghost btn-pop--sm hidden sm:inline-flex" />
+      {/* The single How-to-Play dialog for every page (replay and first visit). */}
+      <TutorialHost />
       <PlayerChip />
       <div className="menu" ref={root}>
         <button
@@ -95,6 +101,24 @@ export default function ClassroomMenu() {
                 </Link>
               </li>
             ))}
+            <li className="sm:hidden">
+              <button
+                type="button"
+                className="flex min-h-12 w-full items-center gap-3 rounded-[14px] border-0 bg-transparent px-3 py-1.5 text-left font-extrabold text-foreground shadow-none hover:bg-white/10 focus-visible:bg-white/10"
+                onClick={() => {
+                  setOpen(false);
+                  openTutorial();
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="grid size-[34px] place-items-center rounded-xl bg-pop-cyan text-space-950"
+                >
+                  ❔
+                </span>
+                <span>How to play</span>
+              </button>
+            </li>
           </ul>
         )}
       </div>

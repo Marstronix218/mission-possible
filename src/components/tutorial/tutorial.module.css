@@ -1,0 +1,500 @@
+/* How-to-Play tutorial: a full-screen mission-control "uplink" in the app's
+   space navy, with lime/gold signals. Native <dialog> + showModal. */
+
+.dialog {
+  --t-deep: #07121b;
+  --t-navy: #0d1a25;
+  --t-line: #294253;
+  --t-lime: var(--pop-yellow, #cbf36b);
+  --t-gold: #ffd23f;
+  --t-cyan: var(--pop-cyan, #8ed5dc);
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow-y: auto;
+  color: var(--foreground, #f6f7ff);
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 0%, #1a2266cc, transparent 70%),
+    radial-gradient(circle at 18% 82%, #8ed5dc14, transparent 40%),
+    var(--t-deep);
+}
+.dialog::backdrop {
+  background: rgb(4 9 14 / 0.9);
+}
+
+.frame {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1rem;
+  width: 100%;
+  max-width: 760px;
+  min-height: 100%;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--t-cyan);
+}
+.tag::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--t-lime);
+  box-shadow: 0 0 0 4px #cbf36b26;
+}
+
+.stage {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 1rem;
+  text-align: center;
+  animation: enter 0.45s var(--ease-pop, ease-out) both;
+}
+
+/* The HUD viewport: corner ticks frame each illustration. */
+.viewport {
+  position: relative;
+  width: min(100%, 440px);
+  padding: 10px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #0d1a25, #0a1620);
+  border: 2px solid var(--t-line);
+  box-shadow:
+    0 0 0 6px #07121b,
+    0 18px 40px #0008;
+}
+.viewport::before,
+.viewport::after {
+  content: "";
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--t-lime);
+  pointer-events: none;
+}
+.viewport::before {
+  top: -6px;
+  left: -6px;
+  border-right: 0;
+  border-bottom: 0;
+  border-top-left-radius: 14px;
+}
+.viewport::after {
+  right: -6px;
+  bottom: -6px;
+  border-left: 0;
+  border-top: 0;
+  border-bottom-right-radius: 14px;
+}
+.art {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 14px;
+  background: radial-gradient(circle at 50% 40%, #12283a, #08131d 75%);
+}
+
+.stepNo {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: var(--t-gold);
+}
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 6vw, 2.5rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  outline: none;
+}
+/* The heading takes focus only so each screen is announced; no ring needed. */
+.title:focus,
+.title:focus-visible {
+  outline: none;
+}
+.welcome {
+  color: var(--t-lime);
+  text-shadow: 0 4px 0 #07121b;
+}
+.text {
+  max-width: 34rem;
+  margin: 0;
+  font-size: clamp(1.05rem, 3.6vw, 1.25rem);
+  line-height: 1.5;
+  color: #d9e4ec;
+}
+
+.bottom {
+  display: grid;
+  gap: 0.9rem;
+  padding-bottom: 4px;
+}
+.progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+.dots {
+  display: flex;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dot {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.dot::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 2px solid #b6c8d4;
+  transition:
+    width 0.25s var(--ease-pop, ease-out),
+    background 0.2s;
+}
+.dot[aria-current="step"]::before {
+  width: 24px;
+  border-color: var(--t-lime);
+  background: var(--t-lime);
+}
+.dot[data-done="true"]::before {
+  border-color: var(--t-cyan);
+  background: var(--t-cyan);
+}
+.dot:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 1px;
+  border-radius: 8px;
+}
+.count {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: #b6c8d4;
+}
+.nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.nav > :only-child {
+  margin-left: auto;
+}
+.navNext {
+  flex: 1 1 auto;
+  max-width: 16rem;
+  margin-left: auto;
+}
+.hint {
+  margin: 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #8aa0ae;
+}
+
+@media (max-width: 420px) {
+  .frame {
+    gap: 0.75rem;
+  }
+  .hint {
+    display: none;
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+}
+
+/* ---------- Scene motion (resting state = finished picture) ---------- */
+.art * {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.twinkle {
+  animation: twinkle 2.6s ease-in-out infinite;
+}
+.orbitIntro {
+  transform-box: view-box;
+  transform-origin: 160px 128px;
+  animation: orbit 9s linear infinite;
+}
+.pulse {
+  animation: pulse 1.8s ease-out infinite;
+}
+.pickCard {
+  animation: pick 3.6s var(--ease-pop, ease-out) infinite;
+}
+.snapLeft {
+  animation: snapLeft 4s var(--ease-pop, ease-out) infinite;
+}
+.snapRight {
+  animation: snapRight 4s var(--ease-pop, ease-out) infinite;
+}
+.snapTop {
+  animation: snapTop 4s var(--ease-pop, ease-out) infinite;
+}
+.snapBottom {
+  animation: snapBottom 4s var(--ease-pop, ease-out) infinite;
+}
+.snapFlash {
+  opacity: 0;
+  animation: flash 4s ease-out infinite;
+}
+.spin {
+  transform-box: view-box;
+  transform-origin: 0 0;
+  animation: spin 6s linear infinite;
+}
+.grow {
+  transform-origin: left center;
+  animation: grow 3.2s var(--ease-pop, ease-out) infinite;
+}
+.rocket {
+  animation: rocket 3.4s cubic-bezier(0.55, 0, 0.75, 0.4) infinite;
+}
+.flame {
+  transform-origin: top center;
+  animation: flame 0.18s ease-in-out infinite alternate;
+}
+.smoke {
+  animation: smoke 3.4s ease-out infinite;
+}
+.radarGrow {
+  animation: radar 3.6s var(--ease-pop, ease-out) infinite;
+}
+.starEarn {
+  animation: star 3.6s var(--ease-pop, ease-out) infinite;
+}
+.scoreUp {
+  animation: rise 3.6s ease-out infinite;
+}
+
+@keyframes twinkle {
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pulse {
+  0% {
+    transform: scale(0.4);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+@keyframes pick {
+  0%,
+  25% {
+    transform: translateY(10px) scale(0.6);
+    opacity: 0;
+  }
+  40%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes snapLeft {
+  0%,
+  8% {
+    transform: translateX(-46px);
+    opacity: 0;
+  }
+  28%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes snapRight {
+  0%,
+  18% {
+    transform: translateX(46px);
+    opacity: 0;
+  }
+  38%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes snapTop {
+  0%,
+  30% {
+    transform: translateY(-40px);
+    opacity: 0;
+  }
+  48%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes snapBottom {
+  0%,
+  40% {
+    transform: translateY(36px);
+    opacity: 0;
+  }
+  58%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes flash {
+  0%,
+  58% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  66% {
+    opacity: 1;
+  }
+  85%,
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes grow {
+  0%,
+  10% {
+    transform: scaleX(0.05);
+  }
+  45%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes rocket {
+  0%,
+  22% {
+    transform: none;
+  }
+  100% {
+    transform: translateY(-190px);
+  }
+}
+@keyframes flame {
+  to {
+    transform: scaleY(1.35);
+  }
+}
+@keyframes smoke {
+  0%,
+  18% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  45% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+@keyframes radar {
+  0%,
+  12% {
+    transform: scale(0.2);
+    opacity: 0.4;
+  }
+  50%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes star {
+  0%,
+  45% {
+    transform: scale(0);
+  }
+  62%,
+  100% {
+    transform: none;
+  }
+}
+@keyframes rise {
+  0%,
+  50% {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  70%,
+  100% {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.art[data-still="true"] *,
+.art[data-still="true"] {
+  animation: none !important;
+}
+.art[data-still="true"] .snapFlash {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .stage,
+  .art,
+  .art *,
+  .dot::before {
+    animation: none !important;
+    transition: none !important;
+  }
+}
