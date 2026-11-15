@@ -10,6 +10,7 @@ import {
   starterDesign,
 } from "./beginner-model";
 import { BeginnerDebrief } from "./BeginnerDebrief";
+import { MissionLetter } from "./MissionLetter";
 import { LaunchSequence } from "@/components/results/LaunchSequence";
 import { causeLines } from "@/components/results/mission-debrief";
 
@@ -86,6 +87,21 @@ describe("beginner mission engineering", () => {
   });
 });
 describe("first mission screens", () => {
+  it("puts the objective, deadline, constraints and accept action in the briefing without a letter accordion", () => {
+    const html = renderToStaticMarkup(
+      createElement(MissionLetter, { mission: la }),
+    );
+    expect(html).toContain("Mission parameters");
+    expect(html).toContain("First data due");
+    expect(html).toContain(`${la.targetResponseHours} hours`);
+    expect(html).toContain("ACCEPT MISSION");
+    expect(html).toContain("Why space?");
+    expect(html).not.toContain("Open your mission letter");
+    expect(html.indexOf("ACCEPT MISSION")).toBeLessThan(
+      html.indexOf("Mission science, assumptions"),
+    );
+  });
+
   it("shows one launch action and hides engineering prose in optional details", () => {
     const html = renderToStaticMarkup(
       createElement(LaunchSequence, {

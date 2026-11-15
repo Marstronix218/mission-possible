@@ -1,5 +1,5 @@
 "use client";
-import { useState, type RefObject } from "react";
+import { useRef, useState, type PointerEvent, type RefObject } from "react";
 import type { SatelliteDesign } from "@/types/game";
 import styles from "./gameplay.module.css";
 
@@ -14,14 +14,47 @@ export function SatelliteWorkbench({
   targetRef?: RefObject<HTMLDivElement | null>;
 }) {
   const [rotation, setRotation] = useState(-25);
+  const drag = useRef<{ x: number; rotation: number } | null>(null);
   const sensor = design.instruments[0];
   const wing =
     design.solar === "solar_l" ? 170 : design.solar === "solar_s" ? 100 : 140;
+
+  function startDrag(event: PointerEvent<HTMLDivElement>) {
+    if ((event.target as HTMLElement).closest("input")) return;
+    drag.current = { x: event.clientX, rotation };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function rotate(event: PointerEvent<HTMLDivElement>) {
+    if (!drag.current) return;
+    setRotation(
+      drag.current.rotation + (event.clientX - drag.current.x) * 0.65,
+    );
+  }
+
+  function stopDrag(event: PointerEvent<HTMLDivElement>) {
+    if (!drag.current) return;
+    drag.current = null;
+    if (event.currentTarget.hasPointerCapture(event.pointerId))
+      event.currentTarget.releasePointerCapture(event.pointerId);
+  }
+
+  const sensorClass =
+    sensor === "sar" || sensor === "pr"
+      ? styles.sensorRadar
+      : sensor === "tir" || sensor === "pmw"
+        ? styles.sensorThermal
+        : styles.sensorOptical;
+
   return (
     <div
       ref={targetRef}
-      className={`${styles.workbench} ${attaching ? styles.highlight : ""}`}
+      className={`${styles.workbench} ${styles.interactiveWorkbench} ${attaching ? styles.highlight : ""}`}
       aria-label="Satellite workbench"
+      onPointerDown={startDrag}
+      onPointerMove={rotate}
+      onPointerUp={stopDrag}
+      onPointerCancel={stopDrag}
     >
       <div
         className={styles.satellite}
@@ -32,9 +65,7 @@ export function SatelliteWorkbench({
         {["front", "back", "left", "right", "top", "bottom"].map((face) => (
           <div key={face} className={`${styles.face} ${styles[face]}`}>
             {face === "front" && sensor && (
-              <span
-                className={`${styles.sensorLens} ${sensor === "sar" || sensor === "pr" ? styles.sensorRadar : ""}`}
-              />
+              <span className={`${styles.sensorLens} ${sensorClass}`} />
             )}
           </div>
         ))}
@@ -54,13 +85,13 @@ export function SatelliteWorkbench({
         </span>
       )}
       <label className={styles.controls}>
-        Inspect{" "}
+        <span>Drag to inspect</span>
         <input
           aria-label="Rotate satellite"
           type="range"
           min="-180"
           max="180"
-          value={rotation}
+          value={Math.max(-180, Math.min(180, rotation))}
           onChange={(e) => setRotation(Number(e.target.value))}
         />
       </label>
