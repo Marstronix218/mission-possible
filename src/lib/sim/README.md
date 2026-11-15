@@ -19,8 +19,13 @@ if (resources.violations.length === 0) {
   clouds, detection, downlink delay, reliability, and the five score components.
 - A mission succeeds at a total score of at least 60 with at least 50% coverage.
 - `ENGINE_VERSION` must change whenever a scoring or simulation change would affect rankings.
-- Mission JSON identifies whether each source is NASA-observed or an educational model. The MVP
-  grids are explicitly educational models inspired by the linked NASA products, not live observations.
+- `result.diagnostics` and per-cell `lookHours`, `blockedHours`, `detectedHour` and `missReason`
+  are recorded from the branches the engine actually took. `feedback.ts` and `explain.ts` build
+  their text only from these numbers; never add a reason the engine did not compute.
+- `design.decisions` (focus, downlink, retask) are in-mission operations choices. Magnitudes live
+  in `DECISION_EFFECTS` in `engine.ts`. Omitted decisions reproduce the 1.1.0 engine exactly;
+  `__tests__/compat.test.ts` pins this against `__tests__/fixtures/engine-1.1.0-baseline.json`.
+- Mission JSON records each source's provenance. Los Angeles and Phoenix include archived NASA-observed hazard inputs; Houston retains an explicitly educational-model flood grid. Other missions likewise use their own source metadata. Observations are historical reference evidence, and satellite behavior and scores are simulated.
 
 Regenerate the three MVP datasets with:
 

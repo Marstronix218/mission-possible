@@ -65,9 +65,16 @@ export interface Mission {
 export interface MissionDecisions {
   /** Sensor pointing: spread looks evenly ("wide") or concentrate on the suspected hazard area ("hazard"). */
   focus?: "wide" | "hazard";
-  /** Downlink strategy: send as soon as a station is in view ("fast", costs power) or batch to save power ("save-power"). */
+  /**
+   * Downlink strategy. Omitted = standard scheduled contacts. "fast" transmits on
+   * every contact (lower latency, more transmitter power); "save-power" batches
+   * data for fewer contacts (higher latency, more power and battery reserve).
+   */
   downlink?: "fast" | "save-power";
-  /** Mid-mission retask: from `day` onward, prioritise one quadrant of the mission grid. */
+  /**
+   * Mid-mission retask: from mission `day` (0-based) onward, prioritise one quadrant
+   * of the grid at the expense of the rest. Row 0 is the grid's southern edge.
+   */
   retask?: { day: number; quadrant: "nw" | "ne" | "sw" | "se" };
 }
 
@@ -109,39 +116,64 @@ export interface SimCellResult {
   truth: number;
   observed: boolean;
   detected: boolean;
-  /** Mission hours at which a pass looked at this cell (clear or blocked). */
+  /** Mission hours (0.1 h) at which a pass looked at this cell, clear or blocked, in order. */
   lookHours?: number[];
   /** Subset of lookHours where cloud/smoke blocked the view. */
   blockedHours?: number[];
-  /** Mission hour of detection, if detected. */
+  /**
+   * Mission hour (0.1 h) at which the engine flagged this cell (`detected` true),
+   * whether a true hazard detection or a false alarm; null otherwise.
+   */
   detectedHour?: number | null;
-  /** Why a hazard cell was not detected, straight from the engine's branch. */
+  /**
+   * Hazard cells (truth > 0.5) only: why the cell is not a true detection, taken
+   * from the branch that ended the engine's loop. "never-in-view": no pass looked;
+   * "cloud-blocked": every pass was blocked; "not-recognised": a clear look after
+   * the event did not recognise it; "before-event": the clear looks came before
+   * the hazard started, so the cell was classified as background.
+   */
   missReason?: "never-in-view" | "cloud-blocked" | "not-recognised" | "before-event";
 }
 
 /** Engine-computed explanation of a result. Every number comes from the run itself. */
 export interface SimDiagnostics {
+  /** Hazard cells = hazardDetected + hazardNeverInView + hazardCloudBlocked + hazardNotRecognised + hazardBeforeEvent. */
   hazardCells: number;
   hazardDetected: number;
   hazardNeverInView: number;
   hazardCloudBlocked: number;
   hazardNotRecognised: number;
+  hazardBeforeEvent: number;
+  /** Cells flagged as hazard that were not (yet) hazard cells. */
   falseAlarms: number;
+  /** Cells with at least clear looks, and all cells (coverage = observed / total). */
+  observedCells: number;
+  totalCells: number;
+  /** Mission hour of the first true detection; delivery = this + downlinkLatencyHours. */
   firstDetectionHours: number | null;
   downlinkLatencyHours: number;
-  /** 0–1 factors the engine used. */
+  /** Response target; response score hits 0 at twice this. */
+  targetResponseHours: number;
+  /** 0–1 factors the engine used (rounded to 3 decimals). */
   powerMargin: number;
   dataMargin: number;
+  storageMargin: number;
   batteryContinuity: number;
   operationFactor: number;
   coverageChance: number;
+  /** 0–1 reliability before ×100 in the score. */
+  reliabilityFactor: number;
   bestInstrumentId: string | null;
   bestInstrumentFit: number;
   cloudPenetrating: boolean;
   /** Category weights used for the total score, as in data/categories.json (they sum to 100). */
   weights: Omit<ScoreBreakdown, "total">;
-  /** Decisions actually applied (defaults filled in). */
-  decisions: Required<Pick<MissionDecisions, "focus" | "downlink">> & Pick<MissionDecisions, "retask">;
+  /** Decisions actually applied (defaults filled in; "standard" downlink = no modifier). */
+  decisions: {
+    focus: NonNullable<MissionDecisions["focus"]>;
+    downlink: NonNullable<MissionDecisions["downlink"]> | "standard";
+    retask?: MissionDecisions["retask"];
+  };
 }
 
 export interface TimelinePoint {
