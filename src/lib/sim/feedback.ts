@@ -1,11 +1,19 @@
-import type { FeedbackItem, ResourceSummary, ScoreBreakdown } from "../../types/game";
+import type { FeedbackItem, ResourceSummary, ScoreBreakdown, SimDiagnostics } from "../../types/game";
 
+const percent = (value: number): number => Math.round(value * 100);
+
+/**
+ * Feedback is built only from numbers the engine computed in this run. Every
+ * cause it names is a counter or factor in `diagnostics`; nothing is guessed.
+ */
 export function generateFeedback(
   score: ScoreBreakdown,
   resources: ResourceSummary,
   success: boolean,
+  diagnostics: SimDiagnostics,
 ): FeedbackItem[] {
   const feedback: FeedbackItem[] = [];
+  const d = diagnostics;
 
   if (success) {
     feedback.push({
@@ -22,26 +30,100 @@ export function generateFeedback(
     });
   }
 
-  if (score.accuracy < 55) {
-    feedback.push({ type: "tip", key: "accuracy.sensor_fit", message: "Choose an instrument that is better matched to this hazard." });
+  feedback.push({
+    type: d.hazardCells > 0 && d.hazardDetected * 2 >= d.hazardCells ? "success" : "tip",
+    key: "hazard.found",
+    message: `You found ${d.hazardDetected} of ${d.hazardCells} danger zones.`,
+    params: { detected: d.hazardDetected, total: d.hazardCells },
+  });
+
+  // Miss causes, largest first, so the biggest real problem is never cut off.
+  const misses: FeedbackItem[] = [];
+  if (d.hazardNeverInView > 0) {
+    misses.push({
+      type: "tip",
+      key: "hazard.never_in_view",
+      message: `Your satellite never looked at ${d.hazardNeverInView} danger zones.`,
+      params: { count: d.hazardNeverInView, coverageChance: d.coverageChance },
+    });
+  }
+  if (d.hazardCloudBlocked > 0) {
+    misses.push({
+      type: "tip",
+      key: d.cloudPenetrating ? "hazard.cloud_blocked_residual" : "hazard.cloud_blocked",
+      message: d.cloudPenetrating
+        ? `Even through clouds, every look at ${d.hazardCloudBlocked} danger zones was blocked.`
+        : `Clouds or smoke blocked every look at ${d.hazardCloudBlocked} danger zones.`,
+      params: { count: d.hazardCloudBlocked },
+    });
+  }
+  if (d.hazardNotRecognised > 0) {
+    misses.push({
+      type: "tip",
+      key: "hazard.not_recognised",
+      message: `Your sensor saw ${d.hazardNotRecognised} danger zones clearly but did not recognise the hazard (sensor match ${percent(d.bestInstrumentFit)}%).`,
+      params: { count: d.hazardNotRecognised, fit: d.bestInstrumentFit },
+    });
+  }
+  if (d.hazardBeforeEvent > 0) {
+    misses.push({
+      type: "tip",
+      key: "hazard.before_event",
+      message: `${d.hazardBeforeEvent} danger zones had no clear observation after the hazard started there.`,
+      params: { count: d.hazardBeforeEvent },
+    });
+  }
+  misses.sort((a, b) => (b.params?.count ?? 0) - (a.params?.count ?? 0));
+  feedback.push(...misses);
+
+  if (d.firstDetectionHours === null) {
+    feedback.push({
+      type: "warning",
+      key: "response.no_detection",
+      message: "No danger zone was confirmed, so no alert reached the ground.",
+    });
   } else {
-    feedback.push({ type: "success", key: "accuracy.strong", message: "Your instrument package identified target cells accurately." });
+    feedback.push({
+      type: score.responseTime >= 50 ? "success" : "tip",
+      key: "response.delivery",
+      message: `First alert spotted at hour ${d.firstDetectionHours}; the data took ${d.downlinkLatencyHours} h to come down.`,
+      params: {
+        detectedHour: d.firstDetectionHours,
+        latencyHours: d.downlinkLatencyHours,
+        targetHours: d.targetResponseHours,
+      },
+    });
   }
-  if (score.coverage < 50) {
-    feedback.push({ type: "tip", key: "coverage.orbit", message: "Try an orbit with a wider swath or more frequent access." });
-  }
-  if (score.responseTime < 50) {
-    feedback.push({ type: "tip", key: "response.downlink", message: "Increase downlink capacity or add ground stations to deliver observations sooner." });
+
+  if (d.falseAlarms > 0) {
+    feedback.push({
+      type: "tip",
+      key: "accuracy.false_alarms",
+      message: `${d.falseAlarms} false alarms cost accuracy points.`,
+      params: { count: d.falseAlarms },
+    });
   }
   if (score.reliability < 70) {
-    feedback.push({ type: "warning", key: "reliability.margin", message: "Increase power, battery, storage, or downlink margin to improve reliability." });
+    feedback.push({
+      type: "warning",
+      key: "reliability.margins",
+      message: `Reliability is low: power margin ${percent(d.powerMargin)}%, battery ${percent(d.batteryContinuity)}%, data margin ${percent(d.dataMargin)}%.`,
+      params: { power: d.powerMargin, battery: d.batteryContinuity, data: d.dataMargin },
+    });
   }
-  if (score.costEfficiency >= 50) {
+  if (score.costEfficiency === 0 && (score.accuracy < 25 || score.coverage < 25)) {
+    feedback.push({
+      type: "tip",
+      key: "cost.gate",
+      message: "Budget points only count once accuracy and coverage both reach 25.",
+      params: { accuracy: score.accuracy, coverage: score.coverage },
+    });
+  } else if (score.costEfficiency >= 50) {
     feedback.push({ type: "success", key: "cost.efficient", message: "The mission preserves a strong budget margin without sacrificing core performance." });
   }
   resources.warnings.forEach((message, index) => {
     feedback.push({ type: "warning", key: `resources.warning_${index + 1}`, message });
   });
 
-  return feedback.slice(0, 6);
+  return feedback.slice(0, 7);
 }

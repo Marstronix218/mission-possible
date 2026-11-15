@@ -1,30 +1,45 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { loadAttempts } from "../results/session";
 import { api, backendAvailable } from "../results/cloud";
-import { playableMissions } from "../results/missions";
 import { ENGINE_VERSION } from "@/lib/sim";
 import type { Category, SimResult } from "@/types/game";
 import { categoryLabel } from "@/lib/story/missions";
-import { useReducedMotion } from "../results/use-reduced-motion";
-import * as maplibregl from "maplibre-gl";
 import EmergencyHero from "./EmergencyHero";
 import MissionJourney from "./MissionJourney";
+import HazardIcon from "./HazardIcon";
+import Stars from "./Stars";
+import { useInView } from "./useInView";
 import {
-  missions,
-  featuredMission,
-  categories,
+  selectMissions,
   categoryColors,
-  categorySymbols,
+  briefHref,
+  progressLabel,
+  starsFor,
+  type BestRecord,
   type MapMission,
 } from "./missions";
-export default function MissionMap() {
-  const [best, setBest] = useState<
-    Record<string, { score: number; success: boolean }>
-  >({});
+import styles from "./MissionMap.module.css";
+
+const HazardMap = dynamic(() => import("./HazardMap"), {
+  ssr: false,
+  loading: () => <MapLoading />,
+});
+
+function MapLoading() {
+  return (
+    <div className={styles.mapLoading} role="status">
+      <span className={styles.mapLoadingGlobe} aria-hidden="true" />
+      Loading Earth…
+    </div>
+  );
+}
+
+function useBestScores(missions: MapMission[]) {
+  const [best, setBest] = useState<Record<string, BestRecord>>({});
   const [progressError, setProgressError] = useState("");
-  const reducedMotion = useReducedMotion();
   useEffect(() => {
     let active = true;
     async function refresh() {
@@ -32,7 +47,7 @@ export default function MissionMap() {
         const rows = backendAvailable
           ? (
               await Promise.all(
-                playableMissions.map(async (mission) =>
+                missions.map(async (mission) =>
                   (
                     await api<
                       {
@@ -50,7 +65,7 @@ export default function MissionMap() {
               )
             ).flat()
           : loadAttempts();
-        const scores: Record<string, { score: number; success: boolean }> = {};
+        const scores: Record<string, BestRecord> = {};
         for (const a of rows.filter(
           (a) => !a.classroomId && a.result.engineVersion === ENGINE_VERSION,
         ))
@@ -67,7 +82,7 @@ export default function MissionMap() {
         if (active) {
           setBest({});
           setProgressError(
-            "Your progress could not be loaded. Mission selection is still available.",
+            "Progress couldn't load — every mission is still playable.",
           );
         }
       }
@@ -83,269 +98,252 @@ export default function MissionMap() {
       window.removeEventListener("storage", changed);
       window.removeEventListener("mission-possible:mock-updated", changed);
     };
-  }, []);
-  const host = useRef<HTMLDivElement>(null);
-  const map = useRef<maplibregl.Map | null>(null);
-  const [selectedSlug, setSelectedSlug] = useState(featuredMission?.slug);
-  const [heroSlug, setHeroSlug] = useState(featuredMission?.slug);
-  const hero = missions.find((m) => m.slug === heroSlug);
+  }, [missions]);
+  return { best, progressError };
+}
+
+/** Big, distinct starter card with its own little hazard scene. */
+function FeaturedCard({
+  m,
+  record,
+  index,
+}: {
+  m: MapMission;
+  record?: BestRecord;
+  index: number;
+}) {
+  return (
+    <li
+      className={`${styles.featured} hz-${m.category} anim-pop-in`}
+      style={{ animationDelay: `${index * 90}ms` }}
+    >
+      <div className={styles.featuredArt} aria-hidden="true">
+        <span className={styles.featuredOrbit}>
+          <span className={styles.featuredSat}>
+            <svg
+              className={styles.featuredSatInner}
+              viewBox="0 0 40 24"
+              width="40"
+              height="24"
+            >
+              <rect
+                x="1"
+                y="7"
+                width="12"
+                height="10"
+                rx="2"
+                fill="#2de2e6"
+                stroke="#070a24"
+                strokeWidth="2"
+              />
+              <rect
+                x="27"
+                y="7"
+                width="12"
+                height="10"
+                rx="2"
+                fill="#2de2e6"
+                stroke="#070a24"
+                strokeWidth="2"
+              />
+              <rect
+                x="14"
+                y="4"
+                width="12"
+                height="16"
+                rx="4"
+                fill="#fff"
+                stroke="#070a24"
+                strokeWidth="2"
+              />
+            </svg>
+          </span>
+        </span>
+        <span
+          className={`${styles.featuredBlob} anim-float`}
+          style={{ animationDelay: `${index * -1.2}s` }}
+        >
+          <HazardIcon category={m.category} size={64} />
+        </span>
+        <span className={styles.featuredTimer}>
+          <span aria-hidden="true">⏱</span> {m.deadlineHours}h
+        </span>
+      </div>
+      <div className={styles.featuredBody}>
+        <span className="chip">
+          <span style={{ color: categoryColors[m.category] }}>
+            <HazardIcon category={m.category} size={16} />
+          </span>
+          {categoryLabel[m.category]}
+        </span>
+        <h3 className={styles.featuredCity}>{m.city}</h3>
+        <p className={styles.featuredLine}>{m.headline}</p>
+        <div className={styles.featuredFoot}>
+          <span className="sr-only">{progressLabel(record)}. </span>
+          <Stars count={starsFor(record)} size="1.35rem" />
+          <Link
+            className="btn-pop"
+            href={briefHref(m.slug)}
+            aria-label={`${record ? "Replay" : "Play"} the ${m.city} mission`}
+          >
+            {record ? "Replay" : "Play"} <span aria-hidden="true">▶</span>
+          </Link>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+function MissionTile({ m, record }: { m: MapMission; record?: BestRecord }) {
+  return (
+    <li>
+      <Link
+        href={briefHref(m.slug)}
+        className={`${styles.tile} hz-${m.category}`}
+        aria-label={`${m.city}: ${categoryLabel[m.category]}, ${m.deadlineHours}-hour deadline. ${progressLabel(record)}.`}
+      >
+        <span className={styles.tileIcon} aria-hidden="true">
+          <HazardIcon category={m.category} size={22} />
+        </span>
+        <span className={styles.tileText}>
+          <strong>{m.city}</strong>
+          <span>
+            {categoryLabel[m.category]} · {m.deadlineHours}h
+          </span>
+        </span>
+        {record && <Stars count={starsFor(record)} size="0.8rem" />}
+      </Link>
+    </li>
+  );
+}
+
+export default function MissionMap({ missions }: { missions: MapMission[] }) {
+  const { featuredMission, featuredMissions, moreMissions, categories } = selectMissions(missions);
+  const moreCategories = categories.filter((c) => moreMissions.some((m) => m.category === c));
+  const { best, progressError } = useBestScores(missions);
   const [filter, setFilter] = useState<Category | "all">("all");
-  const [offline, setOffline] = useState(false);
-  useEffect(() => {
-    if (!host.current) return;
-    let instance: maplibregl.Map;
-    try {
-      maplibregl.setWorkerUrl("/maps/maplibre-worker.mjs");
-      instance = new maplibregl.Map({
-        container: host.current,
-        style: {
-          version: 8,
-          sources: {
-            land: {
-              type: "geojson",
-              data: "/maps/north-america.geojson",
-              attribution: "Natural Earth · Public domain",
-            },
-          },
-          layers: [
-            {
-              id: "ocean",
-              type: "background",
-              paint: { "background-color": "#0c202e" },
-            },
-            {
-              id: "land",
-              type: "fill",
-              source: "land",
-              paint: { "fill-color": "#213947" },
-            },
-            {
-              id: "coast",
-              type: "line",
-              source: "land",
-              paint: { "line-color": "#527080", "line-width": 1 },
-            },
-          ],
-        },
-        center: [-104, 33],
-        zoom: 3.4,
-        attributionControl: { compact: true },
-      });
-      map.current = instance;
-      instance.addControl(new maplibregl.NavigationControl(), "top-right");
-      instance.on("error", () => setOffline(true));
-    } catch {
-      if (host.current)
-        host.current.textContent =
-          "Interactive map unavailable. Every mission is listed below.";
-      return;
-    }
-    return () => {
-      instance.remove();
-      map.current = null;
-    };
-  }, []);
-  const visible = missions.filter(
+  const [mapRef, mapNear] = useInView<HTMLDivElement>({
+    rootMargin: "400px 0px",
+    once: true,
+  });
+  const [mapPanelRef, mapVisible] = useInView<HTMLDivElement>();
+  const visible = moreMissions.filter(
     (m) => filter === "all" || m.category === filter,
   );
-  useEffect(() => {
-    if (!map.current) return;
-    const markers = missions
-      .filter((m) => filter === "all" || m.category === filter)
-      .map((m) => {
-        const b = document.createElement("button");
-        b.className = "city-pin";
-        b.style.setProperty("--pin", categoryColors[m.category]);
-        b.textContent = categorySymbols[m.category];
-        b.title = `${m.city}: ${categoryLabel[m.category]}, ${m.deadlineHours}-hour deadline`;
-        b.setAttribute("aria-label", b.title);
-        b.onclick = () => {
-          setSelectedSlug(m.slug);
-          document.getElementById("mission-" + m.slug)?.scrollIntoView({
-            behavior: reducedMotion ? "auto" : "smooth",
-            block: "nearest",
-          });
-        };
-        b.onfocus = () => setSelectedSlug(m.slug);
-        return new maplibregl.Marker({ element: b })
-          .setLngLat(m.coordinates)
-          .addTo(map.current!);
-      });
-    return () => markers.forEach((m) => m.remove());
-  }, [filter, reducedMotion]);
-  const card = (m: MapMission) => {
-    const isSelected = m.slug === selectedSlug;
-    const record = best[m.slug];
-    return (
-      <li
-        key={m.slug}
-        id={"mission-" + m.slug}
-        className={
-          "flex flex-col rounded-lg border bg-[#122430] p-4 text-[#eaf1f5] " +
-          (isSelected
-            ? "border-[#9ae6d3] shadow-[0_0_0_1px_#9ae6d3]"
-            : "border-[#2a3d4b]")
-        }
-      >
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-          <span
-            className="category"
-            style={{ color: categoryColors[m.category] }}
-          >
-            <span aria-hidden="true">{categorySymbols[m.category]} </span>
-            {categoryLabel[m.category]}
-          </span>
-          <span className="rounded-full border border-[#617a9a] px-2 py-0.5 font-mono text-xs">
-            <span aria-hidden="true">⏱ </span>
-            {m.deadlineHours} h deadline
-          </span>
-        </div>
-        <h4 className="m-0 text-xl font-medium">{m.city}</h4>
-        <p className="mt-1 mb-1 text-sm leading-snug text-[#eaf1f5]">
-          {m.headline}
-        </p>
-        <p className="mt-0 mb-3 text-sm">{m.goal}</p>
-        <p className="mt-auto mb-3 text-xs">
-          {record ? (
-            <>
-              <span aria-hidden="true">{record.success ? "✓ " : "△ "}</span>
-              {record.success ? "Completed" : "In progress"} · Best{" "}
-              {record.score.toFixed(1)}/100
-            </>
-          ) : (
-            "Not attempted yet"
-          )}
-        </p>
-        <div className="flex flex-wrap items-center gap-3">
-          <Link
-            className="primary"
-            href={"/mission/" + m.slug + "/brief"}
-            aria-label={`${record ? "Replay" : "Start"} the ${m.city} mission`}
-          >
-            {record ? "Replay mission" : "Start mission"}{" "}
-            <span aria-hidden="true">→</span>
-          </Link>
-          <button
-            type="button"
-            aria-pressed={isSelected}
-            aria-label={`Show ${m.city} on the map`}
-            onClick={() => {
-              setSelectedSlug(m.slug);
-              map.current?.flyTo({
-                center: m.coordinates,
-                zoom: 5,
-                duration: reducedMotion ? 0 : 900,
-              });
-              host.current?.scrollIntoView({
-                behavior: reducedMotion ? "auto" : "smooth",
-                block: "nearest",
-              });
-            }}
-          >
-            {isSelected ? "Shown on map" : "Show on map"}
-          </button>
-        </div>
-      </li>
-    );
-  };
-  const groups = categories
-    .filter((c) => filter === "all" || c === filter)
-    .map((c) => ({ c, items: visible.filter((m) => m.category === c) }));
+  const completed = missions.filter((m) => best[m.slug]?.success).length;
+
   return (
-    <main id="main-content" tabIndex={-1}>
-      {hero && (
-        <EmergencyHero
-          mission={hero}
-          onNext={
-            missions.length > 1
-              ? () => {
-                  const i = missions.findIndex((m) => m.slug === heroSlug);
-                  setHeroSlug(missions[(i + 1) % missions.length].slug);
-                }
-              : undefined
-          }
-        />
-      )}
+    <main id="main-content" tabIndex={-1} className={styles.page}>
+      {featuredMission && <EmergencyHero mission={featuredMission} />}
+
       <MissionJourney />
-      <section aria-labelledby="missions-heading" className="mt-12">
-        <div className="section-heading flex-wrap">
-          <h2 id="missions-heading" className="mb-1">
-            Emergencies you can respond to
-          </h2>
-          <span>
-            {missions.length} {missions.length === 1 ? "city" : "cities"} ·{" "}
-            {categories.length} hazard{" "}
-            {categories.length === 1 ? "type" : "types"}
-          </span>
-        </div>
-        <p className="mt-0 mb-4 text-sm">
-          Each hazard needs a different kind of satellite. Start with the
-          featured emergency, then take on the rest. All missions are training
-          scenarios.
-        </p>
-        <div className="filter mt-0" role="group" aria-label="Filter by hazard">
-          <button
-            aria-pressed={filter === "all"}
-            onClick={() => setFilter("all")}
-          >
-            All · {missions.length}
-          </button>
-          {categories.map((c) => (
-            <button
-              key={c}
-              aria-pressed={filter === c}
-              onClick={() => {
-                setFilter(c);
-                const first = missions.find((m) => m.category === c);
-                if (first) setSelectedSlug(first.slug);
-              }}
+
+      <section
+        aria-labelledby="featured-heading"
+        className="mt-16 sm:mt-24"
+        id="missions"
+      >
+        <div className={styles.sectionHead}>
+          <h2 id="featured-heading">Pick your first mission</h2>
+          {completed > 0 && (
+            <span
+              className="chip"
+              style={{ "--hz": "var(--pop-yellow)" } as React.CSSProperties}
             >
-              <span aria-hidden="true" style={{ color: categoryColors[c] }}>
-                {categorySymbols[c]}{" "}
-              </span>
-              {categoryLabel[c]} ·{" "}
-              {missions.filter((m) => m.category === c).length}
-            </button>
-          ))}
+              <span aria-hidden="true">★</span> {completed}/{missions.length}{" "}
+              completed
+            </span>
+          )}
         </div>
         {progressError && (
           <p role="status" className="notice">
             {progressError}
           </p>
         )}
-        <section
-          className="map-panel min-h-[300px] sm:min-h-[400px]"
-          aria-label="Mission locations map"
-        >
-          <div ref={host} className="map-canvas" />
-          <div className="map-caption">
-            MISSION LOCATIONS{" "}
-            <span>Select a marker to jump to its mission</span>
+        <ul className={styles.featuredGrid}>
+          {featuredMissions.map((m, i) => (
+            <FeaturedCard key={m.slug} m={m} record={best[m.slug]} index={i} />
+          ))}
+        </ul>
+      </section>
+
+      <section aria-labelledby="map-heading" className="mt-16 sm:mt-24">
+        <div className={styles.sectionHead}>
+          <h2 id="map-heading">Disaster map</h2>
+          <span
+            className="chip"
+            style={{ "--hz": "var(--pop-cyan)" } as React.CSSProperties}
+          >
+            {missions.length} alerts
+          </span>
+        </div>
+        <div ref={mapRef}>
+          <div
+            ref={mapPanelRef}
+            className={`map-panel ${styles.mapPanel}`}
+            data-paused={mapVisible ? "false" : "true"}
+            aria-label="Map of disaster missions. Select a marker to preview a mission."
+            role="region"
+          >
+            {mapNear ? (
+              <HazardMap missions={missions} best={best} />
+            ) : (
+              <MapLoading />
+            )}
           </div>
-          {offline && (
-            <p className="map-notice" role="status">
-              Map tiles unavailable. Every mission is listed below the map.
-            </p>
-          )}
-        </section>
-        {groups.map(({ c, items }) => (
-          <section key={c} aria-labelledby={"group-" + c} className="mt-8">
-            <h3
-              id={"group-" + c}
-              className="mt-0 mb-3 text-lg"
-              style={{ color: categoryColors[c] }}
+        </div>
+        <p className={styles.attribution}>
+          Satellite imagery:{" "}
+          <a
+            href="https://earthdata.nasa.gov/gibs"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            NASA EOSDIS GIBS / Blue Marble
+          </a>
+          . Mission alerts are training scenarios.
+        </p>
+      </section>
+
+      <section aria-labelledby="more-heading" className="mt-14 sm:mt-20">
+        <div className={styles.sectionHead}>
+          <h2 id="more-heading" className="text-2xl">
+            More missions
+          </h2>
+          <span className="text-sm text-muted-foreground">
+            {moreMissions.length} cities
+          </span>
+        </div>
+        <div
+          className={`filter ${styles.filters}`}
+          role="group"
+          aria-label="Filter missions by hazard"
+        >
+          <button
+            type="button"
+            aria-pressed={filter === "all"}
+            onClick={() => setFilter("all")}
+          >
+            All
+          </button>
+          {moreCategories.map((c) => (
+            <button
+              type="button"
+              key={c}
+              className={"hz-" + c}
+              aria-pressed={filter === c}
+              onClick={() => setFilter(filter === c ? "all" : c)}
             >
-              <span aria-hidden="true">{categorySymbols[c]} </span>
-              {categoryLabel[c]}{" "}
-              <span className="text-sm text-[#a5bac9]">
-                · {items.length} {items.length === 1 ? "city" : "cities"}
-              </span>
-            </h3>
-            <ul className="m-0 grid list-none grid-cols-1 gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map(card)}
-            </ul>
-          </section>
-        ))}
+              <HazardIcon category={c} size={18} />
+              {categoryLabel[c]}
+            </button>
+          ))}
+        </div>
+        <ul className={styles.tileGrid}>
+          {visible.map((m) => (
+            <MissionTile key={m.slug} m={m} record={best[m.slug]} />
+          ))}
+        </ul>
       </section>
     </main>
   );

@@ -1,69 +1,633 @@
-.hero {
-  background:
-    radial-gradient(120% 90% at 85% 100%, #6b2a1c 0%, transparent 60%),
-    linear-gradient(160deg, #1b1420 0%, #0f1b2a 55%, #0b1722 100%);
+/* Homepage (/map) styles. Global tokens + .btn-pop/.chip live in globals.css. */
+
+.page {
+  overflow-x: clip;
 }
 
-.pulse {
-  animation: pulse 1.6s ease-in-out infinite;
+/* ---------------- Hero ---------------- */
+.highlight {
+  position: relative;
+  display: inline-block;
+  color: var(--pop-yellow);
+  text-shadow: 0 5px 0 #0006;
+  isolation: isolate;
+}
+.highlight::after {
+  content: "";
+  position: absolute;
+  left: 2%;
+  right: 2%;
+  bottom: -0.08em;
+  height: 0.14em;
+  border-radius: 999px;
+  background: var(--pop-pink);
+  transform: rotate(-1.5deg);
+  z-index: -1;
 }
 
-.flicker {
-  transform-origin: 50% 100%;
-  animation: flicker 1.2s ease-in-out infinite alternate;
+.spinSlow {
+  animation: earth-spin 48s linear infinite;
 }
-
-.beam {
-  animation: beam 2.4s ease-in-out infinite;
+.spinFast {
+  animation: earth-spin 30s linear infinite;
 }
-
-.drift {
-  animation: drift 6s ease-in-out infinite alternate;
+@keyframes earth-spin {
+  to {
+    transform: translateX(-480px);
+  }
 }
-
-@keyframes pulse {
+.blink {
+  animation: blink 1.2s steps(2, jump-none) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+.twinkle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: twinkle 2.6s ease-in-out infinite;
+}
+@keyframes twinkle {
   0%,
   100% {
     opacity: 1;
+    transform: scale(1) rotate(0deg);
   }
   50% {
-    opacity: 0.35;
+    opacity: 0.3;
+    transform: scale(0.6) rotate(45deg);
   }
 }
-
-@keyframes flicker {
-  from {
-    transform: scaleY(1);
-  }
-  to {
-    transform: scaleY(1.12);
-  }
+.bob {
+  animation: sos-bob 1.8s ease-in-out infinite;
 }
-
-@keyframes beam {
+@keyframes sos-bob {
   0%,
   100% {
-    opacity: 0.25;
+    transform: translateY(0);
   }
   50% {
-    opacity: 0.7;
+    transform: translateY(-7px);
   }
 }
 
-@keyframes drift {
+/* ---------------- Journey strip ---------------- */
+.journey {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px 8px;
+}
+.journey li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  color: var(--foreground);
+}
+.journeyIcon {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 26px;
+  background: var(--tile);
+  color: var(--space-950);
+  border: 4px solid var(--space-950);
+  box-shadow: 0 6px 0 #0007;
+  transform: rotate(calc((var(--i) - 2.5) * 2deg));
+  transition: transform 0.3s var(--ease-pop);
+}
+.journeyIcon svg {
+  width: 40px;
+  height: 40px;
+}
+.journey li:hover .journeyIcon {
+  transform: rotate(0deg) translateY(-6px) scale(1.06);
+}
+.journeyLabel {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+@media (min-width: 900px) {
+  .journey {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+  /* Dotted connector between steps */
+  .journey li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: 38px;
+    left: calc(50% + 50px);
+    right: calc(-50% + 50px);
+    border-top: 4px dotted #ffffff40;
+  }
+  .journeyIcon {
+    width: 92px;
+    height: 92px;
+  }
+  .journeyIcon svg {
+    width: 48px;
+    height: 48px;
+  }
+  .journey li:not(:last-child)::after {
+    top: 46px;
+    left: calc(50% + 58px);
+    right: calc(-50% + 58px);
+  }
+}
+
+/* ---------------- Section headers ---------------- */
+.sectionHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 18px;
+}
+.sectionHead h2 {
+  margin: 0;
+}
+
+/* ---------------- Featured cards ---------------- */
+.featuredGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 22px;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 720px) {
+  .featuredGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.featured {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--card);
+  border: 4px solid var(--space-950);
+  box-shadow: 0 8px 0 #0007;
+  color: var(--foreground);
+  transition:
+    transform 0.25s var(--ease-pop),
+    box-shadow 0.25s var(--ease-pop);
+}
+.featured:hover,
+.featured:focus-within {
+  transform: translateY(-6px) rotate(-0.6deg);
+  box-shadow:
+    0 14px 0 #0007,
+    0 0 0 4px var(--hz);
+}
+.featuredArt {
+  position: relative;
+  height: 150px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(
+      circle at 50% 120%,
+      color-mix(in srgb, var(--hz) 85%, #fff) 0 30%,
+      transparent 31%
+    ),
+    radial-gradient(circle at 20% 20%, #ffffff30 0 3px, transparent 4px) 0 0 /
+      46px 40px,
+    linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--hz) 70%, var(--space-900)),
+      color-mix(in srgb, var(--hz) 25%, var(--space-950))
+    );
+  border-bottom: 4px solid var(--space-950);
+}
+.featuredBlob {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--hz);
+  color: var(--space-950);
+  border: 4px solid var(--space-950);
+  box-shadow: 0 6px 0 #0006;
+  position: relative;
+  z-index: 1;
+}
+.featuredOrbit {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 190px;
+  height: 64px;
+  margin: -32px 0 0 -95px;
+  border: 3px dashed #ffffff66;
+  border-radius: 50%;
+  transform: rotate(-12deg);
+}
+/* Two out-of-phase ease-in-out axes trace an ellipse without offset-path. */
+.featuredSat {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -12px 0 0 -20px;
+  animation: sat-x 3s ease-in-out infinite alternate;
+}
+.featuredSatInner {
+  display: block;
+  animation: sat-y 3s ease-in-out -1.5s infinite alternate;
+}
+@keyframes sat-x {
   from {
-    transform: translateX(0);
+    transform: translateX(-95px);
   }
   to {
-    transform: translateX(-14px);
+    transform: translateX(95px);
   }
+}
+@keyframes sat-y {
+  from {
+    transform: translateY(-32px);
+  }
+  to {
+    transform: translateY(32px);
+  }
+}
+.featuredTimer {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--space-950);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.featuredBody {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 18px 20px 20px;
+}
+.featuredCity {
+  margin: 4px 0 0;
+  font-size: 1.9rem;
+  line-height: 1.05;
+}
+.featuredLine {
+  margin: 0;
+  font-size: 0.98rem;
+  line-height: 1.4;
+}
+.featuredFoot {
+  margin-top: auto;
+  padding-top: 12px;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* ---------------- Map ---------------- */
+.mapPanel {
+  height: clamp(340px, 52vw, 520px);
+  min-height: 0;
+}
+.mapPanel :global(.maplibregl-ctrl-attrib) {
+  background: #070a24cc;
+  color: #e9ecff;
+  font-size: 11px;
+  border-radius: 12px 0 0 0;
+}
+.mapPanel :global(.maplibregl-ctrl-attrib a) {
+  color: #e9ecff;
+}
+.mapPanel :global(.maplibregl-ctrl-group) {
+  border-radius: 14px;
+  overflow: hidden;
+  border: 3px solid var(--space-950);
+  box-shadow: 0 4px 0 #0006;
+}
+.mapPanel :global(.maplibregl-ctrl-group button) {
+  width: 40px;
+  height: 40px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: #fff;
+}
+.mapPanel :global(.maplibregl-cooperative-gesture-screen) {
+  font-family: var(--font-display);
+  background: #070a24b3;
+}
+.mapLoading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--muted-foreground);
+  background: radial-gradient(circle at 50% 50%, #1a2a8a, var(--space-950) 70%);
+}
+.mapLoadingGlobe {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #5fb0ff, #1b3aa8);
+  border: 4px solid var(--space-950);
+  box-shadow: 0 0 0 6px #2de2e633;
+  animation: mp-pulse 1.4s ease-in-out infinite;
+}
+.attribution {
+  margin: 10px 4px 0;
+  font-size: 0.8rem;
+}
+.attribution a {
+  color: var(--pop-cyan);
+  font-weight: 700;
+}
+
+/* Hazard markers — icon + shape + color, 44px hit target */
+.marker {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+.marker:hover:not(:disabled) {
+  border-color: transparent;
+}
+.markerBadge {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--hz);
+  color: var(--space-950);
+  border: 3px solid var(--space-950);
+  box-shadow: 0 3px 0 #0008;
+  transition: transform 0.2s var(--ease-pop);
+}
+.marker:hover .markerBadge,
+.marker:focus-visible .markerBadge,
+.marker[aria-pressed="true"] .markerBadge {
+  transform: scale(1.25);
+}
+.marker[aria-pressed="true"] .markerBadge {
+  box-shadow:
+    0 0 0 3px #fff,
+    0 4px 0 #0008;
+}
+.marker:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+.markerRing {
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 3px solid var(--hz);
+  box-shadow: 0 0 18px var(--hz);
+  animation: mp-ring 2.2s ease-out infinite;
+}
+.markerDone {
+  position: absolute;
+  z-index: 2;
+  top: -2px;
+  right: -4px;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--pop-yellow);
+  color: var(--space-950);
+  border: 2px solid var(--space-950);
+  font-size: 10px;
+  line-height: 1;
+}
+.markerGlyph {
+  display: grid;
+}
+/* Per-hazard personality */
+.marker[data-category="wildfire"] .markerGlyph {
+  transform-origin: 50% 90%;
+  animation: flame 0.9s ease-in-out infinite alternate;
+}
+.marker[data-category="storm"] .markerGlyph {
+  animation: mp-spin 3s linear infinite;
+}
+.marker[data-category="heat"] .markerGlyph {
+  animation: mp-spin 9s linear infinite;
+}
+.marker[data-category="snow"] .markerGlyph {
+  animation: mp-spin 12s linear infinite;
+}
+.marker[data-category="flood"] .markerGlyph {
+  animation: drip 1.6s ease-in-out infinite;
+}
+.marker[data-category="volcano"] .markerGlyph {
+  animation: rumble 0.5s ease-in-out infinite alternate;
+}
+.marker[data-category="glacier"] .markerGlyph,
+.marker[data-category="drought"] .markerGlyph {
+  animation: mp-bob 3s ease-in-out infinite;
+}
+.marker[data-category="flood"] .markerRing,
+.marker[data-category="glacier"] .markerRing {
+  animation-duration: 3s;
+}
+@keyframes flame {
+  from {
+    transform: scale(1, 1) skewX(-3deg);
+  }
+  to {
+    transform: scale(1.08, 0.92) skewX(4deg);
+  }
+}
+@keyframes drip {
+  0%,
+  100% {
+    transform: translateY(-1px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+@keyframes rumble {
+  from {
+    transform: translateX(-1px);
+  }
+  to {
+    transform: translateX(1px);
+  }
+}
+
+/* Popup preview */
+.popup :global(.maplibregl-popup-content) {
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.popup :global(.maplibregl-popup-tip) {
+  border-top-color: var(--space-950) !important;
+  border-bottom-color: var(--space-950) !important;
+}
+.preview {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  width: 210px;
+  padding: 14px;
+  border-radius: 20px;
+  background: var(--space-800);
+  border: 3px solid var(--space-950);
+  box-shadow: 0 6px 0 #0007;
+  color: var(--foreground);
+  font-family: var(--font-body);
+  animation: mp-pop-in 0.25s var(--ease-pop);
+}
+.previewCity {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  line-height: 1.05;
+}
+.previewMeta {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 800;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+/* ---------------- More missions ---------------- */
+.filters {
+  margin: 0 0 16px;
+}
+.filters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-transform: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+.filters button svg {
+  color: var(--hz, currentColor);
+}
+.filters button[aria-pressed="true"] svg {
+  color: var(--space-950);
+}
+.tileGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+}
+.tileGrid li {
+  padding: 0;
+}
+.tile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 64px;
+  height: 100%;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--card) 80%, transparent);
+  border: 2px solid #ffffff12;
+  color: var(--foreground);
+  transition:
+    transform 0.2s var(--ease-pop),
+    border-color 0.2s,
+    background-color 0.2s;
+}
+.tile:hover,
+.tile:focus-visible {
+  text-decoration: none;
+  transform: translateY(-3px);
+  border-color: var(--hz);
+  background: color-mix(in srgb, var(--hz) 14%, var(--card));
+}
+.tileIcon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: var(--hz);
+  color: var(--space-950);
+  border: 3px solid var(--space-950);
+  transition: transform 0.25s var(--ease-pop);
+}
+.tile:hover .tileIcon {
+  transform: rotate(-10deg) scale(1.08);
+}
+.tileText {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  line-height: 1.2;
+}
+.tileText strong {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  overflow-wrap: anywhere;
+}
+.tileText span {
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pulse,
-  .flicker,
-  .beam,
-  .drift {
-    animation: none;
+  .spinSlow,
+  .spinFast,
+  .blink,
+  .twinkle,
+  .bob,
+  .featuredSat,
+  .featuredSatInner,
+  .markerRing,
+  .markerGlyph,
+  .mapLoadingGlobe {
+    animation: none !important;
   }
 }

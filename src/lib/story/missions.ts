@@ -50,7 +50,7 @@ export const missionStories: Record<string, MissionStory> = {
       duration: "Wind-driven fires change direction within days, so the mission is short.",
     },
     obstacle: "Thick smoke and some clouds hide the fire from ordinary cameras.",
-    hint: "Fire is hot. A sensor that measures heat can find flames through smoke.",
+    hint: "Heat sensors can locate hot areas. Clouds and dense smoke can still block observations.",
   },
   houston: {
     slug: "houston",

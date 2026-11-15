@@ -1,6 +1,60 @@
 import { z } from "zod";
-import { designSchema } from "./contracts";
+import { decisionsSchema, designSchema } from "./contracts";
 const metric = z.number().finite().min(0).max(100);
+const count = z.number().int().nonnegative().max(10000);
+const factor = z.number().finite().min(0).max(1);
+const hour = z.number().finite().nonnegative();
+const diagnosticsSchema = z
+  .object({
+    hazardCells: count,
+    hazardDetected: count,
+    hazardNeverInView: count,
+    hazardCloudBlocked: count,
+    hazardNotRecognised: count,
+    hazardBeforeEvent: count,
+    falseAlarms: count,
+    observedCells: count,
+    totalCells: count,
+    firstDetectionHours: hour.nullable(),
+    downlinkLatencyHours: hour,
+    targetResponseHours: hour.positive(),
+    powerMargin: factor,
+    dataMargin: factor,
+    storageMargin: factor,
+    batteryContinuity: factor,
+    operationFactor: factor,
+    coverageChance: factor,
+    reliabilityFactor: factor,
+    bestInstrumentId: z.string().min(1).nullable(),
+    bestInstrumentFit: factor,
+    cloudPenetrating: z.boolean(),
+    weights: z.object({
+      accuracy: metric,
+      responseTime: metric,
+      coverage: metric,
+      costEfficiency: metric,
+      reliability: metric,
+    }),
+    decisions: z.object({
+      focus: z.enum(["wide", "hazard"]),
+      downlink: z.enum(["fast", "save-power", "standard"]),
+      retask: decisionsSchema.shape.retask,
+    }),
+  })
+  .refine(
+    (d) =>
+      d.hazardDetected +
+        d.hazardNeverInView +
+        d.hazardCloudBlocked +
+        d.hazardNotRecognised +
+        d.hazardBeforeEvent ===
+        d.hazardCells &&
+      d.hazardCells <= d.totalCells &&
+      d.observedCells <= d.totalCells &&
+      Math.abs(Object.values(d.weights).reduce((a, b) => a + b, 0) - 100) <
+        0.001,
+    "Inconsistent simulation diagnostics",
+  );
 export const resultSnapshotSchema = z.object({
   score: z.object({
     accuracy: metric,
@@ -17,6 +71,18 @@ export const resultSnapshotSchema = z.object({
         truth: z.number().finite(),
         observed: z.boolean(),
         detected: z.boolean(),
+        // Per-pass detail from engine 1.2.0+; absent on older saved attempts.
+        lookHours: z.array(hour).max(200).optional(),
+        blockedHours: z.array(hour).max(200).optional(),
+        detectedHour: hour.nullable().optional(),
+        missReason: z
+          .enum([
+            "never-in-view",
+            "cloud-blocked",
+            "not-recognised",
+            "before-event",
+          ])
+          .optional(),
       }),
     )
     .max(10000),
@@ -41,6 +107,7 @@ export const resultSnapshotSchema = z.object({
   success: z.boolean(),
   firstDeliveryHours: z.number().finite().nonnegative().nullable(),
   engineVersion: z.string().min(1),
+  diagnostics: diagnosticsSchema.optional(),
 });
 export const savedAttemptSchema = z.object({
   id: z.string().min(1),
@@ -51,7 +118,7 @@ export const savedAttemptSchema = z.object({
     massKg: z.number().finite().positive(),
   }),
   result: resultSnapshotSchema,
-  at: z.string().datetime(),
+  at: z.string().datetime({ offset: true }),
   classroomId: z.string().min(1).optional(),
   verified: z.boolean().default(false),
 });

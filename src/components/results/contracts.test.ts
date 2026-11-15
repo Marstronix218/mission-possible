@@ -34,4 +34,30 @@ describe("classroom inputs", () => {
       designSchema.safeParse({ ...defaultDesign, groundStations: 999 }).success,
     ).toBe(false);
   });
+  it("accepts mission decisions strictly", () => {
+    const decisions = {
+      focus: "hazard",
+      downlink: "save-power",
+      retask: { day: 2, quadrant: "ne" },
+    };
+    expect(
+      designSchema.safeParse({ ...defaultDesign, decisions }).success,
+    ).toBe(true);
+    expect(
+      designSchema.safeParse({ ...defaultDesign, decisions: {} }).success,
+    ).toBe(true);
+    for (const bad of [
+      { focus: "everywhere" },
+      { downlink: "instant" },
+      { retask: { day: 1.5, quadrant: "ne" } },
+      { retask: { day: 31, quadrant: "ne" } },
+      { retask: { day: -1, quadrant: "ne" } },
+      { retask: { day: 1, quadrant: "north" } },
+      { retask: { day: 1, quadrant: "ne", boost: 9 } },
+      { focus: "wide", score: 100 },
+    ])
+      expect(
+        designSchema.safeParse({ ...defaultDesign, decisions: bad }).success,
+      ).toBe(false);
+  });
 });

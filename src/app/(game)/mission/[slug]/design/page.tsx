@@ -7,7 +7,7 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ classroom?: string; attempt?: string }>;
+  searchParams: Promise<{ classroom?: string; attempt?: string; fix?: string | string[] }>;
 }) {
   const { slug } = await params;
   const query = await searchParams;
@@ -17,7 +17,7 @@ export default async function Page({
   if (!query.classroom)
     return (
       <main id="main-content" tabIndex={-1}>
-        <UpstreamDesign params={Promise.resolve({ slug })} />
+        <UpstreamDesign params={Promise.resolve({ slug })} fix={query.fix} />
       </main>
     );
   return (
