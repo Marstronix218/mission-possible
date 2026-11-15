@@ -6,6 +6,7 @@ import * as maplibregl from "maplibre-gl";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { categoryLabel } from "@/lib/story/missions";
 import HazardIcon from "./HazardIcon";
 import Stars from "./Stars";
@@ -29,6 +30,7 @@ export default function HazardMap({
   missions: MapMission[];
   best: Record<string, BestRecord>;
 }) {
+  const router = useRouter();
   const host = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<maplibregl.Map | null>(null);
   const [failed, setFailed] = useState<"none" | "tiles" | "map">("none");
@@ -46,8 +48,6 @@ export default function HazardMap({
     let instance: maplibregl.Map;
     try {
       maplibregl.setWorkerUrl("/maps/maplibre-worker.mjs");
-      const lngs = missions.map((m) => m.coordinates[0]);
-      const lats = missions.map((m) => m.coordinates[1]);
       instance = new maplibregl.Map({
         container: host.current,
         style: {
@@ -80,11 +80,8 @@ export default function HazardMap({
             },
           ],
         },
-        bounds: [
-          [Math.min(...lngs) - 4, Math.min(...lats) - 4],
-          [Math.max(...lngs) + 4, Math.max(...lats) + 4],
-        ],
-        fitBoundsOptions: { padding: 30 },
+        center: [-35, 20],
+        zoom: 1.25,
         minZoom: 1,
         maxZoom: 7.9,
         dragRotate: false,
@@ -174,11 +171,8 @@ export default function HazardMap({
             aria-label={`${m.city}: ${categoryLabel[m.category]}, ${m.deadlineHours}-hour deadline. ${progressLabel(record)}.`}
             onMouseEnter={() => setSelected(m.slug)}
             onFocus={() => setSelected(m.slug)}
-            onClick={(e) => {
-              setSelected(m.slug);
-              // Keyboard activation (detail 0): jump into the preview.
-              if (e.detail === 0)
-                requestAnimationFrame(() => playRef.current?.focus());
+            onClick={() => {
+              router.push(briefHref(m.slug));
             }}
             onKeyDown={(e) => {
               if (e.key === "Escape") setSelected(null);

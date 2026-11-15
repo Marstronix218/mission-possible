@@ -1,5 +1,7 @@
 # Wako implementation status
 
+Latest UI work: [Map-first entry, physical modules and five-axis score explanations](docs/mission-planning-radar.md). The notes below record the earlier mock-data milestone.
+
 Current scope is the browser-local mock experience. Supabase remains disabled by explicit data-mode selection. The current upstream PRD was fetched and matched the local requirements during this continuation.
 
 ## Latest completed work

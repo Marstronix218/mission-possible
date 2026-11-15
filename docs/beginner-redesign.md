@@ -1,4 +1,6 @@
-# Beginner mission redesign
+# Beginner mission redesign (PR #15 notes)
+
+The default flow has since been expanded to full mission planning; see [mission-planning-radar.md](mission-planning-radar.md). This earlier quick flow remains available under **Quick experiment**.
 
 Based on `develop` at `0a3f90d9acee96b81cb659dffbd864b5d1db2847` (including the merged visual-game work). This branch refines the existing application; it does not replace the simulation or classroom services.
 

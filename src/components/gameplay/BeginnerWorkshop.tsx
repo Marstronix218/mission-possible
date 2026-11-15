@@ -59,7 +59,13 @@ const upgrades: Record<
   },
 };
 
-export default function BeginnerWorkshop({ mission }: { mission: Mission }) {
+export default function BeginnerWorkshop({
+  mission,
+  quick = false,
+}: {
+  mission: Mission;
+  quick?: boolean;
+}) {
   const router = useRouter();
   const [design, setDesign] = useState<SatelliteDesign>(() => ({
     ...starterDesign("", mission),
@@ -91,7 +97,7 @@ export default function BeginnerWorkshop({ mission }: { mission: Mission }) {
       if (!active) return;
       try {
         const preferred = localStorage.getItem(modeKey(mission.slug));
-        if (preferred === "advanced") {
+        if (preferred === "advanced" && !quick) {
           const query = new URLSearchParams(window.location.search);
           query.set("mode", "advanced");
           router.replace(`/mission/${mission.slug}/design?${query}`);
@@ -127,7 +133,7 @@ export default function BeginnerWorkshop({ mission }: { mission: Mission }) {
     return () => {
       active = false;
     };
-  }, [mission, router]);
+  }, [mission, router, quick]);
   function persist(next: SatelliteDesign) {
     setDesign(next);
     try {

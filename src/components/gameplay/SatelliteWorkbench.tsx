@@ -1,104 +1,287 @@
 "use client";
-import { useRef, useState, type PointerEvent, type RefObject } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+  type RefObject,
+  type ReactNode,
+} from "react";
+import { createPortal } from "react-dom";
 import type { SatelliteDesign } from "@/types/game";
+import { partsCatalog } from "@/lib/sim";
+import {
+  partDragEvent,
+  type PartDragDetail,
+} from "@/components/planning/PartDragHandle";
 import styles from "./gameplay.module.css";
-
-/** Lightweight geometric 3D model: six CSS faces, physical wings and a replaceable payload. */
+function PhysicalPart({
+  className,
+  style,
+  label,
+  onRemove,
+  children,
+}: {
+  className: string;
+  style?: CSSProperties;
+  label: string;
+  onRemove?: () => void;
+  children?: ReactNode;
+}) {
+  return onRemove ? (
+    <button
+      className={className}
+      style={{ ...style, pointerEvents: "auto" }}
+      onClick={onRemove}
+      aria-label={`Remove ${label}`}
+      title={`Remove ${label}`}
+    >
+      {children}
+    </button>
+  ) : (
+    <div className={className} style={style} role="img" aria-label={label}>
+      {children}
+    </div>
+  );
+}
+/** Six faces and removable modules share the same 3D transform, not a decorative screenshot. */
 export function SatelliteWorkbench({
   design,
   attaching = false,
   targetRef,
+  onAttach,
+  onRemove,
 }: {
   design: SatelliteDesign;
   attaching?: boolean;
   targetRef?: RefObject<HTMLDivElement | null>;
+  onAttach?: (slot: string, id: string) => void;
+  onRemove?: (slot: string, id: string) => void;
 }) {
   const [rotation, setRotation] = useState(-25);
-  const drag = useRef<{ x: number; rotation: number } | null>(null);
-  const sensor = design.instruments[0];
-  const wing =
-    design.solar === "solar_l" ? 170 : design.solar === "solar_s" ? 100 : 140;
-
-  function startDrag(event: PointerEvent<HTMLDivElement>) {
-    if ((event.target as HTMLElement).closest("input")) return;
-    drag.current = { x: event.clientX, rotation };
+  const rotationDrag = useRef<{ x: number; rotation: number } | null>(null);
+  function startRotation(event: PointerEvent<HTMLDivElement>) {
+    if (
+      event.button !== 0 ||
+      (event.target as HTMLElement).closest("input,button,a,label")
+    )
+      return;
+    rotationDrag.current = { x: event.clientX, rotation };
     event.currentTarget.setPointerCapture(event.pointerId);
   }
-
   function rotate(event: PointerEvent<HTMLDivElement>) {
-    if (!drag.current) return;
-    setRotation(
-      drag.current.rotation + (event.clientX - drag.current.x) * 0.65,
-    );
+    if (rotationDrag.current)
+      setRotation(
+        rotationDrag.current.rotation +
+          (event.clientX - rotationDrag.current.x) * 0.65,
+      );
   }
-
-  function stopDrag(event: PointerEvent<HTMLDivElement>) {
-    if (!drag.current) return;
-    drag.current = null;
+  function stopRotation(event: PointerEvent<HTMLDivElement>) {
+    rotationDrag.current = null;
     if (event.currentTarget.hasPointerCapture(event.pointerId))
       event.currentTarget.releasePointerCapture(event.pointerId);
   }
 
-  const sensorClass =
-    sensor === "sar" || sensor === "pr"
-      ? styles.sensorRadar
-      : sensor === "tir" || sensor === "pmw"
-        ? styles.sensorThermal
-        : styles.sensorOptical;
-
+  const [openBody, setOpenBody] = useState(false);
+  const [drag, setDrag] = useState<PartDragDetail | null>(null);
+  const localRef = useRef<HTMLDivElement>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
+  const wing =
+    design.solar === "solar_l" ? 170 : design.solar === "solar_s" ? 100 : 140;
+  useEffect(() => {
+    if (!onAttach) return;
+    function receive(event: Event) {
+      const d = (event as CustomEvent<PartDragDetail>).detail;
+      if (!d) return;
+      if (d.phase === "move") {
+        setDrag(d);
+        return;
+      }
+      setDrag(null);
+      if (d.phase !== "end") return;
+      const bounds = [
+        localRef.current?.getBoundingClientRect(),
+        dockRef.current?.getBoundingClientRect(),
+      ];
+      if (
+        bounds.some(
+          (b) =>
+            b &&
+            b.width > 0 &&
+            d.x >= b.left &&
+            d.x <= b.right &&
+            d.y >= b.top &&
+            d.y <= b.bottom,
+        )
+      )
+        onAttach?.(d.slot, d.id);
+    }
+    window.addEventListener(partDragEvent, receive);
+    return () => window.removeEventListener(partDragEvent, receive);
+  }, [onAttach]);
+  const remove = (slot: string, id: string) =>
+    onRemove ? () => onRemove(slot, id) : undefined;
+  const payloadNames = design.instruments.map(
+    (id) => partsCatalog.instruments.find((p) => p.id === id)?.name ?? id,
+  );
   return (
     <div
-      ref={targetRef}
-      className={`${styles.workbench} ${styles.interactiveWorkbench} ${attaching ? styles.highlight : ""}`}
-      aria-label="Satellite workbench"
-      onPointerDown={startDrag}
+      ref={(el) => {
+        localRef.current = el;
+        if (targetRef) targetRef.current = el;
+      }}
+      className={`${styles.workbench} ${styles.interactiveWorkbench} ${attaching || drag ? styles.highlight : ""}`}
+      onPointerDown={startRotation}
       onPointerMove={rotate}
-      onPointerUp={stopDrag}
-      onPointerCancel={stopDrag}
+      onPointerUp={stopRotation}
+      onPointerCancel={stopRotation}
+      aria-label="Satellite workbench"
     >
       <div
         className={styles.satellite}
-        role="img"
-        aria-label={`Assembled satellite${sensor ? ` with ${sensor} sensor` : ", empty sensor attachment point"}`}
+        role="group"
+        aria-label={`Satellite assembly: ${payloadNames.join(", ") || "no sensor installed"}`}
         style={{ transform: `rotateX(-18deg) rotateY(${rotation}deg)` }}
       >
         {["front", "back", "left", "right", "top", "bottom"].map((face) => (
-          <div key={face} className={`${styles.face} ${styles[face]}`}>
-            {face === "front" && sensor && (
-              <span className={`${styles.sensorLens} ${sensorClass}`} />
-            )}
+          <div
+            key={face}
+            className={`${styles.face} ${styles[face]}`}
+            style={
+              openBody
+                ? { background: "#12304088", borderStyle: "dashed" }
+                : undefined
+            }
+          >
+            {face === "front" &&
+              design.instruments.map((id, i) => (
+                <PhysicalPart
+                  key={id}
+                  className={`${styles.sensorLens} ${id === "sar" || id === "pr" ? styles.sensorRadar : id === "tir" || id === "pmw" ? styles.sensorThermal : styles.sensorOptical}`}
+                  label={payloadNames[i]}
+                  onRemove={remove("instruments", id)}
+                  style={
+                    design.instruments.length > 1
+                      ? {
+                          inset: "auto",
+                          width: 36,
+                          height: 36,
+                          left: 8 + (i % 2) * 48,
+                          top: 8 + Math.floor(i / 2) * 50,
+                          borderWidth: 5,
+                        }
+                      : undefined
+                  }
+                />
+              ))}
           </div>
         ))}
-        <div
-          className={`${styles.panel} ${styles.wingLeft}`}
-          style={{ width: wing, left: -wing - 5 }}
-        />
-        <div
-          className={`${styles.panel} ${styles.wingRight}`}
-          style={{ width: wing }}
-        />
-        <div className={styles.dish} />
+        {design.solar && (
+          <>
+            <PhysicalPart
+              className={`${styles.panel} ${styles.wingLeft}`}
+              style={{ width: wing, left: -wing - 5 }}
+              label={`${design.solar} solar array`}
+              onRemove={remove("solar", design.solar)}
+            />
+            <PhysicalPart
+              className={`${styles.panel} ${styles.wingRight}`}
+              style={{ width: wing }}
+              label={`${design.solar} solar array`}
+              onRemove={remove("solar", design.solar)}
+            />
+          </>
+        )}
+        {design.comm && (
+          <PhysicalPart
+            className={design.comm === "uhf" ? styles.rod : styles.dish}
+            label={`${design.comm} radio and antenna`}
+            onRemove={remove("comm", design.comm)}
+            style={
+              design.comm !== "uhf"
+                ? {
+                    width:
+                      design.comm === "ka_band"
+                        ? 65
+                        : design.comm === "x_band"
+                          ? 50
+                          : 35,
+                  }
+                : undefined
+            }
+          />
+        )}
+        {openBody && (
+          <>
+            {design.battery && (
+              <PhysicalPart
+                className={styles.internalBattery}
+                label={design.battery}
+                onRemove={remove("battery", design.battery)}
+                style={{
+                  width:
+                    design.battery === "battery_l"
+                      ? 65
+                      : design.battery === "battery_m"
+                        ? 48
+                        : 32,
+                }}
+              >
+                <span>BAT</span>
+              </PhysicalPart>
+            )}
+            {design.storage && (
+              <PhysicalPart
+                className={styles.internalStorage}
+                label={design.storage}
+                onRemove={remove("storage", design.storage)}
+              >
+                <span>{design.storage.replace("storage_", "")} GB</span>
+              </PhysicalPart>
+            )}
+          </>
+        )}
       </div>
-      {(!sensor || attaching) && (
+      {(attaching || drag) && (
         <span className={styles.attachment}>
-          {attaching ? "Release to attach" : "Sensor mount"}
+          {drag ? `${drag.slot} mount` : "Sensor mount"}
+          <br />
+          Release to attach
         </span>
       )}
-      <label className={styles.controls}>
-        <span>Drag to inspect</span>
-        <input
-          aria-label="Rotate satellite"
-          type="range"
-          min="-180"
-          max="180"
-          value={Math.max(-180, Math.min(180, rotation))}
-          onChange={(e) => setRotation(Number(e.target.value))}
-        />
-      </label>
+      {drag &&
+        createPortal(
+          <div ref={dockRef} className={styles.mobileMount} role="status">
+            ◇ {drag.slot} mount
+            <br />
+            <strong>Release to snap in</strong>
+          </div>,
+          document.body,
+        )}
+      <div className={styles.controls}>
+        <label>
+          Inspect{" "}
+          <input
+            aria-label="Rotate satellite"
+            type="range"
+            min="-180"
+            max="180"
+            value={Math.max(-180, Math.min(180, rotation))}
+            onChange={(e) => setRotation(Number(e.target.value))}
+          />
+        </label>
+        <button
+          type="button"
+          onClick={() => setOpenBody(!openBody)}
+          aria-pressed={openBody}
+        >
+          {openBody ? "Close body" : "Open body"}
+        </button>
+      </div>
     </div>
   );
 }
-
 export function SensorArt({ id }: { id: string }) {
   return (
     <span className={styles.sensorArt} aria-hidden="true">
