@@ -35,7 +35,9 @@ export function PlayerNameForm({
           return;
         }
         try {
-          onSaved?.(savePlayerName(parsed.data));
+          // Save first: `onSaved?.(save(...))` would skip saving when no callback is passed.
+          const saved = savePlayerName(parsed.data);
+          onSaved?.(saved);
         } catch {
           setError("Could not save that name. Try another one.");
         }
