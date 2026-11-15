@@ -7,7 +7,7 @@ import type {
   SimResult,
 } from "@/types/game";
 import { partsCatalog } from "@/lib/sim";
-import { MissionMap } from "@/components/results/MissionMap";
+import { ObservationView } from "@/components/results/observation/ObservationView";
 import { MissionOrbit } from "@/components/results/MissionOrbit";
 import {
   cellFrame,
@@ -169,15 +169,16 @@ export function BeginnerObservation({
               {window.open ? "● SENSOR LOOK ACTIVE" : "○ BETWEEN PASSES"}
             </span>
           </div>
-          <MissionMap
+          <ObservationView
             mission={mission}
+            design={design}
+            resources={resources}
             result={result}
             hour={hour}
             mode="live"
             animate={!paused && !reducedMotion && visible}
-            label={`${found} of ${active} active hazard zones found and ${observed} of ${result.cells.length} cells observed by hour ${Math.floor(hour)}.`}
           />
-          <p role="status" className={styles.eventCallout}>
+          <p role="status" aria-live="polite" className={styles.eventCallout}>
             <span aria-hidden="true">
               {latest?.kind === "blocked"
                 ? "☁"
@@ -187,14 +188,8 @@ export function BeginnerObservation({
                     ? "◎"
                     : "🛰️"}
             </span>
-            {momentCopy}
+            Latest event: {momentCopy}
           </p>
-          <div className={styles.mapLegend} aria-label="Observation map legend">
-            <span>▧ simulated mission cell</span>
-            <span>◇ cyan outline: sensor look</span>
-            <span>☁ blocked by cloud or smoke</span>
-            <span>! detected hazard</span>
-          </div>
         </div>
 
         <aside className={styles.telemetryRail} aria-label="Mission telemetry">

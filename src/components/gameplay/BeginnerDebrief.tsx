@@ -1,10 +1,10 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { PredictionComparison } from "@/components/gameplay/Prediction";
 import type { Mission } from "@/types/game";
 import type { SavedAttempt } from "@/components/results/session";
-import { MissionMap, finalCounts } from "@/components/results/MissionMap";
+import { finalCounts } from "@/components/results/MissionMap";
+import { ObservationView } from "@/components/results/observation/ObservationView";
 import {
   causeLines,
   compareAttempts,
@@ -17,6 +17,7 @@ import { comparableAttempts } from "@/components/results/history-model";
 import type { PartSlot } from "@/lib/story/parts";
 import { summarizeResources } from "@/lib/sim";
 import { MissionScoreRadar } from "@/components/planning/MissionScoreRadar";
+import { ResultLeaderboard } from "@/components/player/ResultLeaderboard";
 import styles from "./gameplay.module.css";
 
 export function BeginnerDebrief({
@@ -82,42 +83,23 @@ export function BeginnerDebrief({
         aria-labelledby="observation-heading"
       >
         <h2 id="observation-heading">What your satellite found</h2>
-        <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <p className={styles.kicker}>Your simulated observation</p>
-            <MissionMap
-              mission={mission}
-              result={result}
-              hour={mission.durationDays * 24}
-              mode="final"
-              animate={false}
-              label={`${counts.found} hazard zones found; ${counts["cloud-blocked"]} hidden by clouds or smoke; ${counts["never-in-view"]} never in view; ${counts["not-recognised"]} not recognised; ${counts["before-event"]} checked too early; ${counts.falseAlarm} false alarms.`}
-            />
-            <p>
-              <strong>{counts.found} hazard zones found.</strong>{" "}
-              {Math.round(result.score.coverage)}% of the area observed.
-            </p>
-            <p className={styles.credit}>
-              ! found · ☁ obscured · ∅ missed pass · ? not recognised · ◷ too
-              early · ⚑ false alarm
-            </p>
-          </div>
-          <div>
-            <p className={styles.kicker}>Archived NASA reference</p>
-            <Image
-              src={`/nasa/${mission.slug}.jpg`}
-              alt={`Archived Earth observation of ${mission.city}; separate from your simulated sensor output`}
-              width={512}
-              height={512}
-              className="w-full rounded-lg"
-            />
-            <p className={styles.credit}>
-              Real reference imagery. The simulated map uses the mission&apos;s
-              observed or modeled hazard dataset, not a live feed.{" "}
-              <a href={`/nasa/${mission.slug}.json`}>Source, date & usage ↗</a>
-            </p>
-          </div>
-        </div>
+        <p className={styles.kicker}>
+          Archived NASA reference vs. Your simulated observation
+        </p>
+        <ObservationView
+          mission={mission}
+          design={design}
+          resources={resources}
+          result={result}
+          hour={mission.durationDays * 24}
+          mode="final"
+          animate={false}
+          showSummary
+        />
+        <p>
+          <strong>{counts.found} hazard zones found.</strong>{" "}
+          {Math.round(result.score.coverage)}% of the area observed.
+        </p>
       </section>
       <PredictionComparison id={attempt.id} mission={mission} result={result} />
       <section aria-label="Your next experiment">
@@ -214,6 +196,11 @@ export function BeginnerDebrief({
           ))}
         </ul>
       </details>
+      <ResultLeaderboard
+        attemptId={attempt.id}
+        missionSlug={mission.slug}
+        verified={attempt.verified}
+      />
     </article>
   );
 }

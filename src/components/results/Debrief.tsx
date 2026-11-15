@@ -9,8 +9,7 @@ import { getMissionStory } from "@/lib/story/missions";
 import type { PartSlot } from "@/lib/story/parts";
 import type { SavedAttempt } from "./session";
 import { comparableAttempts } from "./history-model";
-import { MissionMap, finalCounts, finalGlyph } from "./MissionMap";
-import { NasaVsSimulated } from "./DataProvenance";
+import { ObservationView } from "./observation/ObservationView";
 import {
   causeLines,
   compareAttempts,
@@ -30,6 +29,7 @@ import {
 } from "./mission-progress";
 import { quadrantName } from "./mission-playback";
 import { MissionScoreRadar } from "@/components/planning/MissionScoreRadar";
+import { ResultLeaderboard } from "@/components/player/ResultLeaderboard";
 import styles from "./mission.module.css";
 
 export const slotIcon: Record<PartSlot, string> = {
@@ -97,7 +97,6 @@ export function Debrief({
   const challenges = missionChallenges(mission, result, resources);
   const rows = scoreRows(mission, result, resources);
   const fixes = fixSlots(mission, design, result, causes);
-  const counts = finalCounts(result);
 
   const [revealed, setRevealed] = useState(reducedMotion ? STEPS : 1);
   const shown = reducedMotion ? STEPS : revealed;
@@ -243,83 +242,21 @@ export function Debrief({
           <h2 id="saw-heading" className="mt-0 font-display">
             🗺️ What your satellite saw
           </h2>
-          <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,0.8fr)]">
-            <div className={styles.mapFrame}>
-              <MissionMap
-                mission={mission}
-                result={result}
-                hour={mission.durationDays * 24}
-                mode="final"
-                animate={false}
-                retask={
-                  result.diagnostics?.decisions.retask ??
-                  design.decisions?.retask ??
-                  undefined
-                }
-                label={`Final map: ${counts.found} danger zones found, ${counts["cloud-blocked"]} hidden by cloud or smoke, ${counts["never-in-view"]} never in view, ${counts["not-recognised"]} not recognised, ${counts["before-event"]} checked too early, ${counts.falseAlarm} false alarms.`}
-              />
-            </div>
-            <ul
-              className="m-0 grid list-none gap-2 p-0 self-start"
-              aria-label="Map key with counts"
-            >
-              <KeyRow
-                glyph={finalGlyph.found}
-                bg="var(--pop-yellow)"
-                round
-                label="Found"
-                n={counts.found}
-              />
-              <KeyRow
-                glyph={finalGlyph["cloud-blocked"]}
-                label="Hidden by cloud / smoke"
-                n={counts["cloud-blocked"]}
-              />
-              <KeyRow
-                glyph={finalGlyph["never-in-view"]}
-                label="Never in view"
-                n={counts["never-in-view"]}
-              />
-              <KeyRow
-                glyph={finalGlyph["not-recognised"]}
-                label="Seen, not recognised"
-                n={counts["not-recognised"]}
-              />
-              <KeyRow
-                glyph={finalGlyph["before-event"]}
-                label="Checked before it started"
-                n={counts["before-event"]}
-              />
-              <KeyRow
-                glyph={finalGlyph.falseAlarm}
-                bg="var(--pop-pink)"
-                round
-                label="False alarm"
-                n={counts.falseAlarm}
-              />
-              <li className="text-sm text-muted-foreground">
-                Missed zones have a dashed outline. Lighter cells were scanned
-                clearly ({counts.seen} of {result.cells.length}).
-              </li>
-            </ul>
-          </div>
-          <details className="mt-3">
-            <summary className="cursor-pointer font-display">
-              🛰️ Compare with the real NASA image
-            </summary>
-            <NasaVsSimulated mission={mission}>
-              <p className="text-sm">
-                {counts.found} of{" "}
-                {counts.found +
-                  counts["cloud-blocked"] +
-                  counts["never-in-view"] +
-                  counts["not-recognised"] +
-                  counts["before-event"]}{" "}
-                danger zones found by your simulated satellite in{" "}
-                {mission.durationDays} days.
-              </p>
-            </NasaVsSimulated>
-          </details>
+          <ObservationView
+            mission={mission}
+            design={design}
+            resources={resources}
+            result={result}
+            hour={mission.durationDays * 24}
+            mode="final"
+            animate={false}
+            retask={
+              result.diagnostics?.decisions.retask ??
+              design.decisions?.retask ??
+              undefined
+            }
+            showSummary
+          />
         </section>
       )}
 
@@ -572,54 +509,17 @@ export function Debrief({
               ))}
             </ol>
           </details>
-          <p className="mb-0 mt-3">
-            <Link
-              href={
-                "/leaderboard?mission=" +
-                mission.slug +
-                (classroomId ? "&classroom=" + classroomId : "")
-              }
-            >
-              🏆 View ranking
-            </Link>
-          </p>
           {story && <p className="sr-only">{story.goal}</p>}
         </section>
       )}
+      {/* Posted on load (idempotent per attempt ID); shown with the result. */}
+      <ResultLeaderboard
+        attemptId={attempt.id}
+        missionSlug={mission.slug}
+        classroomId={classroomId}
+        verified={attempt.verified}
+      />
     </div>
-  );
-}
-
-function KeyRow({
-  glyph,
-  label,
-  n,
-  bg,
-  round,
-}: {
-  glyph: string;
-  label: string;
-  n: number;
-  bg?: string;
-  round?: boolean;
-}) {
-  return (
-    <li className="flex items-center gap-2">
-      <span
-        className={styles.swatch}
-        style={{
-          background: bg ?? "#141a4f",
-          color: bg ? "#070a24" : "#fff",
-          borderRadius: round ? 999 : 5,
-          outline: bg ? undefined : "2px dashed var(--muted-foreground)",
-        }}
-        aria-hidden="true"
-      >
-        {glyph}
-      </span>
-      <span className="flex-1">{label}</span>
-      <strong className="font-display">{n}</strong>
-    </li>
   );
 }
 

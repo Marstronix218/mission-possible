@@ -631,6 +631,7 @@
   .stamp,
   .starOn .starIcon,
   .scoreBarFill,
+  .scanCone,
   .beam {
     animation: none !important;
   }
@@ -642,6 +643,18 @@
     transition: none;
   }
 }
+@keyframes scanCone {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.55;
+  }
+}
+.scanCone {
+  animation: scanCone 700ms ease-in-out infinite alternate;
+}
+.still .scanCone,
 .still .beam,
 .still .ticker li,
 .still .decision,
