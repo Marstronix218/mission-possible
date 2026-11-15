@@ -23,11 +23,17 @@ function Skyline() {
 function Satellite() {
   return (
     <g>
-      <rect x={160} y={14} width={18} height={12} rx={2} className="fill-muted stroke-primary" strokeWidth={1.5} />
-      <rect x={140} y={16} width={16} height={8} fill="#1e3a8a" className="stroke-primary" strokeWidth={1} />
-      <rect x={182} y={16} width={16} height={8} fill="#1e3a8a" className="stroke-primary" strokeWidth={1} />
-      <line x1={169} y1={28} x2={110} y2={92} className="stroke-primary" strokeDasharray="4 4" strokeWidth={1.5} />
-      <text x={204} y={24} className="fill-primary" fontSize={10}>Your satellite?</text>
+      <g className={styles.scan}>
+        <polygon points="169,30 100,150 150,150" fill="#ffd23f" className={styles.beam} />
+      </g>
+      <g className={styles.float}>
+        <rect x={136} y={12} width={22} height={14} rx={3} fill="#2b3fd6" stroke="#06123a" strokeWidth={2} />
+        <rect x={180} y={12} width={22} height={14} rx={3} fill="#2b3fd6" stroke="#06123a" strokeWidth={2} />
+        <rect x={158} y={8} width={22} height={22} rx={4} fill="#e8ecff" stroke="#06123a" strokeWidth={2.5} />
+        <rect x={160} y={10} width={18} height={5} rx={2} fill="#ffd23f" />
+        <circle cx={214} cy={10} r={9} fill="#ffd23f" stroke="#06123a" strokeWidth={2} />
+        <text x={214} y={14} textAnchor="middle" fill="#06123a" fontSize={12} fontWeight={800}>?</text>
+      </g>
     </g>
   );
 }
@@ -181,21 +187,34 @@ const scenes: Record<Category, ComponentType> = {
   volcano: Volcano,
 };
 
-/** Stylised illustration of the hazard threatening the city. Decorative; the story text carries the meaning. */
+const stars = [[18, 12], [52, 30], [96, 8], [128, 40], [240, 14], [276, 36], [312, 10], [340, 44], [300, 70]];
+
+/** Stylised, animated scene of the hazard threatening the city. The text around it carries the meaning. */
 export function HazardScene({ category, city }: { category: Category; city: string }) {
   const Scene = scenes[category];
+  const tint = `var(--hazard-${category})`;
   return (
-    <svg viewBox="0 0 360 175" className="h-auto w-full rounded-xl border border-border bg-[#0d1b2e]" role="img"
+    <svg viewBox="0 0 360 175" className="block h-auto w-full" role="img"
       aria-label={`Illustration: ${hazardCopy[category].label} threatening homes in ${city}, with a satellite overhead.`}>
       <defs>
+        <linearGradient id={`hazard-sky-${category}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#070a24" />
+          <stop offset="0.55" stopColor="#161d5c" />
+          <stop offset="1" stopColor={tint} stopOpacity={0.55} />
+        </linearGradient>
         <marker id="hazard-arrow" viewBox="0 0 10 10" refX={8} refY={5} markerWidth={6} markerHeight={6} orient="auto">
           <path d="M 0 0 L 10 5 L 0 10 Z" fill="#f97316" />
         </marker>
       </defs>
+      <rect width={360} height={175} fill={`url(#hazard-sky-${category})`} />
+      <g fill="#f6f7ff" className={styles.pulse} aria-hidden="true">
+        {stars.map(([x, y]) => <circle key={`${x}-${y}`} cx={x} cy={y} r={1.1} />)}
+      </g>
+      <rect x={0} y={150} width={360} height={25} fill="#070a24" />
+      <line x1={0} y1={150} x2={360} y2={150} stroke={tint} strokeWidth={2} />
       {Scene && <Scene />}
       <Skyline />
       <Satellite />
-      <line x1={0} y1={150} x2={360} y2={150} className="stroke-border" strokeWidth={1} />
     </svg>
   );
 }
