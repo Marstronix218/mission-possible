@@ -94,8 +94,8 @@ export function MissionFlightBrief({ mission }: { mission: Mission }) {
             </p>
           </div>
           <p className={styles.briefingNote}>
-            No sensor is selected for you. Predict, build, launch, and learn
-            from the measured result.
+            No sensor is selected for you. Build, launch, and learn from the
+            measured result.
           </p>
         </aside>
       </section>

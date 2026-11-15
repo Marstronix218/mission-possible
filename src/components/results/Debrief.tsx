@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { PredictionComparison } from "@/components/gameplay/Prediction";
 import type { Mission } from "@/types/game";
 import { summarizeResources, scoreFormulaText } from "@/lib/sim";
 import { describeDesignChanges } from "@/lib/story/events";
@@ -379,7 +378,6 @@ export function Debrief({
       )}
 
       {/* 5 — Improve */}
-      <PredictionComparison id={attempt.id} mission={mission} result={result} />
       {shown >= 5 && (
         <section
           className={`card-pop ${styles.step}`}

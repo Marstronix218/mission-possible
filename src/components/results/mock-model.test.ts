@@ -130,4 +130,38 @@ describe("demo leaderboard submission", () => {
     expect(rows.find((r) => r.mine)?.nickname).toBe("Pilot Kai");
     expect(rows.filter((r) => r.mine)).toHaveLength(1);
   });
+
+  it("adds each pilot's best mission scores to the overall ranking", () => {
+    const state = createDemoState();
+    performDemoAction(state, "setNickname", { nickname: "Pilot Kai" }, ctx());
+    const losAngeles = performDemoAction(
+      state,
+      "attempt",
+      {
+        missionSlug: "los-angeles",
+        design: defaultDesign,
+        requestId: "overall-los-angeles",
+      },
+      ctx(),
+    ) as { score_total: number };
+    const houston = performDemoAction(
+      state,
+      "attempt",
+      {
+        missionSlug: "houston",
+        design: defaultDesign,
+        requestId: "overall-houston",
+      },
+      ctx(),
+    ) as { score_total: number };
+    const rows = performDemoAction(state, "overallRanking", {}, ctx()) as {
+      nickname: string;
+      score: number;
+      mine?: boolean;
+    }[];
+    expect(rows.find((row) => row.mine)).toMatchObject({
+      nickname: "Pilot Kai",
+      score: losAngeles.score_total + houston.score_total,
+    });
+  });
 });

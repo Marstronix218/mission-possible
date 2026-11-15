@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useId, useRef } from "react";
+import { useId } from "react";
 import styles from "./mission.module.css";
 
 export interface DecisionOption {
@@ -24,18 +24,19 @@ export function DecisionPrompt({
   onChoose: (id: string) => void;
 }) {
   const headingId = useId();
-  const first = useRef<HTMLButtonElement>(null);
-  useEffect(() => {
-    first.current?.focus({ preventScroll: true });
-  }, []);
   return (
     <div className={styles.decision} role="group" aria-labelledby={headingId}>
       {alarm && <span className={styles.alarm}>{alarm}</span>}
       <h3 id={headingId}>{title}</h3>
       {subtitle && <p>{subtitle}</p>}
       <div className={styles.options}>
-        {options.map((o, i) => (
-          <button key={o.id} ref={i === 0 ? first : undefined} type="button" className={styles.option} onClick={() => onChoose(o.id)}>
+        {options.map((o) => (
+          <button
+            key={o.id}
+            type="button"
+            className={styles.option}
+            onClick={() => onChoose(o.id)}
+          >
             <span className={styles.optionIcon} aria-hidden="true">
               {o.icon}
             </span>

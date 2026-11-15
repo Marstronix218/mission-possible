@@ -1,4 +1,9 @@
-import type { FeedbackItem, ResourceSummary, ScoreBreakdown, SimDiagnostics } from "../../types/game";
+import type {
+  FeedbackItem,
+  ResourceSummary,
+  ScoreBreakdown,
+  SimDiagnostics,
+} from "../../types/game";
 
 const percent = (value: number): number => Math.round(value * 100);
 
@@ -19,7 +24,8 @@ export function generateFeedback(
     feedback.push({
       type: "success",
       key: "mission.success",
-      message: "Mission objectives achieved: the design reached the score and coverage thresholds.",
+      message:
+        "Mission objectives achieved: the design reached the score and coverage thresholds.",
     });
   } else {
     feedback.push({
@@ -31,7 +37,10 @@ export function generateFeedback(
   }
 
   feedback.push({
-    type: d.hazardCells > 0 && d.hazardDetected * 2 >= d.hazardCells ? "success" : "tip",
+    type:
+      d.hazardCells > 0 && d.hazardDetected * 2 >= d.hazardCells
+        ? "success"
+        : "tip",
     key: "hazard.found",
     message: `You found ${d.hazardDetected} of ${d.hazardCells} danger zones.`,
     params: { detected: d.hazardDetected, total: d.hazardCells },
@@ -50,7 +59,9 @@ export function generateFeedback(
   if (d.hazardCloudBlocked > 0) {
     misses.push({
       type: "tip",
-      key: d.cloudPenetrating ? "hazard.cloud_blocked_residual" : "hazard.cloud_blocked",
+      key: d.cloudPenetrating
+        ? "hazard.cloud_blocked_residual"
+        : "hazard.cloud_blocked",
       message: d.cloudPenetrating
         ? `Even through clouds, every look at ${d.hazardCloudBlocked} danger zones was blocked.`
         : `Clouds or smoke blocked every look at ${d.hazardCloudBlocked} danger zones.`,
@@ -108,21 +119,19 @@ export function generateFeedback(
       type: "warning",
       key: "reliability.margins",
       message: `Reliability is low: power margin ${percent(d.powerMargin)}%, battery ${percent(d.batteryContinuity)}%, data margin ${percent(d.dataMargin)}%.`,
-      params: { power: d.powerMargin, battery: d.batteryContinuity, data: d.dataMargin },
+      params: {
+        power: d.powerMargin,
+        battery: d.batteryContinuity,
+        data: d.dataMargin,
+      },
     });
-  }
-  if (score.costEfficiency === 0 && (score.accuracy < 25 || score.coverage < 25)) {
-    feedback.push({
-      type: "tip",
-      key: "cost.gate",
-      message: "Budget points only count once accuracy and coverage both reach 25.",
-      params: { accuracy: score.accuracy, coverage: score.coverage },
-    });
-  } else if (score.costEfficiency >= 50) {
-    feedback.push({ type: "success", key: "cost.efficient", message: "The mission preserves a strong budget margin without sacrificing core performance." });
   }
   resources.warnings.forEach((message, index) => {
-    feedback.push({ type: "warning", key: `resources.warning_${index + 1}`, message });
+    feedback.push({
+      type: "warning",
+      key: `resources.warning_${index + 1}`,
+      message,
+    });
   });
 
   return feedback.slice(0, 7);

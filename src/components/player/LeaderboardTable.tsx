@@ -4,9 +4,11 @@ import type { Ranking } from "@/components/results/contracts";
 export function LeaderboardTable({
   rows,
   caption = "Highest score per player · ties go to the earliest achievement",
+  scoreLabel = "Best score",
 }: {
   rows: Ranking[];
   caption?: string;
+  scoreLabel?: string;
 }) {
   return (
     <div className="table-scroll">
@@ -16,7 +18,7 @@ export function LeaderboardTable({
           <tr>
             <th scope="col">Rank</th>
             <th scope="col">Pilot</th>
-            <th scope="col">Best score</th>
+            <th scope="col">{scoreLabel}</th>
             <th scope="col">Attempts</th>
             <th scope="col">Improvement</th>
           </tr>

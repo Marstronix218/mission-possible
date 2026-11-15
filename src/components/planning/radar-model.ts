@@ -227,13 +227,6 @@ export const scoreAxes = (r: SimResult): RadarAxis[] => [
     meaning: "How quickly the first useful observation reached Earth.",
   },
   {
-    id: "costEfficiency",
-    label: "Resources",
-    value: r.score.costEfficiency,
-    actual: `${r.score.costEfficiency}/100`,
-    meaning: "Cost efficiency within the mission budget, not unused power.",
-  },
-  {
     id: "reliability",
     label: "Reliability",
     value: r.score.reliability,
@@ -241,8 +234,13 @@ export const scoreAxes = (r: SimResult): RadarAxis[] => [
     meaning: "The engine's power, battery, data and orbit reliability.",
   },
 ];
-export function radarPoint(index: number, value: number, radius = 104) {
-  const a = -Math.PI / 2 + (index * 2 * Math.PI) / 5;
+export function radarPoint(
+  index: number,
+  value: number,
+  radius = 104,
+  count = 5,
+) {
+  const a = -Math.PI / 2 + (index * 2 * Math.PI) / count;
   return {
     x: 180 + (Math.cos(a) * radius * value) / 100,
     y: 150 + (Math.sin(a) * radius * value) / 100,
@@ -251,7 +249,12 @@ export function radarPoint(index: number, value: number, radius = 104) {
 export function radarPolygon(values: number[], radius = 104) {
   return values
     .map((v, i) => {
-      const p = radarPoint(i, Math.max(0, Math.min(100, v)), radius);
+      const p = radarPoint(
+        i,
+        Math.max(0, Math.min(100, v)),
+        radius,
+        values.length,
+      );
       return `${p.x},${p.y}`;
     })
     .join(" ");

@@ -25,6 +25,7 @@ export function LeaderboardView({
       ? initialMission
       : "los-angeles",
   );
+  const [scope, setScope] = useState<"mission" | "overall">("mission");
   const [rows, setRows] = useState<Ranking[] | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,19 +38,24 @@ export function LeaderboardView({
     setError("");
     try {
       setRows(
-        await api<Ranking[]>("ranking", { missionSlug: slug, classroomId }),
+        scope === "overall" && !classroomId
+          ? await api<Ranking[]>("overallRanking")
+          : await api<Ranking[]>("ranking", { missionSlug: slug, classroomId }),
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not load ranking.");
     } finally {
       setLoading(false);
     }
-  }, [slug, classroomId]);
+  }, [slug, classroomId, scope]);
 
   useEffect(() => {
     if (!autoLoad) return;
     let active = true;
-    api<Ranking[]>("ranking", { missionSlug: slug, classroomId })
+    (scope === "overall" && !classroomId
+      ? api<Ranking[]>("overallRanking")
+      : api<Ranking[]>("ranking", { missionSlug: slug, classroomId })
+    )
       .then((data) => {
         if (active) {
           setRows(data);
@@ -66,7 +72,7 @@ export function LeaderboardView({
       active = false;
       window.removeEventListener(demoUpdateEvent, changed);
     };
-  }, [autoLoad, slug, classroomId, load]);
+  }, [autoLoad, slug, classroomId, scope, load]);
 
   return (
     <main id="main-content" tabIndex={-1}>
@@ -95,23 +101,54 @@ export function LeaderboardView({
         </section>
       ) : (
         <section className="panel">
-          <label className="field">
-            Mission
-            <select
-              disabled={!!classroomId}
-              value={slug}
-              onChange={(e) => {
-                setSlug(e.target.value);
-                setRows(null);
-              }}
-            >
-              {playableMissions.map((m) => (
-                <option key={m.slug} value={m.slug}>
-                  {m.city} · {m.category}
-                </option>
-              ))}
-            </select>
-          </label>
+          {!classroomId && (
+            <div className="filter" role="group" aria-label="Leaderboard type">
+              <button
+                type="button"
+                aria-pressed={scope === "mission"}
+                onClick={() => {
+                  setScope("mission");
+                  setRows(null);
+                }}
+              >
+                By mission
+              </button>
+              <button
+                type="button"
+                aria-pressed={scope === "overall"}
+                onClick={() => {
+                  setScope("overall");
+                  setRows(null);
+                }}
+              >
+                Overall
+              </button>
+            </div>
+          )}
+          {scope === "mission" || classroomId ? (
+            <label className="field">
+              Mission
+              <select
+                disabled={!!classroomId}
+                value={slug}
+                onChange={(e) => {
+                  setSlug(e.target.value);
+                  setRows(null);
+                }}
+              >
+                {playableMissions.map((m) => (
+                  <option key={m.slug} value={m.slug}>
+                    {m.city} · {m.category}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : (
+            <p className="notice">
+              Overall points are the sum of each pilot&apos;s best score from
+              every mission. Completing more missions can raise the total.
+            </p>
+          )}
           {!classroomId && (
             <p className="muted">
               {name
@@ -137,7 +174,15 @@ export function LeaderboardView({
             </p>
           )}
           {rows ? (
-            <LeaderboardTable rows={rows} />
+            <LeaderboardTable
+              rows={rows}
+              scoreLabel={scope === "overall" ? "Overall points" : "Best score"}
+              caption={
+                scope === "overall"
+                  ? "Sum of each pilot's best score per mission"
+                  : undefined
+              }
+            />
           ) : (
             !error && autoLoad && <p aria-live="polite">Loading ranking…</p>
           )}

@@ -25,11 +25,11 @@ export function RadarChart({
       role="group"
       aria-labelledby={id}
     >
-      <title id={id}>{label}. Each axis uses a 0 to 100 scale.</title>
+      <title id={id}>{`${label}. Each axis uses a 0 to 100 scale.`}</title>
       {[25, 50, 75, 100].map((n) => (
         <polygon
           key={n}
-          points={radarPolygon([n, n, n, n, n])}
+          points={radarPolygon(axes.map(() => n))}
           fill="none"
           stroke="#6c8da0"
           strokeOpacity=".5"
@@ -45,7 +45,7 @@ export function RadarChart({
         100
       </text>
       {axes.map((a, i) => {
-        const p = radarPoint(i, 100);
+        const p = radarPoint(i, 100, 104, axes.length);
         return (
           <line
             key={a.id}
@@ -74,8 +74,8 @@ export function RadarChart({
         strokeWidth="3"
       />
       {axes.map((axis, i) => {
-        const p = radarPoint(i, axis.value);
-        const t = radarPoint(i, 128);
+        const p = radarPoint(i, axis.value, 104, axes.length);
+        const t = radarPoint(i, 128, 104, axes.length);
         return (
           <g key={axis.id}>
             <text

@@ -72,14 +72,14 @@ export function EnvelopeLetter({
         {mission ? (
           <Link href={`/mission/${mission.slug}/design`}>ACCEPT MISSION →</Link>
         ) : (
-          <button onClick={onExplore}>EXPLORE THE WORLD →</button>
+          <button onClick={onExplore}>EXPLORE THE U.S. →</button>
         )}
       </div>
     </section>
   );
 }
 export function WelcomeLetter() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [letterKey, setLetterKey] = useState(0);
   const dialogRef = useRef<HTMLDialogElement>(null);
   useEffect(() => {

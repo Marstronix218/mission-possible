@@ -29,7 +29,12 @@ export interface MetricExplanation {
   why: string | null;
 }
 
-export const METRIC_ORDER: ScoreMetric[] = ["accuracy", "responseTime", "coverage", "costEfficiency", "reliability"];
+export const METRIC_ORDER: ScoreMetric[] = [
+  "accuracy",
+  "responseTime",
+  "coverage",
+  "reliability",
+];
 
 export const METRIC_LABELS: Record<ScoreMetric, string> = {
   accuracy: "Accuracy",
@@ -42,29 +47,38 @@ export const METRIC_LABELS: Record<ScoreMetric, string> = {
 /** Mirrors src/lib/sim/scoring.ts and the reliability term in engine.ts. */
 export const METRIC_FORMULAS: Record<ScoreMetric, string> = {
   accuracy: "100 × (danger zones found − ½ × false alarms) ÷ danger zones",
-  responseTime: "100 × (1 − first alert delivery hour ÷ (2 × target hours)); 0 if no alert",
+  responseTime:
+    "100 × (1 − first alert delivery hour ÷ (2 × target hours)); 0 if no alert",
   coverage: "100 × cells seen clearly at least once ÷ all cells",
-  costEfficiency: "100 × (1 − cost ÷ budget), only once accuracy and coverage both reach 25",
-  reliability: "100 × orbit reliability × (0.55 + 0.3 × power margin + 0.15 × battery) × (0.75 + 0.15 × data margin + 0.1 × storage margin)",
+  costEfficiency:
+    "100 × (1 − cost ÷ budget), only once accuracy and coverage both reach 25",
+  reliability:
+    "100 × orbit reliability × (0.55 + 0.3 × power margin + 0.15 × battery) × (0.75 + 0.15 × data margin + 0.1 × storage margin)",
 };
 
 const pct = (value: number): number => Math.round(value * 100);
 const round1 = (value: number): number => Math.round(value * 10) / 10;
-const plural = (count: number, word: string): string => `${count} ${word}${count === 1 ? "" : "s"}`;
+const plural = (count: number, word: string): string =>
+  `${count} ${word}${count === 1 ? "" : "s"}`;
 
-/** "Total = 30% Accuracy + 30% Response time + …" for a hazard category. */
+/** Evaluation formula; budget is enforced before launch and earns no points. */
 export function scoreFormulaText(category: Category): string {
-  const weights = categoryRules[category].weights;
-  const terms = METRIC_ORDER.map((metric) => `${weights[metric]}% ${METRIC_LABELS[metric]}`);
-  return `Total = ${terms.join(" + ")}`;
+  void category;
+  return "Total uses Accuracy, Response time, Coverage and Reliability, normalized to 100%. Budget is a launch limit, not a scoring category.";
 }
 
 function missBreakdown(d: SimDiagnostics): string {
   const parts = [
     d.hazardNeverInView > 0 ? `${d.hazardNeverInView} never in view` : null,
-    d.hazardCloudBlocked > 0 ? `${d.hazardCloudBlocked} blocked by clouds or smoke` : null,
-    d.hazardNotRecognised > 0 ? `${d.hazardNotRecognised} seen but not recognised` : null,
-    d.hazardBeforeEvent > 0 ? `${d.hazardBeforeEvent} checked before the hazard started` : null,
+    d.hazardCloudBlocked > 0
+      ? `${d.hazardCloudBlocked} blocked by clouds or smoke`
+      : null,
+    d.hazardNotRecognised > 0
+      ? `${d.hazardNotRecognised} seen but not recognised`
+      : null,
+    d.hazardBeforeEvent > 0
+      ? `${d.hazardBeforeEvent} checked before the hazard started`
+      : null,
   ].filter((part) => part !== null);
   return parts.length > 0 ? ` Missed: ${parts.join(", ")}.` : "";
 }
@@ -78,13 +92,17 @@ function whyFor(
 ): string {
   switch (metric) {
     case "accuracy": {
-      const alarms = d.falseAlarms > 0
-        ? ` ${plural(d.falseAlarms, "false alarm")} took off ${plural(round1(d.falseAlarms * 0.5), "zone")}.`
-        : "";
+      const alarms =
+        d.falseAlarms > 0
+          ? ` ${plural(d.falseAlarms, "false alarm")} took off ${plural(round1(d.falseAlarms * 0.5), "zone")}.`
+          : "";
       return `Found ${d.hazardDetected} of ${d.hazardCells} danger zones.${alarms}${missBreakdown(d)}`;
     }
     case "responseTime":
-      if (result.firstDeliveryHours === null || d.firstDetectionHours === null) {
+      if (
+        result.firstDeliveryHours === null ||
+        d.firstDetectionHours === null
+      ) {
         return "No danger zone was confirmed, so no alert was delivered.";
       }
       return `First alert spotted at hour ${d.firstDetectionHours} and delivered at hour ${result.firstDeliveryHours} after ${d.downlinkLatencyHours} h of downlink. Target is ${d.targetResponseHours} h; the score reaches 0 at ${d.targetResponseHours * 2} h.`;
@@ -115,7 +133,8 @@ export function explainScore(
   mission: { category: Category },
   options: { resources?: ResourceSummary; constraints?: Constraints } = {},
 ): MetricExplanation[] {
-  const weights = result.diagnostics?.weights ?? categoryRules[mission.category].weights;
+  const weights =
+    result.diagnostics?.weights ?? categoryRules[mission.category].weights;
   return METRIC_ORDER.map((metric) => {
     const value = result.score[metric];
     return {
@@ -125,7 +144,9 @@ export function explainScore(
       weight: weights[metric],
       weightedPoints: round1((value * weights[metric]) / 100),
       formula: METRIC_FORMULAS[metric],
-      why: result.diagnostics ? whyFor(metric, result.score, result, result.diagnostics, options) : null,
+      why: result.diagnostics
+        ? whyFor(metric, result.score, result, result.diagnostics, options)
+        : null,
     };
   });
 }

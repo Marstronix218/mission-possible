@@ -69,9 +69,12 @@ export function RankingTable({ rows }: { rows: Ranking[] }) {
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={r.entry_id}>
+            <tr key={r.entry_id} aria-current={r.mine ? "true" : undefined}>
               <td>{i + 1}</td>
-              <th scope="row">{r.nickname}</th>
+              <th scope="row">
+                {r.nickname}
+                {r.mine ? " ★ You" : ""}
+              </th>
               <td>{Number(r.score).toFixed(1)}</td>
               <td>{r.attempts}</td>
               <td>+{Number(r.improvement).toFixed(1)}</td>
@@ -322,7 +325,20 @@ export function ClassDashboard({ id }: { id: string }) {
                         : "Refreshing every 10 seconds"}
                   </span>
                 </div>
+                {rows.find((row) => row.mine) && (
+                  <p className="notice">
+                    Your best score is{" "}
+                    {Number(rows.find((row) => row.mine)!.score).toFixed(1)}{" "}
+                    points · class rank #{rows.findIndex((row) => row.mine) + 1}
+                    .
+                  </p>
+                )}
                 <RankingTable rows={rows} />
+                <p>
+                  <Link href={`/leaderboard?mission=${c.mission_slug}`}>
+                    Compare with the global mission ranking ↗
+                  </Link>
+                </p>
               </section>
             </>
           )}
@@ -468,24 +484,18 @@ export function GlobalRanking({
   );
 }
 export function TeacherDashboard({ authError }: { authError?: string }) {
-  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [error, setError] = useState(
-    authError
-      ? "The sign-in link is invalid or expired. Request a new magic link."
-      : "",
-  );
+  const [error, setError] = useState("");
   const [classes, setClasses] = useState<Classroom[]>([]);
   const [selected, setSelected] = useState<Classroom | null>(null);
   const [students, setStudents] = useState<StudentData | null>(null);
   const [busy, setBusy] = useState(false);
   const scoringLocked = Boolean(selected && students?.attempts.length);
   useEffect(() => {
-    if (!isMockMode) return;
     let active = true;
     Promise.resolve()
       .then(async () => {
-        selectDemoActor("teacher");
+        if (isMockMode) selectDemoActor("teacher");
         const data = await api<Classroom[]>("listClasses");
         if (active) setClasses(data);
       })
@@ -506,25 +516,6 @@ export function TeacherDashboard({ authError }: { authError?: string }) {
       setClasses(await api<Classroom[]>("listClasses"));
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not load classes.");
-    }
-  }
-  async function login(e: React.FormEvent) {
-    e.preventDefault();
-    setBusy(true);
-    setError("");
-    try {
-      const { error } = await cloud().auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: window.location.origin + "/auth/confirm" },
-      });
-      if (error) throw error;
-      setMessage(
-        "Check your email for the sign-in link, then load your classes.",
-      );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not send link.");
-    } finally {
-      setBusy(false);
     }
   }
   async function create(e: React.FormEvent<HTMLFormElement>) {
@@ -623,38 +614,19 @@ export function TeacherDashboard({ authError }: { authError?: string }) {
               {message}
             </p>
           )}
-          {isMockMode ? (
-            <section className="panel">
-              <h2>Demo teacher dashboard</h2>
-              <p>
-                You are roleplaying the sample teacher. There is no real
-                account, email sign-in, or authentication in this mode.
-              </p>
-              <button onClick={list}>Reload demo classes</button>
-            </section>
-          ) : (
-            <>
-              {" "}
-              <section className="panel">
-                <h2>Teacher sign-in</h2>
-                <form onSubmit={login} className="inline-form">
-                  <label className="field">
-                    Teacher email
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </label>
-                  <button disabled={busy}>Send magic link</button>
-                  <button type="button" onClick={list}>
-                    Load my classes
-                  </button>
-                </form>
-              </section>
-            </>
-          )}
+          <section className="panel">
+            <h2>No account required</h2>
+            <p>
+              Create a classroom on this device, then share its six-character
+              class code. Students join with the code and a nickname—no email or
+              real name is collected.
+            </p>
+            <p className="muted">
+              Classroom management stays with this browser session, so keep
+              using this device to edit the class or view student results.
+            </p>
+            <button onClick={list}>Reload my classrooms</button>
+          </section>
           <div className="two-column">
             <form
               key={selected?.id ?? "new"}

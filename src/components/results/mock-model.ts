@@ -316,6 +316,8 @@ export function performDemoAction(
       ctx.userId,
     );
   }
+  if (action === "overallRanking")
+    return publicRanking(demoOverallRanking(state), ctx.userId);
   if (action === "submitScore") {
     const attempt = state.attempts.find(
       (a) => a.id === input.attemptId && a.user_id === ctx.userId,
@@ -393,4 +395,45 @@ function demoRanking(
       improvement: r.improvement,
       achieved: r.achieved,
     }));
+}
+
+/** Sum of each player's best score in every global mission. */
+function demoOverallRanking(state: DemoState): RankingSource[] {
+  const eligible = state.attempts.filter(
+    (a) => a.classroom_id === null && a.engine_version === ENGINE_VERSION,
+  );
+  const users = new Map<
+    string,
+    RankingSource & { first: number; best: Map<string, number> }
+  >();
+  for (const a of eligible.sort((x, y) =>
+    x.created_at.localeCompare(y.created_at),
+  )) {
+    const nickname = state.profiles[a.user_id]?.nickname;
+    if (!nickname) continue;
+    const current = users.get(a.user_id) ?? {
+      user_id: a.user_id,
+      nickname,
+      score: 0,
+      attempts: 0,
+      improvement: 0,
+      achieved: a.created_at,
+      first: a.score_total,
+      best: new Map<string, number>(),
+    };
+    current.attempts += 1;
+    const previous = current.best.get(a.mission_slug) ?? 0;
+    if (a.score_total > previous)
+      current.best.set(a.mission_slug, a.score_total);
+    current.score = [...current.best.values()].reduce(
+      (sum, score) => sum + score,
+      0,
+    );
+    current.achieved = a.created_at;
+    users.set(a.user_id, current);
+  }
+  return [...users.values()]
+    .map((row) => ({ ...row, improvement: row.score - row.first }))
+    .sort((a, b) => b.score - a.score || a.achieved.localeCompare(b.achieved))
+    .slice(0, 100);
 }
