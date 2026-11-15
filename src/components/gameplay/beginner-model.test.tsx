@@ -16,10 +16,10 @@ import { causeLines } from "@/components/results/mission-debrief";
 
 const la = allMissions.find((m) => m.slug === "los-angeles")!;
 describe("beginner mission engineering", () => {
-  it("keeps the first choice neutral and offers exactly three known sensors for every mission", () => {
+  it("keeps the first choice neutral and offers every catalog sensor on the first attempt", () => {
     for (const mission of allMissions) {
       const choices = beginnerSensors(mission);
-      expect(choices).toHaveLength(3);
+      expect(choices).toEqual(partsCatalog.instruments.map((p) => p.id));
       for (const id of choices) {
         expect(partsCatalog.instruments.some((p) => p.id === id)).toBe(true);
         expect(sensorNames[id].join(" ")).not.toMatch(
@@ -34,7 +34,7 @@ describe("beginner mission engineering", () => {
       summarizeResources(starterDesign(""), la.defaultConstraints).violations,
     ).toContain("Select at least one instrument.");
   });
-  it("can launch all three beginner payloads for each of the original missions and San Francisco without bypassing budgets", () => {
+  it("can launch every beginner payload for each of the original missions and San Francisco without bypassing budgets", () => {
     for (const slug of ["los-angeles", "houston", "phoenix", "san-francisco"]) {
       const m = allMissions.find((m) => m.slug === slug)!;
       for (const sensor of beginnerSensors(m))

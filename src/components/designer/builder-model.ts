@@ -20,13 +20,18 @@ export interface Stage {
   slots: PartSlot[];
 }
 
-/** Most meaningful choice first; engineering details come later. */
+/**
+ * Guided order: Sensor → Orbit → Power & Storage → Communications. Every step
+ * stays reachable from the first attempt; the order is guidance, not a lock.
+ */
 export const stages: Stage[] = [
-  { id: "eyes", label: "Eyes", icon: "👁️", prompt: "What should it look with?", slots: ["instruments"] },
+  { id: "eyes", label: "Sensor", icon: "👁️", prompt: "What should it observe with?", slots: ["instruments"] },
   { id: "orbit", label: "Orbit", icon: "🪐", prompt: "Where should it fly?", slots: ["orbit"] },
-  { id: "radio", label: "Radio", icon: "📡", prompt: "How does data get home?", slots: ["comm", "groundStations"] },
-  { id: "power", label: "Power", icon: "⚡", prompt: "Keep it powered and remembering.", slots: ["solar", "battery", "storage"] },
+  { id: "power", label: "Power & Storage", icon: "⚡", prompt: "Keep it powered and remembering.", slots: ["solar", "battery", "storage"] },
+  { id: "radio", label: "Communications", icon: "📡", prompt: "How does data get home?", slots: ["comm", "groundStations"] },
 ];
+
+export const stageById = (id: StageId): Stage => stages.find((stage) => stage.id === id)!;
 
 const allSlots: PartSlot[] = ["instruments", "orbit", "solar", "battery", "comm", "groundStations", "storage"];
 
