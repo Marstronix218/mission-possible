@@ -1,10 +1,21 @@
 import { notFound } from "next/navigation";
-import { findMission } from "@/components/designer/missions";
-import { SatelliteDesigner } from "@/components/designer/satellite-designer";
-
-/** `fix` comes from `?fix=orbit,comm` on debrief retry links. */
-export default async function DesignPage({ params, fix }: { params: Promise<{ slug: string }>; fix?: string | string[] }) {
+import { findMission } from "./missions";
+import BeginnerWorkshop from "@/components/gameplay/BeginnerWorkshop";
+import AdvancedWorkshop from "@/components/gameplay/AdvancedWorkshop";
+export default async function DesignPage({
+  params,
+  fix,
+  mode,
+}: {
+  params: Promise<{ slug: string }>;
+  fix?: string | string[];
+  mode?: string;
+}) {
   const mission = findMission((await params).slug);
   if (!mission) notFound();
-  return <SatelliteDesigner key={mission.slug} mission={mission} fix={fix} />;
+  return mode === "advanced" ? (
+    <AdvancedWorkshop mission={mission} fix={fix} />
+  ) : (
+    <BeginnerWorkshop mission={mission} />
+  );
 }

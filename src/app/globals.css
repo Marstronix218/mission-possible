@@ -1,53 +1,18 @@
 @import "tailwindcss";
 
-/* ==========================================================================
-   CODE BLUE — "Pop Space" design system
-   --------------------------------------------------------------------------
-   Mood: a bright, chunky, toy-like space game. Deep indigo night sky, candy
-   accents, fat rounded shapes, hard drop-shadows that "press" on click.
-
-   TOKENS (CSS vars on :root, also exposed to Tailwind):
-     Surfaces   --space-950 / 900 / 800 / 700   bg-space-900, bg-space-800 ...
-     Accents    --pop-yellow (primary CTA) --pop-cyan --pop-pink --pop-lime
-                --pop-orange --pop-violet       text-pop-yellow, bg-pop-cyan ...
-     Hazards    --hazard-wildfire heat flood snow drought storm glacier volcano
-                Shortcut: add `.hz-<category>` to any element to set `--hz`
-                to that hazard's color, then use var(--hz) inside.
-                Always pair hazard color with an icon or label (never color alone).
-     Status     --ok --warn --bad               bg-ok, text-bad ...
-     Shape      --radius (1.25rem) --radius-pill --shadow-pop --ease-pop
-     Type       font-display (Fredoka: headings, buttons, numbers)
-                font-sans    (Nunito: body)
-
-   COMPONENTS (global classes):
-     .btn-pop                 chunky primary button (yellow). >=48px tall.
-       .btn-pop--secondary    cyan      .btn-pop--pink   pink
-       .btn-pop--ghost        outline   .btn-pop--lg     hero size
-       .btn-pop--sm           compact (still >=44px)  .btn-pop--block  full width
-     .chip                    pill label; `.chip.hz-flood` tints with hazard
-     .card-pop                rounded raised card (use for big tiles)
-     .panel                   quieter content panel (legacy, still supported)
-     .eyebrow                 tiny uppercase kicker
-     .stars                   star rating row (filled stars use .is-on)
-   MOTION (all disabled under prefers-reduced-motion):
-     .anim-float .anim-bob .anim-pulse .anim-ring .anim-spin .anim-pop-in
-     Add `data-paused="true"` on an ancestor to freeze every animation inside
-     (used with IntersectionObserver when content scrolls off-screen).
-   LEGACY (kept working, restyled): .panel .eyebrow .actions .notice .error
-     .two-column .choice .field .score .legend .back .primary .feedback .radar
-     .filter .history .observation-grid .table-scroll .join-code ...
-   ========================================================================== */
+/* Cinematic space palette. Existing component class names remain compatible
+   with the advanced designer and classroom screens. */
 
 :root {
   color-scheme: dark;
-  /* CODE BLUE design tokens — playful "pop space" palette. */
-  --space-950: #070a24;
-  --space-900: #0d1240;
-  --space-800: #161d5c;
-  --space-700: #222b7a;
-  --pop-yellow: #ffd23f;
+  /* CODE BLUE shared tokens. */
+  --space-950: #07121b;
+  --space-900: #0d1a25;
+  --space-800: #182c3b;
+  --space-700: #294253;
+  --pop-yellow: #cbf36b;
   --pop-pink: #ff5c8a;
-  --pop-cyan: #2de2e6;
+  --pop-cyan: #8ed5dc;
   --pop-lime: #8bf05a;
   --pop-orange: #ff8a3d;
   --pop-violet: #a98bff;
@@ -67,15 +32,15 @@
   --card: #1a2266;
   --card-foreground: #f6f7ff;
   --muted: #202a72;
-  --muted-foreground: #c3c8f5;
+  --muted-foreground: #b6c8d4;
   --border: #4b55a8;
   --primary: var(--pop-cyan);
   --primary-foreground: #06123a;
   --destructive: var(--pop-pink);
   --ring: var(--pop-yellow);
-  --radius: 1.25rem;
+  --radius: 0.9rem;
   --radius-pill: 999px;
-  --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.35);
+  --shadow-pop: 0 10px 30px rgba(0, 0, 0, 0.2);
   --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* Legacy aliases used by older screens — mapped onto the pop palette. */
@@ -99,9 +64,8 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-destructive: var(--destructive);
   --color-ring: var(--ring);
-  --font-sans: var(--font-body), "Nunito", system-ui, sans-serif;
-  --font-display:
-    var(--font-display-face), var(--font-body), system-ui, sans-serif;
+  --font-sans: Arial, Helvetica, system-ui, sans-serif;
+  --font-display: Arial, Helvetica, system-ui, sans-serif;
   --color-space-950: var(--space-950);
   --color-space-900: var(--space-900);
   --color-space-800: var(--space-800);
@@ -147,13 +111,13 @@ body {
     line-height: 1.55;
     background-color: var(--space-900);
     background-image:
-      radial-gradient(1200px 600px at 85% -10%, #2a2f9a55, transparent 70%),
-      radial-gradient(900px 500px at -10% 30%, #5a1f7a33, transparent 70%),
+      radial-gradient(1200px 600px at 85% -10%, #23425655, transparent 70%),
+      radial-gradient(900px 500px at -10% 30%, #184c5133, transparent 70%),
       linear-gradient(
         180deg,
         var(--space-950) 0%,
         var(--space-900) 40%,
-        #10165a 100%
+        #10202b 100%
       );
     background-attachment: fixed;
   }
