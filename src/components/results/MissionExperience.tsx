@@ -36,6 +36,9 @@ import { LaunchSequence } from "./LaunchSequence";
 import { ObserveDeck } from "./ObserveDeck";
 import { DecisionPrompt } from "./DecisionPrompt";
 import { Debrief } from "./Debrief";
+import { BeginnerObservation } from "@/components/gameplay/BeginnerObservation";
+import { BeginnerDebrief } from "@/components/gameplay/BeginnerDebrief";
+import { modeKey } from "@/components/gameplay/beginner-model";
 import { hazardProvenance } from "./DataProvenance";
 import { fixHref, stripDecisions } from "./mission-debrief";
 import {
@@ -65,6 +68,7 @@ export default function MissionExperience({
     mission.defaultConstraints,
   );
   const [launchDone, setLaunchDone] = useState(false);
+  const [beginner, setBeginner] = useState(false);
   const [observeEnded, setObserveEnded] = useState(false);
   const [decisions, setDecisions] = useState<MissionDecisions>({});
   const [answered, setAnswered] = useState<Set<CheckpointId>>(() => new Set());
@@ -94,6 +98,11 @@ export default function MissionExperience({
     async function load() {
       await Promise.resolve();
       try {
+        if (active)
+          setBeginner(
+            !classroomId &&
+              localStorage.getItem(modeKey(mission.slug)) === "beginner",
+          );
         const store = classroomId
           ? null
           : localStorage.getItem(designerDraftKey(mission.slug));
@@ -366,6 +375,7 @@ export default function MissionExperience({
     update(stripDecisions(from));
     router.push(fixHref(mission.slug, slots, classroomId));
   }
+  const DebriefView = beginner ? BeginnerDebrief : Debrief;
   return (
     <main id="main-content" tabIndex={-1}>
       <Link className="back" href="/map">
@@ -375,7 +385,11 @@ export default function MissionExperience({
         {mission.category} / {stage}
         {classroom ? " / " + classroom.name : ""}
       </div>
-      <h1>
+      <h1
+        className={
+          stage === "run" || stage === "result" ? "sr-only" : undefined
+        }
+      >
         {stage === "brief"
           ? "A mission for "
           : stage === "design"
@@ -387,21 +401,24 @@ export default function MissionExperience({
               : "Mission debrief: "}
         <em>{mission.city}</em>
       </h1>
-      <p
-        className={
-          stage === "run" || stage === "result"
-            ? "text-xs text-muted-foreground"
-            : "notice"
-        }
-      >
-        Educational simulation · {hazardProvenance(mission)}{" "}
-        {isMockMode
-          ? "Mock data stays in this browser; scores come from the real engine."
-          : backendAvailable
-            ? "Cloud submissions are recalculated on the server."
-            : "Solo attempts are saved in this browser."}
-      </p>
-      {(stage === "run" || stage === "result") && (
+      <details className="mb-4 text-sm text-muted-foreground">
+        <summary>Simulation & data sources</summary>
+        <p
+          className={
+            stage === "run" || stage === "result"
+              ? "text-xs text-muted-foreground"
+              : "notice"
+          }
+        >
+          Educational simulation · {hazardProvenance(mission)}{" "}
+          {isMockMode
+            ? "Mock data stays in this browser; scores come from the real engine."
+            : backendAvailable
+              ? "Cloud submissions are recalculated on the server."
+              : "Solo attempts are saved in this browser."}
+        </p>
+      </details>
+      {(stage === "run" || stage === "result") && !beginner && (
         <MissionSteps
           slug={mission.slug}
           current={
@@ -611,17 +628,20 @@ export default function MissionExperience({
       )}
       {stage === "run" && (
         <section aria-busy={busy} className="grid gap-4">
-          <label className="choice">
-            <input
-              type="checkbox"
-              checked={motionReduced}
-              disabled={reducedMotion}
-              onChange={(e) => setStillPlayback(e.target.checked)}
-            />
-            <span>
-              Reduce motion{reducedMotion ? " (system preference)" : ""}
-            </span>
-          </label>
+          <details>
+            <summary>Playback options</summary>
+            <label className="choice">
+              <input
+                type="checkbox"
+                checked={motionReduced}
+                disabled={reducedMotion}
+                onChange={(e) => setStillPlayback(e.target.checked)}
+              />
+              <span>
+                Reduce motion{reducedMotion ? " (system preference)" : ""}
+              </span>
+            </label>
+          </details>
           {busy && (
             <p role="status">Saving your attempt. Your design is preserved.</p>
           )}
@@ -630,6 +650,14 @@ export default function MissionExperience({
               events={runEvents.filter((e) => e.launchStage)}
               design={design}
               reducedMotion={motionReduced}
+              city={mission.city}
+              responseHours={mission.targetResponseHours}
+              blocker={
+                classBlocker ??
+                (resources.violations.length
+                  ? resources.violations.join(" ")
+                  : null)
+              }
               onComplete={() => {
                 setLaunchDone(true);
                 requestAnimationFrame(() =>
@@ -647,50 +675,65 @@ export default function MissionExperience({
               >
                 🛰️ Observe {mission.city}
               </h2>
-              <ObserveDeck
-                mission={mission}
-                design={runDesign}
-                resources={resources}
-                result={simulated}
-                reducedMotion={motionReduced}
-                checkpoints={checkpoints}
-                answered={answered}
-                change={change}
-                onEnd={onObserveEnd}
-                renderDecision={(id) => {
-                  const copy = decisionCopy(id, hazardNoun, offer);
-                  return (
-                    <DecisionPrompt
-                      alarm={copy.alarm}
-                      title={copy.title}
-                      subtitle={copy.subtitle}
-                      options={copy.options}
-                      onChoose={(choice) => answer(id, choice)}
-                    />
-                  );
-                }}
-              />
+              {beginner ? (
+                <BeginnerObservation
+                  mission={mission}
+                  design={runDesign}
+                  resources={resources}
+                  result={simulated}
+                  reducedMotion={motionReduced}
+                  onEnd={onObserveEnd}
+                />
+              ) : (
+                <ObserveDeck
+                  mission={mission}
+                  design={runDesign}
+                  resources={resources}
+                  result={simulated}
+                  reducedMotion={motionReduced}
+                  checkpoints={beginner ? [] : checkpoints}
+                  answered={answered}
+                  change={change}
+                  onEnd={onObserveEnd}
+                  renderDecision={(id) => {
+                    const copy = decisionCopy(id, hazardNoun, offer);
+                    return (
+                      <DecisionPrompt
+                        alarm={copy.alarm}
+                        title={copy.title}
+                        subtitle={copy.subtitle}
+                        options={copy.options}
+                        onChoose={(choice) => answer(id, choice)}
+                      />
+                    );
+                  }}
+                />
+              )}
             </>
           )}
           <div className="actions">
-            <button
-              className={
-                observeEnded ? "btn-pop btn-pop--lg" : "btn-pop btn-pop--ghost"
-              }
-              disabled={
-                !loaded ||
-                busy ||
-                resources.violations.length > 0 ||
-                !!classBlocker
-              }
-              onClick={finish}
-            >
-              {busy
-                ? "Submitting…"
-                : observeEnded
-                  ? "🔎 See what happened →"
-                  : "⏩ Skip to results"}
-            </button>
+            {launchDone && (
+              <button
+                className={
+                  observeEnded
+                    ? "btn-pop btn-pop--lg"
+                    : "btn-pop btn-pop--ghost"
+                }
+                disabled={
+                  !loaded ||
+                  busy ||
+                  resources.violations.length > 0 ||
+                  !!classBlocker
+                }
+                onClick={finish}
+              >
+                {busy
+                  ? "Submitting…"
+                  : observeEnded
+                    ? "🔎 See what happened →"
+                    : "⏩ Skip to results"}
+              </button>
+            )}
             <Link href={base + "/design" + suffix}>Back to design</Link>
           </div>
         </section>
@@ -698,7 +741,7 @@ export default function MissionExperience({
       {stage === "result" &&
         loaded &&
         (result && attempt ? (
-          <Debrief
+          <DebriefView
             key={attempt.id}
             mission={mission}
             attempt={attempt}

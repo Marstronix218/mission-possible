@@ -2,13 +2,13 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 import { loadAttempts } from "../results/session";
 import { api, backendAvailable } from "../results/cloud";
 import { ENGINE_VERSION } from "@/lib/sim";
 import type { Category, SimResult } from "@/types/game";
 import { categoryLabel } from "@/lib/story/missions";
 import EmergencyHero from "./EmergencyHero";
-import MissionJourney from "./MissionJourney";
 import HazardIcon from "./HazardIcon";
 import Stars from "./Stars";
 import { useInView } from "./useInView";
@@ -117,56 +117,19 @@ function FeaturedCard({
       className={`${styles.featured} hz-${m.category} anim-pop-in`}
       style={{ animationDelay: `${index * 90}ms` }}
     >
-      <div className={styles.featuredArt} aria-hidden="true">
-        <span className={styles.featuredOrbit}>
-          <span className={styles.featuredSat}>
-            <svg
-              className={styles.featuredSatInner}
-              viewBox="0 0 40 24"
-              width="40"
-              height="24"
-            >
-              <rect
-                x="1"
-                y="7"
-                width="12"
-                height="10"
-                rx="2"
-                fill="#2de2e6"
-                stroke="#070a24"
-                strokeWidth="2"
-              />
-              <rect
-                x="27"
-                y="7"
-                width="12"
-                height="10"
-                rx="2"
-                fill="#2de2e6"
-                stroke="#070a24"
-                strokeWidth="2"
-              />
-              <rect
-                x="14"
-                y="4"
-                width="12"
-                height="16"
-                rx="4"
-                fill="#fff"
-                stroke="#070a24"
-                strokeWidth="2"
-              />
-            </svg>
-          </span>
-        </span>
-        <span
-          className={`${styles.featuredBlob} anim-float`}
-          style={{ animationDelay: `${index * -1.2}s` }}
-        >
-          <HazardIcon category={m.category} size={64} />
-        </span>
+      <div
+        className={styles.featuredArt}
+        style={{ position: "relative", overflow: "hidden" }}
+      >
+        <Image
+          src={`/nasa/${m.slug}.jpg`}
+          alt={`Archived NASA Earth observation of ${m.city}`}
+          fill
+          sizes="(max-width: 640px) 100vw, 360px"
+          style={{ objectFit: "cover" }}
+        />
         <span className={styles.featuredTimer}>
-          <span aria-hidden="true">⏱</span> {m.deadlineHours}h
+          Archived NASA imagery · {m.deadlineHours}h response
         </span>
       </div>
       <div className={styles.featuredBody}>
@@ -218,8 +181,11 @@ function MissionTile({ m, record }: { m: MapMission; record?: BestRecord }) {
 }
 
 export default function MissionMap({ missions }: { missions: MapMission[] }) {
-  const { featuredMission, featuredMissions, moreMissions, categories } = selectMissions(missions);
-  const moreCategories = categories.filter((c) => moreMissions.some((m) => m.category === c));
+  const { featuredMission, featuredMissions, moreMissions, categories } =
+    selectMissions(missions);
+  const moreCategories = categories.filter((c) =>
+    moreMissions.some((m) => m.category === c),
+  );
   const { best, progressError } = useBestScores(missions);
   const [filter, setFilter] = useState<Category | "all">("all");
   const [mapRef, mapNear] = useInView<HTMLDivElement>({
@@ -236,15 +202,13 @@ export default function MissionMap({ missions }: { missions: MapMission[] }) {
     <main id="main-content" tabIndex={-1} className={styles.page}>
       {featuredMission && <EmergencyHero mission={featuredMission} />}
 
-      <MissionJourney />
-
       <section
         aria-labelledby="featured-heading"
         className="mt-16 sm:mt-24"
         id="missions"
       >
         <div className={styles.sectionHead}>
-          <h2 id="featured-heading">Pick your first mission</h2>
+          <h2 id="featured-heading">Explore another mission</h2>
           {completed > 0 && (
             <span
               className="chip"
