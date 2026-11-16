@@ -11,7 +11,7 @@ export function EnvelopeLetter({
   mission?: Mission;
   onExplore?: () => void;
 }) {
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState(!mission);
   const heading = useRef<HTMLHeadingElement>(null);
   return (
     <section
@@ -24,28 +24,29 @@ export function EnvelopeLetter({
         Incoming{" "}
         {mission ? `mission / ${mission.city}` : "message / Mission operations"}
       </p>
-      <button
-        autoFocus={!mission}
-        disabled={opened}
-        aria-hidden={opened}
-        tabIndex={opened ? -1 : 0}
-        className={`${styles.envelope} ${opened ? styles.envelopeOpened : ""}`}
-        onClick={() => {
-          setOpened(true);
-          requestAnimationFrame(() => heading.current?.focus());
-        }}
-        aria-label={
-          mission
-            ? `Open mission envelope from ${mission.city}`
-            : "Open welcome envelope"
-        }
-      >
-        <span className={styles.flap} />
-        <span className={styles.seal}>CB</span>
-        <span className={styles.envelopeText}>
-          {mission ? `From ${mission.city}` : "To our next mission designer"}
-        </span>
-      </button>
+      {mission && (
+        <button
+          disabled={opened}
+          aria-hidden={opened}
+          tabIndex={opened ? -1 : 0}
+          className={`${styles.envelope} ${opened ? styles.envelopeOpened : ""}`}
+          onClick={() => {
+            setOpened(true);
+            requestAnimationFrame(() => heading.current?.focus());
+          }}
+          aria-label={
+            mission
+              ? `Open mission envelope from ${mission.city}`
+              : "Open welcome envelope"
+          }
+        >
+          <span className={styles.flap} />
+          <span className={styles.seal}>CB</span>
+          <span className={styles.envelopeText}>
+            {mission ? `From ${mission.city}` : "To our next mission designer"}
+          </span>
+        </button>
+      )}
       {!opened && <p>Click the envelope to open your letter.</p>}
       <div hidden={!opened} className={styles.paper}>
         <p>Dear Mission Designer,</p>
@@ -72,31 +73,48 @@ export function EnvelopeLetter({
         {mission ? (
           <Link href={`/mission/${mission.slug}/design`}>ACCEPT MISSION →</Link>
         ) : (
-          <button onClick={onExplore}>EXPLORE THE U.S. →</button>
+          <button onClick={onExplore}>Continue</button>
         )}
       </div>
     </section>
   );
 }
+const welcomeKey = "codeblue:welcome-letter:v1";
+let dismissedInSession = false;
+
 export function WelcomeLetter() {
-  const [open, setOpen] = useState(true);
-  const [letterKey, setLetterKey] = useState(0);
   const dialogRef = useRef<HTMLDialogElement>(null);
+
   useEffect(() => {
-    if (open && !dialogRef.current?.open) dialogRef.current?.showModal();
-    if (!open && dialogRef.current?.open) dialogRef.current.close();
-  }, [open]);
-  function dismiss() {
-    setOpen(false);
+    if (dismissedInSession) return;
+    try {
+      if (localStorage.getItem(welcomeKey) === "seen") return;
+    } catch {
+      // The current session can still dismiss the letter.
+    }
+    const dialog = dialogRef.current;
+    if (dialog && !dialog.open) dialog.showModal();
+  }, []);
+
+  function rememberDismissal() {
+    dismissedInSession = true;
+    try {
+      localStorage.setItem(welcomeKey, "seen");
+    } catch {
+      // Storage may be unavailable or blocked.
+    }
   }
+
+  function dismiss() {
+    rememberDismissal();
+    dialogRef.current?.close();
+  }
+
   return (
     <>
       <button
         className={styles.welcomeButton}
-        onClick={() => {
-          setLetterKey((k) => k + 1);
-          setOpen(true);
-        }}
+        onClick={() => dialogRef.current?.showModal()}
       >
         ✉ Mission welcome
       </button>
@@ -104,14 +122,12 @@ export function WelcomeLetter() {
         ref={dialogRef}
         className={styles.modal}
         aria-label="Welcome mission letter"
-        onCancel={(e) => {
-          e.preventDefault();
+        onCancel={(event) => {
+          event.preventDefault();
           dismiss();
         }}
-        onClose={() => {
-          if (open) dismiss();
-        }}
       >
+        <EnvelopeLetter onExplore={dismiss} />
         <button
           className={styles.close}
           onClick={dismiss}
@@ -119,7 +135,6 @@ export function WelcomeLetter() {
         >
           ×
         </button>
-        <EnvelopeLetter key={letterKey} onExplore={dismiss} />
       </dialog>
     </>
   );

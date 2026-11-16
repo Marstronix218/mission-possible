@@ -142,8 +142,8 @@ describe("physical mission entry and assembly", () => {
     const html = renderToStaticMarkup(
       createElement(EnvelopeLetter, { onExplore: () => {} }),
     );
-    expect(html).toContain("Open welcome envelope");
-    expect(html).toContain("EXPLORE THE U.S.");
+    expect(html).toContain("Welcome to CODE BLUE.");
+    expect(html).toContain(">Continue</button>");
   });
   it("does not draw missing array or antenna modules and exposes installed removals accessibly", () => {
     const full = renderToStaticMarkup(
