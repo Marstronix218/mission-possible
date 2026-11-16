@@ -26,12 +26,9 @@ import {
   level,
   MAX_INSTRUMENTS,
   parseFixSlots,
-  stageById,
   stageComplete,
-  stageOfSlot,
   stages,
   stationCounts,
-  type StageId,
 } from "./builder-model";
 import { OrbitIcon, OrbitPreview } from "./OrbitPreview";
 import {
@@ -60,6 +57,14 @@ import type { GuideStage } from "@/components/guide/guide-copy";
 import { storyFor } from "./story-fallback";
 import { useReducedMotion } from "./useReducedMotion";
 import styles from "./designer.module.css";
+import { WorkshopInstruction } from "./WorkshopInstruction";
+import {
+  workshopDecisions,
+  decisionComplete,
+  decisionForSlot,
+  firstUnfinishedDecision,
+} from "./workshop-flow";
+import tutorialStyles from "./workshop-instruction.module.css";
 
 type SingleSlot = "orbit" | "solar" | "battery" | "comm" | "storage";
 
@@ -100,7 +105,9 @@ function SlotGroup({
   fixed,
   changed,
   children,
+  hidden,
 }: {
+  hidden?: boolean;
   slot: PartSlot;
   title: string;
   aside?: ReactNode;
@@ -110,6 +117,7 @@ function SlotGroup({
 }) {
   return (
     <fieldset
+      hidden={hidden}
       id={`slot-${slot}`}
       className={
         "m-0 min-w-0 scroll-mt-80 lg:scroll-mt-6 " +
@@ -230,8 +238,12 @@ export function SatelliteDesigner({
   const [ready, setReady] = useState(false);
   const [launching, setLaunching] = useState(false);
   const [error, setError] = useState("");
-  const [stage, setStage] = useState<StageId>("eyes");
-  const [showNumbers, setShowNumbers] = useState(true);
+  const [decisionIndex, setDecisionIndex] = useState(0);
+  const [instruction, setInstruction] = useState(true);
+  const decision = workshopDecisions[decisionIndex];
+  const stage = decision.stage;
+
+  const [showNumbers, setShowNumbers] = useState(false);
   const [previousDesign, setPreviousDesign] = useState<SatelliteDesign | null>(
     null,
   );
@@ -277,7 +289,9 @@ export function SatelliteDesigner({
         : "workshop"
       : stage === "radio"
         ? "comm"
-        : stage;
+        : stage === "review"
+          ? "resources"
+          : stage;
   const onPreview = (category: PerfCategory, id: string | null) =>
     setPreview((current) =>
       (current[category] ?? null) === id
@@ -285,15 +299,17 @@ export function SatelliteDesigner({
         : { ...current, [category]: id ?? undefined },
     );
   const panel = (category: PerfCategory) => (
-    <PerformancePanel
-      category={category}
-      preview={preview[category] ?? null}
-      ctx={perf}
-    />
+    <details className="my-3 rounded-xl border border-border p-3">
+      <summary>Compare installed parts & alternatives</summary>
+      <PerformancePanel
+        category={category}
+        preview={preview[category] ?? null}
+        ctx={perf}
+      />
+    </details>
   );
-  const mini = (category: PerfCategory, id: string) => (
-    <MiniRadar category={category} id={id} ctx={perf} />
-  );
+  const mini = (category: PerfCategory, id: string) =>
+    showNumbers ? <MiniRadar category={category} id={id} ctx={perf} /> : null;
 
   useEffect(() => {
     async function restoreDraft() {
@@ -306,12 +322,10 @@ export function SatelliteDesigner({
       const targets = parseFixSlots(fix, window.location.hash);
       setFixSlots(targets);
       if (targets.length) {
-        setStage(stageOfSlot(targets[0]));
+        setDecisionIndex(decisionForSlot(targets[0]));
+        setInstruction(false);
         scrollToSlot(targets[0]);
-      } else
-        setStage(
-          stages.find((item) => !stageComplete(saved, item.id))?.id ?? "eyes",
-        );
+      } else setDecisionIndex(firstUnfinishedDecision(saved));
       setReady(true);
     }
     void restoreDraft();
@@ -320,7 +334,8 @@ export function SatelliteDesigner({
       const targets = parseFixSlots(null, window.location.hash);
       if (!targets.length) return;
       setFixSlots((current) => [...new Set([...current, ...targets])]);
-      setStage(stageOfSlot(targets[0]));
+      setDecisionIndex(decisionForSlot(targets[0]));
+      setInstruction(false);
       scrollToSlot(targets[0]);
     }
     window.addEventListener("hashchange", onHash);
@@ -431,14 +446,6 @@ export function SatelliteDesigner({
     }
   }
 
-  function goTo(next: StageId) {
-    setStage(next);
-    requestAnimationFrame(() => {
-      if (window.matchMedia("(max-width: 1023px)").matches)
-        trayRef.current?.scrollIntoView({ block: "start" });
-    });
-  }
-
   function launch() {
     if (launching || !ready || resources.violations.length) return;
     setLaunching(true);
@@ -456,11 +463,7 @@ export function SatelliteDesigner({
 
   const stageIndex = stages.findIndex((item) => item.id === stage);
   const current = stages[stageIndex];
-  const nextStage = stages[stageIndex + 1];
   const allDone = stages.every((item) => stageComplete(design, item.id));
-  const firstIncomplete = stages.find(
-    (item) => !stageComplete(design, item.id),
-  );
   const blockers = blockerMessages(resources.violations);
   const canLaunch = ready && !launching && blockers.length === 0;
   const orbit = findPart(cat.orbits, design.orbit);
@@ -471,6 +474,7 @@ export function SatelliteDesigner({
     slot,
     fixed: fixSet.has(slot),
     changed: changed.has(slot),
+    hidden: decision.slot !== slot,
   });
   const money = (value: number) => `$${value}M`;
   const costStat = (costM: number, options: number[]): CardStat => ({
@@ -487,7 +491,7 @@ export function SatelliteDesigner({
   });
 
   let primary: ReactNode;
-  if (allDone) {
+  if (decision.slot === "review") {
     primary = (
       <button
         type="button"
@@ -500,26 +504,38 @@ export function SatelliteDesigner({
       </button>
     );
   } else {
-    const target = nextStage ?? firstIncomplete;
-    const enabled =
-      Boolean(target) && target !== current && stageComplete(design, stage);
     primary = (
       <button
         type="button"
-        disabled={!enabled}
-        onClick={() => target && goTo(target.id)}
-        className="w-full rounded-full border-[3px] border-space-950 bg-pop-cyan px-6 py-3.5 font-display text-xl font-bold tracking-wide text-space-950 shadow-[var(--shadow-pop)] transition-transform hover:-translate-y-0.5 active:translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+        disabled={!ready || !decisionComplete(design, decisionIndex)}
+        onClick={() => {
+          setDecisionIndex((i) =>
+            Math.min(workshopDecisions.length - 1, i + 1),
+          );
+          setInstruction(true);
+        }}
+        className="btn-pop"
       >
-        {target ? (
-          <>
-            Next: {target.label.toUpperCase()} <span aria-hidden="true">→</span>
-          </>
-        ) : (
-          "Next"
-        )}
+        CONTINUE →
       </button>
     );
   }
+  if (ready && instruction)
+    return (
+      <WorkshopInstruction
+        mission={mission}
+        index={decisionIndex}
+        onContinue={() => setInstruction(false)}
+        onBack={() => {
+          if (decisionIndex === 0)
+            router.push(`/mission/${mission.slug}/brief`);
+          else {
+            setDecisionIndex((i) => i - 1);
+            setInstruction(false);
+          }
+        }}
+      />
+    );
 
   return (
     <div className="mx-auto max-w-6xl">
@@ -554,11 +570,83 @@ export function SatelliteDesigner({
 
       {ready && <MissionGuide stage={guideStage} hint={guideHint} />}
 
+      <dl
+        className={tutorialStyles.resourceHud}
+        aria-label="Live spacecraft resources"
+      >
+        {[
+          [
+            "Budget",
+            `$${resources.costM}M / $${constraints.budgetM}M`,
+            resources.costM > constraints.budgetM,
+            resources.costM / constraints.budgetM,
+          ],
+          [
+            "Mass",
+            `${resources.massKg} / ${constraints.massKg} kg`,
+            resources.massKg > constraints.massKg,
+            resources.massKg / constraints.massKg,
+          ],
+          [
+            "Power",
+            `${resources.powerUseW} / ${resources.powerGenW} W`,
+            !!design.solar && resources.powerUseW > resources.powerGenW,
+            design.solar
+              ? resources.powerUseW / Math.max(1, resources.powerGenW)
+              : 0,
+          ],
+          [
+            "Data / downlink",
+            `${resources.dataGBPerDay} / ${resources.downlinkGBPerDay} GB/day`,
+            !!design.comm &&
+              !!design.storage &&
+              resources.dataGBPerDay >
+                resources.downlinkGBPerDay + resources.storageGB,
+          ],
+          ["Storage", `${resources.storageGB} GB`, false],
+        ].map(([label, value, over, ratio]) => (
+          <div key={String(label)} data-over={over || undefined}>
+            <dt>{label}</dt>
+            <dd>
+              {over ? "! " : ""}
+              {value}
+            </dd>
+            {typeof ratio === "number" && (
+              <meter
+                aria-label={`${label} utilization`}
+                min="0"
+                max="100"
+                value={Math.min(100, ratio * 100)}
+                className="w-full"
+              />
+            )}
+          </div>
+        ))}
+      </dl>
+      {resources.violations.filter(
+        (v) =>
+          !v.startsWith("Select ") &&
+          (v !== "Power demand exceeds solar generation." || !!design.solar),
+      ).length > 0 && (
+        <p
+          role="status"
+          className="mb-4 rounded-lg border border-amber-300/40 bg-amber-300/10 p-3 text-sm"
+        >
+          {blockerMessages(
+            resources.violations.filter(
+              (v) =>
+                !v.startsWith("Select ") &&
+                (v !== "Power demand exceeds solar generation." ||
+                  !!design.solar),
+            ),
+          ).join(" · ")}
+        </p>
+      )}
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
         {/* ---------- The satellite and its gauges ---------- */}
         <section
           aria-label="Your satellite"
-          className="space-y-4 lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:pr-1"
+          className="space-y-4 lg:sticky lg:top-48 lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto lg:pr-1"
         >
           <div
             onDragOver={onDragOver}
@@ -637,13 +725,18 @@ export function SatelliteDesigner({
             installed module to remove it. Open the body to inspect battery and
             memory slots.
           </p>
-          <ResourceDashboard
-            mission={mission}
-            design={design}
-            resources={resources}
-            constraints={constraints}
-            previousDesign={previousDesign}
-          />
+          <details className="rounded-xl border border-border p-3">
+            <summary>
+              Detailed resource checks & engineering consequences
+            </summary>
+            <ResourceDashboard
+              mission={mission}
+              design={design}
+              resources={resources}
+              constraints={constraints}
+              previousDesign={previousDesign}
+            />
+          </details>
           <label className="flex items-center gap-2 text-xs font-bold text-muted-foreground">
             <input
               type="checkbox"
@@ -696,69 +789,44 @@ export function SatelliteDesigner({
           className="min-w-0 scroll-mt-72 space-y-4 lg:scroll-mt-4"
         >
           <nav aria-label="Build steps" className="!block">
-            <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {stages.map((item, index) => {
-                const done = stageComplete(design, item.id);
-                // Every step is reachable from the first attempt; order is guidance only.
-                const open = true;
-                const active = item.id === stage;
-                const flagged = item.slots.some(
-                  (slot) => fixSet.has(slot) && !changed.has(slot),
-                );
-                return (
-                  <li key={item.id}>
-                    <button
-                      type="button"
-                      onClick={() => goTo(item.id)}
-                      disabled={!open || !ready}
-                      aria-current={active ? "step" : undefined}
-                      aria-controls={`${groupId}-${item.id}`}
-                      className={
-                        "relative flex min-h-16 w-full flex-col items-center justify-center rounded-2xl border-[3px] px-1 py-1.5 font-display text-sm font-bold transition-transform " +
-                        (active
-                          ? "-translate-y-0.5 border-space-950 bg-pop-cyan text-space-950 shadow-[var(--shadow-pop)]"
-                          : done
-                            ? "border-pop-cyan/60 bg-space-800"
-                            : "border-border bg-space-800 text-muted-foreground") +
-                        (open ? "" : " cursor-not-allowed opacity-50")
-                      }
-                    >
-                      <span aria-hidden="true" className="text-xl leading-none">
-                        {open ? item.icon : "🔒"}
-                      </span>
-                      <span>
-                        {index + 1}. {item.label}
-                      </span>
-                      <span className="sr-only">
-                        {done ? " (done)" : open ? "" : " (locked)"}
-                        {flagged ? " (check this)" : ""}
-                      </span>
-                      {done && !active && (
-                        <span
-                          aria-hidden="true"
-                          className="absolute -top-2 -left-1 flex size-5 items-center justify-center rounded-full border-2 border-space-950 bg-pop-lime text-[11px] font-black text-space-950"
-                        >
-                          ✓
-                        </span>
-                      )}
-                      {flagged && (
-                        <span
-                          aria-hidden="true"
-                          className={
-                            styles.wiggle +
-                            " absolute -top-2 -right-1 flex size-6 items-center justify-center rounded-full border-2 border-space-950 bg-pop-pink text-sm font-black text-space-950"
-                          }
-                        >
-                          !
-                        </span>
-                      )}
-                    </button>
-                  </li>
-                );
-              })}
+            <ol className="grid grid-cols-4 gap-2">
+              {workshopDecisions.map((item, index) => (
+                <li key={item.slot}>
+                  <button
+                    type="button"
+                    disabled={!ready}
+                    onClick={() => {
+                      setDecisionIndex(index);
+                      setInstruction(true);
+                    }}
+                    aria-current={index === decisionIndex ? "step" : undefined}
+                    className="w-full min-h-12 rounded-lg border border-border px-2 py-2 text-sm"
+                    style={
+                      index === decisionIndex
+                        ? { background: "#bddfdc", color: "#122330" }
+                        : undefined
+                    }
+                  >
+                    {index + 1}. {item.label}
+                    {decisionComplete(design, index) ? " ✓" : ""}
+                    {item.slot !== "review" &&
+                    fixSet.has(item.slot) &&
+                    !changed.has(item.slot)
+                      ? " · ! Check"
+                      : ""}
+                  </button>
+                </li>
+              ))}
             </ol>
           </nav>
 
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm">
+              {decisionIndex + 1}/{workshopDecisions.length} · Choose, inspect,
+              then continue.
+            </p>
+            {primary}
+          </div>
           {fixSlots.length > 0 && (
             <p className="rounded-2xl border-[3px] border-dashed border-pop-pink bg-pop-pink/10 px-4 py-2.5 text-sm font-bold">
               <span aria-hidden="true">🔧 </span>Mission control flagged{" "}
@@ -784,7 +852,7 @@ export function SatelliteDesigner({
                 id={`${groupId}-eyes-h`}
                 className="!m-0 font-display text-2xl font-bold !tracking-normal"
               >
-                {stageById("eyes").prompt}
+                {decision.title}
               </h2>
               <p className="text-sm text-muted-foreground">
                 <span aria-hidden="true">🌫 </span>
@@ -887,7 +955,7 @@ export function SatelliteDesigner({
                 id={`${groupId}-orbit-h`}
                 className="!m-0 font-display text-2xl font-bold !tracking-normal"
               >
-                {stageById("orbit").prompt}
+                {decision.title}
               </h2>
               {panel("orbits")}
               <SlotGroup {...groupProps("orbit")} title="Orbit">
@@ -938,9 +1006,9 @@ export function SatelliteDesigner({
                 id={`${groupId}-radio-h`}
                 className="!m-0 font-display text-2xl font-bold !tracking-normal"
               >
-                {stageById("radio").prompt}
+                {decision.title}
               </h2>
-              {panel("communications")}
+              {decision.slot === "comm" && panel("communications")}
               <SlotGroup {...groupProps("comm")} title="Radio">
                 {cat.communications.map((part) => (
                   <Previewable
@@ -995,7 +1063,7 @@ export function SatelliteDesigner({
                   </Previewable>
                 ))}
               </SlotGroup>
-              {panel("groundStations")}
+              {decision.slot === "groundStations" && panel("groundStations")}
               <SlotGroup
                 {...groupProps("groundStations")}
                 title="Antennas on Earth"
@@ -1068,9 +1136,9 @@ export function SatelliteDesigner({
                 id={`${groupId}-power-h`}
                 className="!m-0 font-display text-2xl font-bold !tracking-normal"
               >
-                {stageById("power").prompt}
+                {decision.title}
               </h2>
-              {panel("solar")}
+              {decision.slot === "solar" && panel("solar")}
               <SlotGroup {...groupProps("solar")} title="Solar wings">
                 {cat.solar.map((part) => {
                   const span =
@@ -1144,7 +1212,7 @@ export function SatelliteDesigner({
                   );
                 })}
               </SlotGroup>
-              {panel("batteries")}
+              {decision.slot === "battery" && panel("batteries")}
               <SlotGroup {...groupProps("battery")} title="Battery">
                 {cat.batteries.map((part) => (
                   <Previewable
@@ -1195,7 +1263,7 @@ export function SatelliteDesigner({
                   </Previewable>
                 ))}
               </SlotGroup>
-              {panel("storage")}
+              {decision.slot === "storage" && panel("storage")}
               <SlotGroup {...groupProps("storage")} title="Memory">
                 {cat.storage.map((part, index) => (
                   <Previewable
@@ -1239,6 +1307,56 @@ export function SatelliteDesigner({
                   </Previewable>
                 ))}
               </SlotGroup>
+            </section>
+            <section
+              hidden={stage !== "review"}
+              aria-labelledby={`${groupId}-review-title`}
+              className="rounded-xl border border-border p-5"
+            >
+              <h2 id={`${groupId}-review-title`}>Review your spacecraft</h2>
+              <p>Check your choices and resource limits before launching.</p>
+              <dl>
+                {workshopDecisions.slice(0, -1).map((item, index) => (
+                  <div key={item.slot}>
+                    <dt>
+                      {item.label}{" "}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDecisionIndex(index);
+                          setInstruction(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </dt>
+                    <dd>
+                      {item.slot === "review"
+                        ? ""
+                        : item.slot === "instruments"
+                          ? design.instruments
+                              .map((id) => partCopy[id]?.name ?? id)
+                              .join(", ") || "Not installed"
+                          : item.slot === "groundStations"
+                            ? design.groundStations
+                            : (partCopy[design[item.slot]]?.name ??
+                              "Not installed")}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              {blockers.length ? (
+                <ul>
+                  {blockers.map((b) => (
+                    <li key={b}>! {b}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>
+                  ✓ Resource checks passed. Mission success still depends on
+                  your design and observations.
+                </p>
+              )}
             </section>
           </fieldset>
 
@@ -1307,7 +1425,16 @@ export function SatelliteDesigner({
                   </span>
                 )}
               </div>
-              {primary}
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  className="btn-pop btn-pop--ghost"
+                  onClick={() => setInstruction(true)}
+                >
+                  ← Back to instructions
+                </button>
+                {primary}
+              </div>
             </div>
             {error && (
               <p role="alert" className="mt-2 text-sm font-bold text-pop-pink">
