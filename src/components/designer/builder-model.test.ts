@@ -48,7 +48,13 @@ const roomy = { budgetM: 1000, massKg: 2000 };
 
 describe("build stages", () => {
   it("guides steps in order: sensor, orbit, power & storage, communications", () => {
-    expect(stages_.map((stage) => stage.id)).toEqual(["eyes", "orbit", "power", "radio"]);
+    expect(stages_.map((stage) => stage.id)).toEqual([
+      "eyes",
+      "orbit",
+      "power",
+      "radio",
+      "review",
+    ]);
     expect(stageUnlocked(empty, "eyes")).toBe(true);
     expect(stageUnlocked(empty, "orbit")).toBe(false);
     const withSensor = { ...empty, instruments: ["msi"] };
@@ -57,6 +63,8 @@ describe("build stages", () => {
     expect(stageComplete({ ...withSensor, comm: "uhf" }, "radio")).toBe(true);
     expect(stageComplete({ ...full, storage: "" }, "power")).toBe(false);
     expect(stages(full)).toEqual([true, true, true, true]);
+    expect(stageComplete(full, "review")).toBe(true);
+    expect(stageComplete({ ...full, solar: "" }, "review")).toBe(false);
   });
 
   it("maps every slot to the step that shows it", () => {
@@ -131,7 +139,7 @@ describe("gauges", () => {
   it("translates engine violations into short reasons", () => {
     expect(
       blockerMessages(["Mass limit exceeded.", "Select a valid orbit."]),
-    ).toEqual(["Too heavy for the rocket", "Pick an orbit"]);
+    ).toEqual(["Over mass limit: try lighter parts", "Pick an orbit"]);
   });
 
   it("ranks catalog values into 1–3 levels", () => {
